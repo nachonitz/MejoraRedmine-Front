@@ -1,18 +1,24 @@
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { logout } from '../../api/services/authService';
 
 const Header = () => {
     const location = useLocation();
+    const navigate = useNavigate();
 
     const isLoggedIn = () => {
-        return location.pathname !== '/login' && location.pathname !== '/'
+        return (location.pathname !== '/login' && location.pathname !== '/register')
     }
+
+    const handleLogout = () => {
+        logout(navigate);
+    };
 
     return (
         <div className="h-16 bg-primary flex flex-row p-page box-border">
             <div className="flex items-center justify-between w-full">
                 <div className="flex items-center flex-row gap-24">
                     <div>
-                        <Link className="text-white text-2xl font-bold" to="/">Datadreams</Link>
+                        <Link className="text-white text-2xl font-bold" to="/">Redmine</Link>
                     </div>
                     {   
                         isLoggedIn() && 
@@ -27,6 +33,10 @@ const Header = () => {
                         {
                             !isLoggedIn() && 
                             <Link to="/login">Login</Link>
+                        }
+                        {
+                            isLoggedIn() && 
+                            <a href='#' className="cursor-pointer" onClick={()=> handleLogout()}>Logout</a>
                         }
                     </div>
                 </div>
