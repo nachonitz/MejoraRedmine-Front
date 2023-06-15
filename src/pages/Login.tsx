@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../api/services/authService';
 import Input from '../components/Auth/Input';
+import { UserContext } from '../context/UserContext';
 
 const Login = () => {
 	const navigate = useNavigate();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [wrongCredentials, setWrongCredentials] = useState(false);
+	const { login } = useContext(UserContext);
 
 	const handleLogin = async () => {
+		if (!username || !password) return;
 		try {
 			const response = await login(username, password);
 			if (response) {
@@ -25,7 +27,7 @@ const Login = () => {
 	};
 
 	const handleKeyPress = (e:any) => {
-		if (e.key === 'Enter' && username && password) {
+		if (e.key === 'Enter') {
 			handleLogin();
 		}
 	};
@@ -39,7 +41,7 @@ const Login = () => {
 					</div>
 					<div className='flex flex-col w-full gap-[22px]'>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setUsername(e.target.value)} value={username} name="email" type="email" placeholder="Enter your email"></Input>
+							<Input onKeyPress={handleKeyPress} onChange={(e) => setUsername(e.target.value)} value={username} name="username" type="text" placeholder="Enter your user"></Input>
 						</div>
 						<div>
 							<Input onKeyPress={handleKeyPress} onChange={(e) => setPassword(e.target.value)} value={password} name="password" type="password" placeholder="Enter your password"></Input>
