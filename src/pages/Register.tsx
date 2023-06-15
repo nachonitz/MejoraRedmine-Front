@@ -12,7 +12,7 @@ const Register = () => {
 	const [firstname, setFirstname] = useState('');
 	const [lastname, setLastname] = useState('');
 	const [errorText, setErrorText] = useState('');
-	const [serverErrors, setServerErrors] = useState([]);
+	const [serverErrors, setServerErrors] = useState<string[]>([]);
 	const [errorUsername, setErrorUsername] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 	const [errorConfirmpassword, setErrorConfirmpassword] = useState(false);
@@ -86,7 +86,6 @@ const Register = () => {
 		}
 		try {
 			const response = await register(username, password, email, firstname, lastname);
-			console.log(response);
 			if (response.status === 201) {
 				navigate('/login');
 			} else {

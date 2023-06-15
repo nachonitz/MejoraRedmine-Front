@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { UserContext } from "./UserContext";
 import { login as loginService, register as registerService } from "../api/services/authService";
 import { api } from "../api/api";
+import { User } from '../api/models/user';
+import { RegisterResponse } from '../api/models/register-response';
 
 export const UserProvider = ({ children }: any) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const [apiKey, setApiKey] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -18,10 +20,10 @@ export const UserProvider = ({ children }: any) => {
 
     const login = async (username:string, password:string): Promise<boolean> => {
         try {
-            const response = await loginService(username, password);
-            if (response.status === 200) {
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                setUser(response.data.user);
+            const user = await loginService(username, password);
+            if (user) {
+                localStorage.setItem('user', JSON.stringify(user));
+                setUser(user);
                 setIsLoggedIn(true);
                 return true;
             } else {
@@ -32,13 +34,10 @@ export const UserProvider = ({ children }: any) => {
         }
     }
 
-    const register = async (username:string, password:string, email: string, firstname: string, lastname: string): Promise<any> => {
+    const register = async (username:string, password:string, email: string, firstname: string, lastname: string): Promise<RegisterResponse> => {
         try {
             const response = await registerService(username, password, email, firstname, lastname);
-            return {
-                "status": response.status,
-                "errors": response.data.errors
-            }
+            return response;
         } catch (error) {
             throw new Error('Error. Please try again.');
         }
