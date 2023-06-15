@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login, register } from '../api/services/authService';
 import Input from '../components/Auth/Input';
+import { UserContext } from '../context/UserContext';
 
 const Register = () => {
 	const navigate = useNavigate();
@@ -12,13 +12,14 @@ const Register = () => {
 	const [firstname, setFirstname] = useState('');
 	const [lastname, setLastname] = useState('');
 	const [errorText, setErrorText] = useState('');
+	const [serverErrors, setServerErrors] = useState([]);
 	const [errorUsername, setErrorUsername] = useState(false);
 	const [errorPassword, setErrorPassword] = useState(false);
 	const [errorConfirmpassword, setErrorConfirmpassword] = useState(false);
 	const [errorEmail, setErrorEmail] = useState(false);
 	const [errorFirstname, setErrorFirstname] = useState(false);
 	const [errorLastname, setErrorLastname] = useState(false);
-	const [wrongCredentials, setWrongCredentials] = useState(false);
+	const { register } = useContext(UserContext);
 
 	const clearErrors = () => {
 		setErrorText('');
@@ -28,6 +29,7 @@ const Register = () => {
 		setErrorEmail(false);
 		setErrorFirstname(false);
 		setErrorLastname(false);
+		setServerErrors([]);
 	}
 
 	const checkForFieldsErrors = () => {
@@ -84,19 +86,18 @@ const Register = () => {
 		}
 		try {
 			const response = await register(username, password, email, firstname, lastname);
-			if (response) {
+			console.log(response);
+			if (response.status === 201) {
 				navigate('/login');
 			} else {
 				setPassword('');
 				setConfirmpassword('');
-				setErrorText('Error. Please try again.');
-				setWrongCredentials(true);
+				setServerErrors(response.errors);
 			}
 		} catch (error: any) {
 			setPassword('');
 			setConfirmpassword('');
 			setErrorText('Error. Please try again.');
-			setWrongCredentials(true);
 		}
 	};
 
@@ -134,8 +135,11 @@ const Register = () => {
 						</div>
 						<div>
 							<button onClick={() => handleRegister()} className="w-full font-bold bg-primary text-white p-3 border border-gray-300 rounded active:bg-blue-900">Create account</button>
-							<div className='mt-2 h-[10px] text-left'>
+							<div className='mt-2 min-h-[10px] text-left'>
 								<p className='text-red-700'> { errorText }</p>
+								{serverErrors.map((error) => (<div>
+									<p className='text-red-700'> { error }</p>
+								</div>))}
 							</div>
 						</div>
 						<div className='flex flex-row justify-center items-center gap-3'>
