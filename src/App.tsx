@@ -1,37 +1,31 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Header from './components/Header/Header';
 import Register from './pages/Register';
-
-interface PrivateRouteProps {
-	children: any;
-  }
-
-export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-	const isAuthenticated = localStorage.getItem('api_key');
-		
-	if (isAuthenticated ) {
-	  return children
-	}
-	  
-	return <Navigate to="/login" />
-}
+import { UserContext } from './context/UserContext';
 
 function App() {
+	const { isLoggedIn } = useContext(UserContext);
 
 	return (
 		<Router>
 			<Header />
 			<Routes>
-				<Route
-					path="/"
-					element={ <PrivateRoute> <Home /> </PrivateRoute> }
-				/>
-				<Route path="/login" element={<Login />} />
-				<Route path="/register" element={<Register />} />
+				{ isLoggedIn ?
+					<>	
+						<Route path="/" element={<Home />} />
+						<Route path="*" element={<Navigate to="/" />} />
+					</>
+					:
+					<>
+						<Route path="/login" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+						<Route path="*" element={<Navigate to="/login" />} />
+					</>
+				}
 			</Routes>
 		</Router>
 	);

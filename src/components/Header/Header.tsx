@@ -1,16 +1,14 @@
+import {  useContext } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { logout } from '../../api/services/authService';
+import { UserContext } from '../../context/UserContext';
 
 const Header = () => {
     const location = useLocation();
     const navigate = useNavigate();
-
-    const isLoggedIn = () => {
-        return (location.pathname !== '/login' && location.pathname !== '/register')
-    }
+    const { isLoggedIn, logout } = useContext( UserContext );
 
     const handleLogout = () => {
-        logout(navigate);
+        logout();
     };
 
     return (
@@ -21,7 +19,7 @@ const Header = () => {
                         <Link className="text-white text-2xl font-bold" to="/">Redmine</Link>
                     </div>
                     {   
-                        isLoggedIn() && 
+                        isLoggedIn && 
                         <div className="flex flex-row gap-5 text-white">
                             <p>Projects</p>
                             <p>Admin</p>
@@ -31,11 +29,11 @@ const Header = () => {
                 <div>
                     <div className="flex gap-5 text-white">
                         {
-                            !isLoggedIn() && 
+                            !isLoggedIn && 
                             <Link to="/login">Login</Link>
                         }
                         {
-                            isLoggedIn() && 
+                            isLoggedIn && 
                             <a href='#' className="cursor-pointer" onClick={()=> handleLogout()}>Logout</a>
                         }
                     </div>
