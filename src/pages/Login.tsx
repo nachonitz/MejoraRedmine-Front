@@ -15,7 +15,7 @@ const Login = () => {
 		try {
 			const response = await login(username, password);
 			if (response) {
-				navigate('/');
+				navigate('/projects');
 			} else {
 				setPassword('')
 				setWrongCredentials(true);

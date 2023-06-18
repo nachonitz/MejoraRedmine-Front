@@ -21,7 +21,7 @@ const Header = () => {
                     {   
                         isLoggedIn && 
                         <div className="flex flex-row gap-5 text-white">
-                            <p>Projects</p>
+                            <Link to="/projects">Projects</Link>
                             <p>Admin</p>
                         </div>
                     }

@@ -4,10 +4,12 @@ import { login as loginService, register as registerService } from "../api/servi
 import { api } from "../api/api";
 import { User } from '../api/models/user';
 import { RegisterResponse } from '../api/models/register-response';
+import { useNavigate } from 'react-router-dom';
 
 export const UserProvider = ({ children }: any) => {
     const [user, setUser] = useState<User | null>(null);
     const [apiKey, setApiKey] = useState(null);
+    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {  
@@ -48,6 +50,7 @@ export const UserProvider = ({ children }: any) => {
         setUser(null);
         setApiKey(null);
         setIsLoggedIn(false);
+        navigate('/login');
     }
 
     return (
