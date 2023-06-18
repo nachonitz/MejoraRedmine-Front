@@ -12,7 +12,7 @@ const Header = () => {
     };
 
     return (
-        <div className="h-16 bg-primary flex flex-row p-page box-border">
+        <div className="h-header top-0 fixed w-full bg-primary flex flex-row p-page box-border">
             <div className="flex items-center justify-between w-full">
                 <div className="flex items-center flex-row gap-24">
                     <div>

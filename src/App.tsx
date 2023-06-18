@@ -13,20 +13,22 @@ function App() {
 	return (
 		<Router>
 			<Header />
-			<Routes>
-				{ isLoggedIn ?
-					<>	
-						<Route path="/" element={<Home />} />
-						<Route path="*" element={<Navigate to="/" />} />
-					</>
-					:
-					<>
-						<Route path="/login" element={<Login />} />
-						<Route path="/register" element={<Register />} />
-						<Route path="*" element={<Navigate to="/login" />} />
-					</>
-				}
-			</Routes>
+			<div className="flex flex-column mt-[64px]">
+				<Routes>
+					{ isLoggedIn ?
+						<>
+							<Route path="/" element={<Home />} />
+							<Route path="*" element={<Navigate to="/" />} />
+						</>
+						:
+						<>
+							<Route path="/" element={<Navigate to="/login" />} />
+							<Route path="/login" element={<Login />} />
+							<Route path="/register" element={<Register />} />
+						</>
+					}
+				</Routes>
+			</div>
 		</Router>
 	);
 }
