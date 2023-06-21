@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import AddButton from '../components/AddButton/AddButton';
 import { getProjects } from '../api/services/projectsService';
 import { Project } from '../api/models/project';
+import { useNavigate } from 'react-router-dom';
 
 const Projects = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
+	const navigate = useNavigate();
 
 	const getAllProjects = async () => {
 		try {
@@ -14,6 +16,10 @@ const Projects = () => {
 		} catch (error) {
 			throw new Error('Error. Please try again.');
 		}
+	}
+
+	const goToProject = (id: number) => {
+		navigate(`/project/${id}`);
 	}
 
 	const getFullDate = (date: Date) => {
@@ -28,7 +34,7 @@ const Projects = () => {
 	}, []);
 	return(
 		<div className='p-page mt-10 box-border w-full'>
-			<div className="text-[26px] text-primary flex gap-[15px]">
+			<div className="text-[26px] text-primary flex gap-[15px] items-center">
 				<span>Projects</span>
 				<AddButton />
 			</div>
@@ -36,6 +42,7 @@ const Projects = () => {
 				<table className="w-full mt-[30px]">
 					<thead>
 						<tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
+							<th></th>
 							<th className="text-left">Name</th>
 							<th className="text-left">Created</th>
 							<th className="text-left">Owner</th>
@@ -43,17 +50,19 @@ const Projects = () => {
 					</thead>
 					<tbody>
 						{projects.map((project: Project) => (
-							<tr key={project.id} className="text-[18px] h-[40px]">
-								<td className="text-left">{project.name}</td>
+							<tr key={project.id} onClick={()=> {goToProject(project.id)}} className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50">
+								<td className='w-[30px]'>
+									<img className="w-[24px] h-[24px]" src={'/src/assets/icons/project-icon.png'} />
+								</td>
+								<td className="gap-[10px] text-left">
+									{project.name}
+								</td>
 								<td className="text-left">{getFullDate(project.created_on)}</td>
 								<td className="text-left">NO INFO</td>
 							</tr>
 						))}
 					</tbody>
 				</table>
-			</div>
-			<div className="h-[100vh]">
-				HOLAAAA
 			</div>
 		</div>
 	)

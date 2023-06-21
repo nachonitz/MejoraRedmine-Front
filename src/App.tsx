@@ -20,6 +20,7 @@ function App() {
 						<>
 							<Route path="/" element={<Home />} />
 							<Route path="/projects" element={<Projects />} />
+							<Route path="/project/:id" element={<Home />} />
 							<Route path="*" element={<Navigate to="/" />} />
 						</>
 						:
