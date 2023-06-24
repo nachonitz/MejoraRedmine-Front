@@ -3,6 +3,7 @@ import AddButton from '../components/AddButton/AddButton';
 import { getProjects } from '../api/services/projectsService';
 import { Project } from '../api/models/project';
 import { useNavigate } from 'react-router-dom';
+import Page from '../components/Page/Page';
 
 const Projects = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
@@ -33,7 +34,7 @@ const Projects = () => {
 		getAllProjects();
 	}, []);
 	return(
-		<div className='p-page mt-10 box-border w-full'>
+		<Page>
 			<div className="text-[26px] text-primary flex gap-[15px] items-center">
 				<span>Projects</span>
 				<AddButton />
@@ -64,7 +65,7 @@ const Projects = () => {
 					</tbody>
 				</table>
 			</div>
-		</div>
+		</Page>
 	)
 };
 

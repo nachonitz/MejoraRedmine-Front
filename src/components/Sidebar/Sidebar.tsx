@@ -14,7 +14,7 @@ const Sidebar = ( { children }: any ) => {
                     <Item name="Settings" icon="settings-icon.png" onClick={()=>{ console.log("Click!") }} />
                 </div>
             </div>
-            <div className="ml-56">
+            <div className="ml-56 w-full">
                 { children }
             </div>
         </>

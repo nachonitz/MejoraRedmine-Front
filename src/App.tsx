@@ -7,6 +7,7 @@ import Header from './components/Header/Header';
 import Register from './pages/Register';
 import { UserContext } from './context/UserContext';
 import Projects from './pages/Projects';
+import ProjectReleases from './pages/Project/Releases';
 
 function App() {
 	const { isLoggedIn } = useContext(UserContext);
@@ -18,9 +19,9 @@ function App() {
 				<Routes>
 					{ isLoggedIn ?
 						<>
-							<Route path="/" element={<Home />} />
+							<Route path="/" element={<Projects />} />
 							<Route path="/projects" element={<Projects />} />
-							<Route path="/project/:id" element={<Home />} />
+							<Route path="/project/:id" element={<ProjectReleases />} />
 							<Route path="*" element={<Navigate to="/" />} />
 						</>
 						:
