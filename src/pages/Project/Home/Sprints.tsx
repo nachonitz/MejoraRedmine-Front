@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import { getSprintsByReleaseId } from '../../../api/services/projectsService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PageTitle from '../../../components/PageTitle/PageTitle';
 import Page from '../../../components/Page/Page';
 import AddButton from '../../../components/AddButton/AddButton';
@@ -9,6 +9,7 @@ import { Sprint } from '../../../api/models/sprint';
 
 const ProjectSprints = () => {
 	const { projectId, releaseId } = useParams();
+	const navigate = useNavigate();
 	const [sprints, setSprints] = useState<Sprint[]>([]);
 	
 	const getSprints = async () => {
@@ -25,7 +26,7 @@ const ProjectSprints = () => {
 	}
 
 	const goToSprint = (id: number) => {
-		// navigate(`/project/${id}`);
+		navigate(`/project/${projectId}/release/${releaseId}/sprint/${id}}`);
 		console.log(id);
 	}
 
