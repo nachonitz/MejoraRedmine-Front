@@ -36,7 +36,7 @@ const ProjectEpics = () => {
 		<Sidebar>
 			<Page>
 				<div className="flex gap-[15px] items-center">
-					<PageTitle title="Sprints" />
+					<PageTitle title="Epics" />
 					<AddButton />
 				</div>
 				<div>

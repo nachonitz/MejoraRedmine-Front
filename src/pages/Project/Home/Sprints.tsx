@@ -44,7 +44,7 @@ const ProjectSprints = () => {
 		<Sidebar>
 			<Page>
 				<div className="flex gap-[15px] items-center">
-					<PageTitle title="Epics" />
+					<PageTitle title="Sprints" />
 					<AddButton />
 				</div>
 				<div>
