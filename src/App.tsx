@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import { UserContext } from './context/UserContext';
 import Projects from './pages/Projects';
 import ProjectReleases from './pages/Project/Releases';
+import ProjectSprints from './pages/Project/Sprints';
 
 function App() {
 	const { isLoggedIn } = useContext(UserContext);
@@ -21,7 +22,8 @@ function App() {
 						<>
 							<Route path="/" element={<Projects />} />
 							<Route path="/projects" element={<Projects />} />
-							<Route path="/project/:id" element={<ProjectReleases />} />
+							<Route path="/project/:projectId" element={<ProjectReleases />} />
+							<Route path="/project/:projectId/release/:releaseId" element={<ProjectSprints />} />
 							<Route path="*" element={<Navigate to="/" />} />
 						</>
 						:

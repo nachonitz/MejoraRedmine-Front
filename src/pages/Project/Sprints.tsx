@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { getReleasesByProjectId } from '../../api/services/projectsService';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Release } from '../../api/models/release';
+import { getSprintsByReleaseId } from '../../api/services/projectsService';
+import { useParams } from 'react-router-dom';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import Page from '../../components/Page/Page';
 import AddButton from '../../components/AddButton/AddButton';
+import { Sprint } from '../../api/models/sprint';
 
-const ProjectReleases = () => {
-	const { projectId } = useParams();
-	const navigate = useNavigate();
-	const [releases, setReleases] = useState<Release[]>([]);
+const ProjectSprints = () => {
+	const { projectId, releaseId } = useParams();
+	const [sprints, setSprints] = useState<Sprint[]>([]);
 	
-	const getReleases = async () => {
+	const getSprints = async () => {
 		try {
-			if (projectId) {
-				let releases = await getReleasesByProjectId(parseInt(projectId));
-				setReleases(releases);
-				console.log(releases)
-				return releases;
+			if (releaseId) {
+				let sprints = await getSprintsByReleaseId(parseInt(releaseId));
+				setSprints(sprints);
+				console.log(sprints)
+				return sprints;
 			}
 		} catch (error) {
 			throw new Error('Error. Please try again.');
 		}
 	}
 
-	const goToRelease = (releaseId: number) => {
-		navigate(`/project/${projectId}/release/${releaseId}`);
-		console.log(projectId);
+	const goToSprint = (id: number) => {
+		// navigate(`/project/${id}`);
+		console.log(id);
 	}
 
 	const getFullDate = (date: Date) => {
@@ -38,13 +37,13 @@ const ProjectReleases = () => {
 	}
 
 	useEffect(() => {  
-		getReleases();
+		getSprints();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
 				<div className="flex gap-[15px] items-center">
-					<PageTitle title="Releases" />
+					<PageTitle title="Sprints" />
 					<AddButton />
 				</div>
 				<div>
@@ -58,16 +57,16 @@ const ProjectReleases = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{releases.map((release: Release) => (
-								<tr key={release.id} onClick={()=> {goToRelease(release.id)}} className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50">
+							{sprints.map((sprint: Sprint) => (
+								<tr key={sprint.id} onClick={()=> {goToSprint(sprint.id)}} className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50">
 									<td className='w-[30px]'>
-										<img className="w-[24px] h-[24px]" src={'/src/assets/icons/release-icon.png'} />
+										<img className="w-[24px] h-[24px]" src={'/src/assets/icons/sprint-icon.png'} />
 									</td>
 									<td className="gap-[10px] text-left">
-										{release.name}
+										{sprint.name}
 									</td>
-									<td className="text-left">{getFullDate(release.startDate)}</td>
-									<td className="text-left">{getFullDate(release.endDate)}</td>
+									<td className="text-left">{getFullDate(sprint.startDate)}</td>
+									<td className="text-left">{getFullDate(sprint.endDate)}</td>
 								</tr>
 							))}
 						</tbody>
@@ -78,4 +77,4 @@ const ProjectReleases = () => {
 	)
 };
 
-export default ProjectReleases;
+export default ProjectSprints;
