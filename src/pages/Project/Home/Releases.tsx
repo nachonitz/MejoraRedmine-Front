@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import { getReleasesByProjectId } from '../../api/services/projectsService';
+import Sidebar from '../../../components/Sidebar/Sidebar';
+import { getReleasesByProjectId } from '../../../api/services/projectsService';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Release } from '../../api/models/release';
-import PageTitle from '../../components/PageTitle/PageTitle';
-import Page from '../../components/Page/Page';
-import AddButton from '../../components/AddButton/AddButton';
+import { Release } from '../../../api/models/release';
+import PageTitle from '../../../components/PageTitle/PageTitle';
+import Page from '../../../components/Page/Page';
+import AddButton from '../../../components/AddButton/AddButton';
 
 const ProjectReleases = () => {
 	const { projectId } = useParams();

@@ -7,8 +7,8 @@ import Header from './components/Header/Header';
 import Register from './pages/Register';
 import { UserContext } from './context/UserContext';
 import Projects from './pages/Projects';
-import ProjectReleases from './pages/Project/Releases';
-import ProjectSprints from './pages/Project/Sprints';
+import ProjectReleases from './pages/Project/Home/Releases';
+import ProjectSprints from './pages/Project/Home/Sprints';
 
 function App() {
 	const { isLoggedIn } = useContext(UserContext);

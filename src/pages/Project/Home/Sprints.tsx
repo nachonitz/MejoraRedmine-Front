@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import { getSprintsByReleaseId } from '../../api/services/projectsService';
+import Sidebar from '../../../components/Sidebar/Sidebar';
+import { getSprintsByReleaseId } from '../../../api/services/projectsService';
 import { useParams } from 'react-router-dom';
-import PageTitle from '../../components/PageTitle/PageTitle';
-import Page from '../../components/Page/Page';
-import AddButton from '../../components/AddButton/AddButton';
-import { Sprint } from '../../api/models/sprint';
+import PageTitle from '../../../components/PageTitle/PageTitle';
+import Page from '../../../components/Page/Page';
+import AddButton from '../../../components/AddButton/AddButton';
+import { Sprint } from '../../../api/models/sprint';
 
 const ProjectSprints = () => {
 	const { projectId, releaseId } = useParams();
