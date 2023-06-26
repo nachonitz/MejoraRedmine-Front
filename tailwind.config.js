@@ -22,7 +22,8 @@ export default {
         header: '64px',
       },
       boxShadow: {
-        login: '0px 0px 10px #DDDDDD'
+        login: '0px 0px 10px #DDDDDD',
+        card: '0px 3px 8px rgba(0, 0, 0, 0.24)'
       }
     },
   },
