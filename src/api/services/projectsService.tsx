@@ -1,5 +1,6 @@
 import { api } from "../api";
 import { Epic } from "../models/epic";
+import { Issue } from "../models/issue";
 import { Project } from "../models/project";
 import { Release } from "../models/release";
 import { Sprint } from "../models/sprint";
@@ -39,6 +40,16 @@ export const getEpicsBySprintId = async (sprintId: number): Promise<Epic[]> => {
 		const response = await api.get('/epics', { params: { sprintId } });
 		const epics: Epic[] = response.data.items;
 		return epics;
+	} catch (error) {
+		throw new Error('Error. Please try again.');
+	}
+}
+
+export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
+	try {
+		const response = await api.get('/issues', { params: { epicId } });
+		const issues: Issue[] = response.data.items;
+		return issues;
 	} catch (error) {
 		throw new Error('Error. Please try again.');
 	}
