@@ -4,7 +4,7 @@ import { getEpicsBySprintId } from '../../../api/services/projectsService';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageTitle from '../../../components/PageTitle/PageTitle';
 import Page from '../../../components/Page/Page';
-import AddButton from '../../../components/AddButton/AddButton';
+import AddButton from '../../../components/Buttons/AddButton';
 import { Epic } from '../../../api/models/epic';
 
 const ProjectEpics = () => {
