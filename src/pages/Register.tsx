@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Auth/Input';
 import { UserContext } from '../context/UserContext';
+import { TextField } from '@mui/material';
+import PrimaryButton from '../components/Buttons/PrimaryButton';
 
 const Register = () => {
 	const navigate = useNavigate();
@@ -113,27 +115,27 @@ const Register = () => {
 					<div>
 						<p className='text-primary text-3xl text-center'>REDMINE</p>
 					</div>
-					<div className='flex flex-col w-full gap-[22px]'>
+					<div onKeyPress={handleKeyPress} className='flex flex-col w-full gap-[22px]'>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setUsername(e.target.value)} error={errorUsername} value={username} name="user" type="text" placeholder="Enter your user"></Input>
+							<TextField className="w-full"  onChange={(e) => setUsername(e.target.value)} error={errorUsername} value={username} label="User" type="text"></TextField>
 						</div>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setPassword(e.target.value)} error={errorPassword} value={password} name="password" type="password" placeholder="Enter your password"></Input>
+							<TextField className="w-full"  onChange={(e) => setPassword(e.target.value)} error={errorPassword} value={password} label="Password" type="password"></TextField>
 						</div>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setConfirmpassword(e.target.value)} error={errorConfirmpassword} value={confirmpassword} name="confirmPassword" type="password" placeholder="Confirm your password"></Input>
+							<TextField className="w-full"  onChange={(e) => setConfirmpassword(e.target.value)} error={errorConfirmpassword} value={confirmpassword} label="Confirm password" type="password"></TextField>
 						</div>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setEmail(e.target.value)} error={errorEmail} value={email} name="email" type="email" placeholder="Enter your email"></Input>
+							<TextField className="w-full"  onChange={(e) => setEmail(e.target.value)} error={errorEmail} value={email} label="Email" type="email"></TextField>
 						</div>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setFirstname(e.target.value)} error={errorFirstname} value={firstname} name="firstname" type="text" placeholder="Enter your first name"></Input>
+							<TextField className="w-full"  onChange={(e) => setFirstname(e.target.value)} error={errorFirstname} value={firstname} label="First Name" type="text"></TextField>
 						</div>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setLastname(e.target.value)} error={errorLastname} value={lastname} name="lastname" type="text" placeholder="Enter your last name"></Input>
+							<TextField className="w-full"  onChange={(e) => setLastname(e.target.value)} error={errorLastname} value={lastname} label="Last Name" type="text"></TextField>
 						</div>
 						<div>
-							<button onClick={() => handleRegister()} className="w-full font-bold bg-primary text-white p-3 border border-gray-300 rounded active:bg-blue-900">Create account</button>
+							<PrimaryButton width="100%" onClick={() => handleRegister()}>Create account</PrimaryButton>
 							<div className='mt-2 min-h-[10px] text-left'>
 								<p className='text-red-700'> { errorText }</p>
 								{serverErrors.map((error) => (<div>

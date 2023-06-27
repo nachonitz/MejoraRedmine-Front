@@ -16,12 +16,16 @@ export const register = async (username:string, password:string, email: string, 
 	try {
 		const response = await api.post('/auth/register', { "login": username, password, "mail": email, firstname, lastname });
 		const registerResponse: RegisterResponse = {
-			status: response.data.status,
-			errors: response.data.data.errors
+			status: response.status,
+			errors: []
 		}
 		return registerResponse;
-	} catch (error) {
-		throw new Error('Error. Please try again.');
+	} catch (error: any) {
+		const registerResponse: RegisterResponse = {
+			status: error.response.data.statusCode,
+			errors: error.response.data.message
+		}
+		return registerResponse;
 	}
 };
 
