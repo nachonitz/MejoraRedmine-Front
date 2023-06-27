@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Auth/Input';
 import { UserContext } from '../context/UserContext';
+import { TextField } from '@mui/material';
+import PrimaryButton from '../components/Buttons/PrimaryButton';
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -39,15 +41,17 @@ const Login = () => {
 					<div>
 						<p className='text-primary text-3xl text-center'>REDMINE</p>
 					</div>
-					<div className='flex flex-col w-full gap-[22px]'>
+					<div onKeyPress={handleKeyPress} className='flex flex-col w-full gap-[22px]'>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setUsername(e.target.value)} value={username} name="username" type="text" placeholder="Enter your user"></Input>
+							<TextField className="w-full"  onChange={(e) => setUsername(e.target.value)} value={username} label="User" type="text"></TextField>
+							{/* <Input onKeyPress={handleKeyPress} onChange={(e) => setUsername(e.target.value)} value={username} name="User" type="text" placeholder="Enter your user"></Input> */}
 						</div>
 						<div>
-							<Input onKeyPress={handleKeyPress} onChange={(e) => setPassword(e.target.value)} value={password} name="password" type="password" placeholder="Enter your password"></Input>
+							<TextField className="w-full" onChange={(e) => setPassword(e.target.value)} value={password} label="Password" type="password"></TextField>
+							{/* <Input onKeyPress={handleKeyPress} onChange={(e) => setPassword(e.target.value)} value={password} name="Password" type="password" placeholder="Enter your password"></Input> */}
 						</div>
 						<div>
-							<button onClick={() => handleLogin()} className="w-full font-bold bg-primary text-white p-3 border border-gray-300 rounded active:bg-blue-900">Login</button>
+							<PrimaryButton width="100%" onClick={() => handleLogin()}>Login</PrimaryButton>
 							<div className='mt-2 h-[10px] text-left'>
 								<p className='text-red-700'> {wrongCredentials && 'Invalid user or password' }</p>
 							</div>
