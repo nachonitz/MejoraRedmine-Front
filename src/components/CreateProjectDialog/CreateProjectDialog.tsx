@@ -19,13 +19,13 @@ const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ( { open, handle
     const [errorName, setErrorName] = useState(false);
 	const [errorDescription, setErrorDescription] = useState(false);
     const [errorIdentifier, setErrorIdentifier] = useState(false);
-    const [error, setError] = useState("");
+    const [serverErrors, setServerErrors] = useState<string[]>([]);
 
     const clearErrors = () => {
         setErrorName(false);
         setErrorDescription(false);
         setErrorIdentifier(false);
-        setError("");
+        setServerErrors([]);
     }
 
     const checkForFieldsErrors = () => {
@@ -62,7 +62,7 @@ const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ( { open, handle
             handleCloseModal();
         }).catch((error) => {
             console.log(error)
-            setError(error.message);
+            setServerErrors(error.messages);
         });
     }
 
@@ -89,7 +89,11 @@ const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ( { open, handle
                         <TextField onChange={(e) => setIdentifier(e.target.value)} error={errorIdentifier} className="w-full" id="project-identifier" placeholder="project-identifier" label="Identifier" variant="outlined" />
                         <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} className="w-full" multiline minRows={"2"} maxRows={"4"} id="project-description" label="Description" variant="outlined" />
                         <CustomSwitch onClick={setIsPrivate} title="Private" />
-                        <span className="text-red-700">{error}</span>
+                        <div className='mt-2 min-h-[10px] text-left'>
+                            {serverErrors.map((error, index) => (<div key={index}>
+                                <p className='text-red-700'> { error }</p>
+                            </div>))}
+                        </div>
                     </div>
                 </DialogContent>
                 <DialogActions>

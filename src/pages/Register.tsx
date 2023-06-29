@@ -97,10 +97,10 @@ const Register = () => {
 		} catch (error: any) {
 			setPassword('');
 			setConfirmpassword('');
-			if (!error.message) {
+			if (!error.messages) {
 				setErrorText('Error. Please try again.');
 			} else {
-				setServerErrors(error.message)
+				setServerErrors(error.messages)
 			}
 		}
 	};
@@ -141,7 +141,7 @@ const Register = () => {
 							<PrimaryButton width="100%" onClick={() => handleRegister()}>Create account</PrimaryButton>
 							<div className='mt-2 min-h-[10px] text-left'>
 								<p className='text-red-700'> { errorText }</p>
-								{serverErrors.map((error) => (<div>
+								{serverErrors.map((error, index) => (<div key={index}>
 									<p className='text-red-700'> { error }</p>
 								</div>))}
 							</div>
