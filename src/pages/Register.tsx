@@ -88,17 +88,20 @@ const Register = () => {
 		}
 		try {
 			const response = await register(username, password, email, firstname, lastname);
-			if (response.status === 201) {
+			if (response) {
 				navigate('/login');
 			} else {
 				setPassword('');
 				setConfirmpassword('');
-				setServerErrors(response.errors);
 			}
 		} catch (error: any) {
 			setPassword('');
 			setConfirmpassword('');
-			setErrorText('Error. Please try again.');
+			if (!error.message) {
+				setErrorText('Error. Please try again.');
+			} else {
+				setServerErrors(error.message)
+			}
 		}
 	};
 

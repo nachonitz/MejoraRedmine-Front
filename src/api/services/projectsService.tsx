@@ -54,3 +54,10 @@ export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
 		throw new Error('Error. Please try again.');
 	}
 }
+
+export const createProject = async (project: any): Promise<Project> => {
+	const response = await api.post('/projects', { "name": project.name, "description": project.description, "identifier": project.identifier, "is_public": project.is_public });
+	const newProject: Project = response.data.project;
+	return newProject;
+	
+}
