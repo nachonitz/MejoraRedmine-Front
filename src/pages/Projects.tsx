@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AddButton from '../components/Buttons/AddButton';
-import { getProjects } from '../api/services/projectsService';
+import { deleteProject, getProjects } from '../api/services/projectsService';
 import { Project } from '../api/models/project';
 import { useNavigate } from 'react-router-dom';
 import Page from '../components/Page/Page';
@@ -8,6 +8,7 @@ import { IoLockClosed } from 'react-icons/io5';
 import CreateProjectDialog from '../components/CreateProjectDialog/CreateProjectDialog';
 import SettingsButton from '../components/Buttons/SettingsButton';
 import EditProjectDialog from '../components/EditProjectDialog/EditProjectDialog';
+import DeleteDialog from '../components/DeleteDialog/DeleteDialog';
  
 
 const Projects = () => {
@@ -15,7 +16,8 @@ const Projects = () => {
 	const navigate = useNavigate();
 	const [openCreateProject, setOpenCreateProject] = useState(false);
 	const [openEditProject, setOpenEditProject] = useState(false);
-	const [selectedProjectId, setSelectedProjectId] = useState(-1);
+	const [openDeleteProject, setOpenDeleteProject] = useState(false);
+	const [selectedProject, setSelectedProject] = useState<Project>();
 
 
 	const getAllProjects = async () => {
@@ -44,7 +46,15 @@ const Projects = () => {
 		if (refresh) {
 			getAllProjects();
 		}
-		setSelectedProjectId(-1);
+		setSelectedProject(undefined);
+	}
+
+	const handleCloseDeleteProject = (refresh?: boolean) => {
+		setOpenDeleteProject(false);
+		if (refresh) {
+			getAllProjects();
+		}
+		setSelectedProject(undefined);
 	}
 
 	const handleCloseCreateProject = (refresh?: boolean) => {
@@ -60,7 +70,8 @@ const Projects = () => {
 	return(
 		<Page>
 			<CreateProjectDialog open={openCreateProject} handleClose={handleCloseCreateProject} />
-			<EditProjectDialog open={openEditProject} projectId={selectedProjectId} handleClose={handleCloseEditProject} />
+			<EditProjectDialog open={openEditProject} projectId={selectedProject?.id} handleClose={handleCloseEditProject} />
+			<DeleteDialog open={openDeleteProject} id={selectedProject?.id} handleClose={handleCloseDeleteProject} deleteFunction={deleteProject} name={selectedProject?.name} />
 			<div className="text-[26px] text-primary flex gap-[15px] items-center">
 				<span>Projects</span>
 				<AddButton onClick={ ()=> { setOpenCreateProject(true) }} />
@@ -89,7 +100,7 @@ const Projects = () => {
 									</div>
 								</td>
 								<td className="text-left">{getFullDate(project.created_on)}</td>
-								<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedProjectId(project.id); setOpenEditProject(true) }} onDelete={()=> console.log("DELETE")} /></div></td>
+								<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedProject(project); setOpenEditProject(true) }} onDelete={()=> { setSelectedProject(project); setOpenDeleteProject(true)}} /></div></td>
 							</tr>
 						))}
 					</tbody>

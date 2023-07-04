@@ -72,3 +72,9 @@ export const editProject = async (project: any): Promise<Project> => {
 	const editedProject: Project = response.data.project;
 	return editedProject;
 }
+
+export const deleteProject = async (projectId: number): Promise<boolean> => {
+	const response = await api.delete(`/projects/${projectId}`);
+	console.log(response);
+	return true;
+}

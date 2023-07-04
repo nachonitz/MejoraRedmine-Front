@@ -7,7 +7,7 @@ import { editProject, getProject } from "../../api/services/projectsService";
 import { Project } from "../../api/models/project";
 
 interface EditProjectDialogProps {
-    projectId: number;
+    projectId?: number;
     open: boolean;
     handleClose: (refresh?: boolean) => void;
 }
@@ -31,14 +31,16 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ( { open, handleClos
     }, [open, projectId]);
 
     const handleGetProject = () => {
-        getProject(projectId).then((project: Project) => {
-            setName(project.name);
-            setDescription(project.description);
-            setIdentifier(project.identifier);
-            setIsPrivate(!project.is_public);
-        }).catch((error) => {
-            console.log(error);
-        });
+        if (projectId) {
+            getProject(projectId).then((project: Project) => {
+                setName(project.name);
+                setDescription(project.description);
+                setIdentifier(project.identifier);
+                setIsPrivate(!project.is_public);
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
     }
 
     const clearErrors = () => {
@@ -66,7 +68,6 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ( { open, handleClos
     }
 
     const handleSubmit = () => {
-        console.log("Submit")
         clearErrors();
 		let errorFound = checkForFieldsErrors();
 		if (errorFound) {
