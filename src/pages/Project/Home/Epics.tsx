@@ -12,7 +12,7 @@ const ProjectEpics = () => {
 	const navigate = useNavigate();
 	const [epics, setEpics] = useState<Epic[]>([]);
 	
-	const getSprints = async () => {
+	const getEpics = async () => {
 		try {
 			if (sprintId) {
 				let epics = await getEpicsBySprintId(parseInt(sprintId));
@@ -26,12 +26,12 @@ const ProjectEpics = () => {
 	}
 
 	const goToEpic = (id: number) => {
-		navigate(`/project/${projectId}/release/${releaseId}/sprint/${id}}/epic/${id}`);
-		console.log(id);
+		navigate(`/project/${projectId}/release/${releaseId}/sprint/${sprintId}/epic/${id}`);
 	}
 
-	useEffect(() => {  
-		getSprints();
+	useEffect(() => {
+		console.log(sprintId)
+		getEpics();
     }, []);
 	return(
 		<Sidebar>

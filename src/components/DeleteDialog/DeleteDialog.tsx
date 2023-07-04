@@ -36,8 +36,8 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ( { open, handleClose, id, nam
     };
 
     const handleCloseModal = (refresh?: boolean) => {
-        resetState();
         handleClose(refresh);
+        resetState();
     };
 
     return (

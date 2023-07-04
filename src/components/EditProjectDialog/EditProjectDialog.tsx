@@ -97,8 +97,8 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ( { open, handleClos
     };
 
     const handleCloseModal = (refresh?: boolean) => {
-        resetState();
         handleClose(refresh);
+        resetState();
     };
 
     return (

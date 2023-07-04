@@ -26,7 +26,7 @@ const ProjectSprints = () => {
 	}
 
 	const goToSprint = (id: number) => {
-		navigate(`/project/${projectId}/release/${releaseId}/sprint/${id}}`);
+		navigate(`/project/${projectId}/release/${releaseId}/sprint/${id}`);
 		console.log(id);
 	}
 
