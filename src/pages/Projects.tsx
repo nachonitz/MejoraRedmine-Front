@@ -6,12 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import Page from '../components/Page/Page';
 import { IoLockClosed } from 'react-icons/io5';
 import CreateProjectDialog from '../components/CreateProjectDialog/CreateProjectDialog';
+import SettingsButton from '../components/Buttons/SettingsButton';
+import EditProjectDialog from '../components/EditProjectDialog/EditProjectDialog';
  
 
 const Projects = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const navigate = useNavigate();
 	const [openCreateProject, setOpenCreateProject] = useState(false);
+	const [openEditProject, setOpenEditProject] = useState(false);
+	const [selectedProjectId, setSelectedProjectId] = useState(-1);
 
 
 	const getAllProjects = async () => {
@@ -35,9 +39,19 @@ const Projects = () => {
 		return `${month}/${day}/${year}`;
 	}
 
-	const handleCloseCreateProject = () => {
+	const handleCloseEditProject = (refresh?: boolean) => {
+		setOpenEditProject(false);
+		if (refresh) {
+			getAllProjects();
+		}
+		setSelectedProjectId(-1);
+	}
+
+	const handleCloseCreateProject = (refresh?: boolean) => {
 		setOpenCreateProject(false);
-		getAllProjects();
+		if (refresh) {
+			getAllProjects();
+		}
 	}
 
 	useEffect( () => {	
@@ -46,6 +60,7 @@ const Projects = () => {
 	return(
 		<Page>
 			<CreateProjectDialog open={openCreateProject} handleClose={handleCloseCreateProject} />
+			<EditProjectDialog open={openEditProject} projectId={selectedProjectId} handleClose={handleCloseEditProject} />
 			<div className="text-[26px] text-primary flex gap-[15px] items-center">
 				<span>Projects</span>
 				<AddButton onClick={ ()=> { setOpenCreateProject(true) }} />
@@ -57,7 +72,8 @@ const Projects = () => {
 							<th></th>
 							<th className="text-left">Name</th>
 							<th className="text-left">Created</th>
-							<th className="text-left">Owner</th>
+							<th className="text-right"></th>
+							{/* <th className="text-left">Owner</th> */}
 						</tr>
 					</thead>
 					<tbody>
@@ -73,7 +89,7 @@ const Projects = () => {
 									</div>
 								</td>
 								<td className="text-left">{getFullDate(project.created_on)}</td>
-								<td className="text-left">NO INFO</td>
+								<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedProjectId(project.id); setOpenEditProject(true) }} onDelete={()=> console.log("DELETE")} /></div></td>
 							</tr>
 						))}
 					</tbody>

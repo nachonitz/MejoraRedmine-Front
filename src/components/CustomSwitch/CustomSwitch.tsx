@@ -2,11 +2,12 @@ import { Switch } from "@mui/material";
 
 interface CustomSwitchProps {
     title: string;
+    value?: boolean;
     description?: string;
     onClick?: (e: any) => void;
 }
 
-const CustomSwitch: React.FC<CustomSwitchProps> = ( { title, onClick, description } ) => {
+const CustomSwitch: React.FC<CustomSwitchProps> = ( { title, value, onClick, description } ) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         onClick && onClick(event.target.checked);
@@ -19,7 +20,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ( { title, onClick, descriptio
                 {description && <p className="text-[16px] text-[#888]">{description}</p>}
             </div>
             <div>
-                <Switch onChange={handleChange} />
+                <Switch checked={value} onChange={handleChange} />
             </div>
         </div>
     )

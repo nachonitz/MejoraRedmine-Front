@@ -55,9 +55,20 @@ export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
 	}
 }
 
+export const getProject = async (projectId: number): Promise<Project> => {
+	const response = await api.get(`/projects/${projectId}`);
+	const project: Project = response.data;
+	return project;
+}
+
 export const createProject = async (project: any): Promise<Project> => {
 	const response = await api.post('/projects', { "name": project.name, "description": project.description, "identifier": project.identifier, "is_public": project.is_public });
 	const newProject: Project = response.data.project;
 	return newProject;
-	
+}
+
+export const editProject = async (project: any): Promise<Project> => {
+	const response = await api.patch(`/projects/${project.id}`, { "name": project.name, "description": project.description, "identifier": project.identifier, "is_public": project.is_public });
+	const editedProject: Project = response.data.project;
+	return editedProject;
 }
