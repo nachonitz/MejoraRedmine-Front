@@ -1,9 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Input from '../components/Auth/Input';
 import { UserContext } from '../context/UserContext';
 import { TextField } from '@mui/material';
-import PrimaryButton from '../components/Buttons/PrimaryButton';
+import PrimaryButton from '../components/Shared/Buttons/PrimaryButton';
 
 const Register = () => {
 	const navigate = useNavigate();

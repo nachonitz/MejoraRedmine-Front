@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import AddButton from '../components/Buttons/AddButton';
+import AddButton from '../components/Shared/Buttons/AddButton';
 import { deleteProject, getProjects } from '../api/services/projectsService';
 import { Project } from '../api/models/project';
 import { useNavigate } from 'react-router-dom';
-import Page from '../components/Page/Page';
+import Page from '../components/Shared/Page/Page';
 import { IoLockClosed } from 'react-icons/io5';
-import CreateProjectDialog from '../components/CreateProjectDialog/CreateProjectDialog';
-import SettingsButton from '../components/Buttons/SettingsButton';
-import EditProjectDialog from '../components/EditProjectDialog/EditProjectDialog';
-import DeleteDialog from '../components/DeleteDialog/DeleteDialog';
+import CreateProjectDialog from '../components/Pages/Projects/CreateProjectDialog/CreateProjectDialog';
+import SettingsButton from '../components/Shared/Buttons/SettingsButton';
+import EditProjectDialog from '../components/Pages/Projects/EditProjectDialog/EditProjectDialog';
+import DeleteDialog from '../components/Shared/DeleteDialog/DeleteDialog';
  
 
 const Projects = () => {

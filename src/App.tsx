@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Header from './components/Header/Header';
+import Header from './components/Shared/Header/Header';
 import Register from './pages/Register';
 import { UserContext } from './context/UserContext';
 import Projects from './pages/Projects';
