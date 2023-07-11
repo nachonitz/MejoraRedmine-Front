@@ -6,11 +6,20 @@ import { Release } from '../../../api/models/release';
 import PageTitle from '../../../components/Shared/Page/PageTitle/PageTitle';
 import Page from '../../../components/Shared/Page/Page';
 import AddButton from '../../../components/Shared/Buttons/AddButton';
+import CreateReleaseDialog from '../../../components/Pages/Releases/CreateReleaseDialog/CreateReleaseDialog';
+import SettingsButton from '../../../components/Shared/Buttons/SettingsButton';
+import DeleteDialog from '../../../components/Shared/DeleteDialog/DeleteDialog';
+import { deleteRelease } from '../../../api/services/releasesService';
+import EditReleaseDialog from '../../../components/Pages/Releases/EditReleaseDialog/EditReleaseDialog';
 
 const ProjectReleases = () => {
 	const { projectId } = useParams();
 	const navigate = useNavigate();
 	const [releases, setReleases] = useState<Release[]>([]);
+	const [openCreateRelease, setOpenCreateRelease] = useState(false);
+	const [openEditRelease, setOpenEditRelease] = useState(false);
+	const [openDeleteRelease, setOpenDeleteRelease] = useState(false);
+	const [selectedRelease, setSelectedRelease] = useState<Release>();
 	
 	const getReleases = async () => {
 		try {
@@ -37,15 +46,41 @@ const ProjectReleases = () => {
 		return `${month}/${day}/${year}`;
 	}
 
+	const handleCloseCreateRelease = (refresh?: boolean) => {
+		setOpenCreateRelease(false);
+		if (refresh) {
+			getReleases();
+		}
+	}
+
+	const handleCloseEditRelease = (refresh?: boolean) => {
+		setOpenEditRelease(false);
+		if (refresh) {
+			getReleases();
+		}
+		setSelectedRelease(undefined);
+	}
+
+	const handleCloseDeleteRelease = (refresh?: boolean) => {
+		setOpenDeleteRelease(false);
+		if (refresh) {
+			getReleases();
+		}
+		setSelectedRelease(undefined);
+	}
+
 	useEffect(() => {  
 		getReleases();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
+				<CreateReleaseDialog projectId={projectId} open={openCreateRelease} handleClose={handleCloseCreateRelease} />
+				<EditReleaseDialog open={openEditRelease} releaseId={selectedRelease?.id} handleClose={handleCloseEditRelease} />
+				<DeleteDialog open={openDeleteRelease} id={selectedRelease?.id} handleClose={handleCloseDeleteRelease} deleteFunction={deleteRelease} name={selectedRelease?.name} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Releases" />
-					<AddButton />
+					<AddButton onClick={ () => { setOpenCreateRelease(true) } } />
 				</div>
 				<div>
 					<table className="w-full mt-[30px]">
@@ -68,6 +103,7 @@ const ProjectReleases = () => {
 									</td>
 									<td className="text-left">{getFullDate(release.startDate)}</td>
 									<td className="text-left">{getFullDate(release.endDate)}</td>
+									<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedRelease(release); setOpenEditRelease(true) }} onDelete={()=> { setSelectedRelease(release); setOpenDeleteRelease(true)}} /></div></td>
 								</tr>
 							))}
 						</tbody>
