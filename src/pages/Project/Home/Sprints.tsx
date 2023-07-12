@@ -7,12 +7,19 @@ import Page from '../../../components/Shared/Page/Page';
 import AddButton from '../../../components/Shared/Buttons/AddButton';
 import { Sprint } from '../../../api/models/sprint';
 import CreateSprintDialog from '../../../components/Pages/Sprints/CreateSprintDialog/CreateSprintDialog';
+import SettingsButton from '../../../components/Shared/Buttons/SettingsButton';
+import DeleteDialog from '../../../components/Shared/DeleteDialog/DeleteDialog';
+import { deleteSprint } from '../../../api/services/sprintsService';
+import EditSprintDialog from '../../../components/Pages/Sprints/EditSprintDialog/EditSprintDialog';
 
 const ProjectSprints = () => {
 	const { projectId, releaseId } = useParams();
 	const navigate = useNavigate();
 	const [sprints, setSprints] = useState<Sprint[]>([]);
 	const [openCreateSprint, setOpenCreateSprint] = useState(false);
+	const [openEditSprint, setOpenEditSprint] = useState(false);
+	const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
+	const [selectedSprint, setSelectedSprint] = useState<Sprint>();
 	
 	const getSprints = async () => {
 		try {
@@ -46,6 +53,22 @@ const ProjectSprints = () => {
 		}
 	}
 
+	const handleCloseEditSprint = (refresh?: boolean) => {
+		setOpenEditSprint(false);
+		if (refresh) {
+			getSprints();
+		}
+		setSelectedSprint(undefined);
+	}
+
+	const handleCloseDeleteSprint = (refresh?: boolean) => {
+		setOpenDeleteSprint(false);
+		if (refresh) {
+			getSprints();
+		}
+		setSelectedSprint(undefined);
+	}
+
 	useEffect(() => {  
 		getSprints();
     }, []);
@@ -53,6 +76,8 @@ const ProjectSprints = () => {
 		<Sidebar>
 			<Page>
 				<CreateSprintDialog projectId={projectId} releaseId={releaseId} open={openCreateSprint} handleClose={handleCloseCreateRelease} />
+				<EditSprintDialog open={openEditSprint} sprintId={selectedSprint?.id} handleClose={handleCloseEditSprint} />
+				<DeleteDialog open={openDeleteSprint} id={selectedSprint?.id} handleClose={handleCloseDeleteSprint} deleteFunction={deleteSprint} name={selectedSprint?.name} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Sprints" />
 					<AddButton onClick={ () => { setOpenCreateSprint(true) } } />
@@ -78,6 +103,7 @@ const ProjectSprints = () => {
 									</td>
 									<td className="text-left">{getFullDate(sprint.startDate)}</td>
 									<td className="text-left">{getFullDate(sprint.endDate)}</td>
+									<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedSprint(sprint); setOpenEditSprint(true) }} onDelete={()=> { setSelectedSprint(sprint); setOpenDeleteSprint(true)}} /></div></td>
 								</tr>
 							))}
 						</tbody>

@@ -1,18 +1,20 @@
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
-import { useState } from "react";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Release } from "../../../../api/models/release";
-import { createRelease } from "../../../../api/services/releasesService";
+import { useEffect, useState } from "react";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { editSprint, getSprint } from "../../../../api/services/sprintsService";
+import { Sprint } from "../../../../api/models/sprint";
 
-interface CreateReleaseDialogProps {
+interface EditSprintDialogProps {
+    sprintId?: number;
     open: boolean;
     handleClose: (refresh?: boolean) => void;
-    projectId?: string;
 }
 
-const CreateReleaseDialog: React.FC<CreateReleaseDialogProps> = ( { open, handleClose, projectId } ) => {
+const EditSprintDialog: React.FC<EditSprintDialogProps> = ( { open, handleClose, sprintId } ) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [startDate, setStartDate] = useState<any>(null);
@@ -22,6 +24,28 @@ const CreateReleaseDialog: React.FC<CreateReleaseDialogProps> = ( { open, handle
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+
+
+    useEffect(() => {
+        resetState();
+        if (open && sprintId) {
+            handleGetSprint();
+        }
+    }, [open, sprintId]);
+
+    const handleGetSprint = () => {
+        if (sprintId) {
+            getSprint(sprintId).then((sprint: Sprint) => {
+                console.log(sprint)
+                setName(sprint.name);
+                setDescription(sprint.description);
+                setStartDate(dayjs(sprint.startDate));
+                setEndDate(dayjs(sprint.endDate));
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+    }
 
     const clearErrors = () => {
         setErrorName(false);
@@ -52,21 +76,20 @@ const CreateReleaseDialog: React.FC<CreateReleaseDialogProps> = ( { open, handle
         return errorFound;
     }
 
-    const handleCreate = () => {
+    const handleSubmit = () => {
         clearErrors();
 		let errorFound = checkForFieldsErrors();
 		if (errorFound) {
 			return;
 		}
-        let release = {
+        let sprint = {
+            "id": sprintId,
             "name": name,
             "description": description,
-            "startDate": new Date(startDate),
-            "endDate": new Date(endDate),
-            "projectId": projectId
+            "startDate": startDate,
+            "endDate": endDate,
         }
-        createRelease(release).then((release: Release) => {
-            console.log(release);
+        editSprint(sprint).then((sprint: Sprint) => {
             handleCloseModal(true);
         }).catch((error) => {
             console.log(error)
@@ -83,20 +106,20 @@ const CreateReleaseDialog: React.FC<CreateReleaseDialogProps> = ( { open, handle
     };
 
     const handleCloseModal = (refresh?: boolean) => {
-        resetState();
         handleClose(refresh);
+        resetState();
     };
 
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[400px]">
-                <DialogTitle>Create Release</DialogTitle>
+                <DialogTitle>Edit Sprint</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
-                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} className="w-full" id="release-name" label="Name" variant="outlined" />
-                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} className="w-full" multiline minRows={"2"} maxRows={"4"} id="release-description" label="Description" variant="outlined" />
-                        <DatePicker onChange={(date: any) => setStartDate(date)} slotProps={{ textField: { error: errorStartDate } }} label="Start Date" />
-                        <DatePicker onChange={(date: any) => setEndDate(date)} slotProps={{ textField: { error: errorEndDate } }} minDate={startDate} label="End Date" />
+                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} value={name} className="w-full" id="sprint-name" label="Name" variant="outlined" />
+                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} value={description} className="w-full" multiline minRows={"2"} maxRows={"4"} id="sprint-description" label="Description" variant="outlined" />
+                        <DatePicker onChange={(date: any) => setStartDate(date)} slotProps={{ textField: { error: errorStartDate } }} value={startDate} label="Start Date" />
+                        <DatePicker onChange={(date: any) => setEndDate(date)} slotProps={{ textField: { error: errorEndDate } }} minDate={startDate} value={endDate}  label="End Date" />
                         {serverErrors && serverErrors.length > 0 && <div className='mt-2 min-h-[10px] text-left'>
                             {serverErrors.map((error, index) => (<div key={index}>
                                 <p className='text-red-700'> { error }</p>
@@ -106,11 +129,11 @@ const CreateReleaseDialog: React.FC<CreateReleaseDialogProps> = ( { open, handle
                 </DialogContent>
                 <DialogActions>
                     <SecondaryButton onClick={handleClose}>Close</SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit}>Edit</PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>
     )
 }
 
-export default CreateReleaseDialog;
+export default EditSprintDialog;

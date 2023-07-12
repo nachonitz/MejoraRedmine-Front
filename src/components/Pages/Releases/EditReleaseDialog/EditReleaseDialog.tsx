@@ -3,8 +3,6 @@ import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useEffect, useState } from "react";
-import { editProject, getProject } from "../../../../api/services/projectsService";
-import { Project } from "../../../../api/models/project";
 import { editRelease, getReleasae } from "../../../../api/services/releasesService";
 import { Release } from "../../../../api/models/release";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -118,8 +116,8 @@ const EditReleaseDialog: React.FC<EditReleaseDialogProps> = ( { open, handleClos
                 <DialogTitle>Edit Release</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
-                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} value={name} className="w-full" id="project-name" label="Name" variant="outlined" />
-                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} value={description} className="w-full" multiline minRows={"2"} maxRows={"4"} id="project-description" label="Description" variant="outlined" />
+                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} value={name} className="w-full" id="release-name" label="Name" variant="outlined" />
+                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} value={description} className="w-full" multiline minRows={"2"} maxRows={"4"} id="release-description" label="Description" variant="outlined" />
                         <DatePicker onChange={(date: any) => setStartDate(date)} slotProps={{ textField: { error: errorStartDate } }} value={startDate} label="Start Date" />
                         <DatePicker onChange={(date: any) => setEndDate(date)} slotProps={{ textField: { error: errorEndDate } }} minDate={startDate} value={endDate}  label="End Date" />
                         {serverErrors && serverErrors.length > 0 && <div className='mt-2 min-h-[10px] text-left'>

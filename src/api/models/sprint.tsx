@@ -1,6 +1,6 @@
 export interface Sprint {
     id: number;
-    name: number;
+    name: string;
     description: string;
     startDate: Date;
     endDate: Date;
