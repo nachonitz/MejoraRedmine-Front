@@ -6,11 +6,13 @@ import PageTitle from '../../../components/Shared/Page/PageTitle/PageTitle';
 import Page from '../../../components/Shared/Page/Page';
 import AddButton from '../../../components/Shared/Buttons/AddButton';
 import { Sprint } from '../../../api/models/sprint';
+import CreateSprintDialog from '../../../components/Pages/Sprints/CreateSprintDialog/CreateSprintDialog';
 
 const ProjectSprints = () => {
 	const { projectId, releaseId } = useParams();
 	const navigate = useNavigate();
 	const [sprints, setSprints] = useState<Sprint[]>([]);
+	const [openCreateSprint, setOpenCreateSprint] = useState(false);
 	
 	const getSprints = async () => {
 		try {
@@ -37,15 +39,23 @@ const ProjectSprints = () => {
 		return `${month}/${day}/${year}`;
 	}
 
+	const handleCloseCreateRelease = (refresh?: boolean) => {
+		setOpenCreateSprint(false);
+		if (refresh) {
+			getSprints();
+		}
+	}
+
 	useEffect(() => {  
 		getSprints();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
+				<CreateSprintDialog projectId={projectId} releaseId={releaseId} open={openCreateSprint} handleClose={handleCloseCreateRelease} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Sprints" />
-					<AddButton />
+					<AddButton onClick={ () => { setOpenCreateSprint(true) } } />
 				</div>
 				<div>
 					<table className="w-full mt-[30px]">

@@ -14,12 +14,6 @@ export const createRelease = async (release: any): Promise<Release> => {
 	return newRelease;
 }
 
-// export const editProject = async (project: any): Promise<Project> => {
-// 	const response = await api.patch(`/projects/${project.id}`, { "name": project.name, "description": project.description, "identifier": project.identifier, "is_public": project.is_public });
-// 	const editedProject: Project = response.data.project;
-// 	return editedProject;
-// }
-
 export const editRelease = async (release: any): Promise<Release> => {
 	const response = await api.patch(`/releases/${release.id}`, { "name": release.name, "description": release.description, "startDate": release.startDate, "endDate": release.endDate });
 	const editedRelease: Release = response.data.release;
