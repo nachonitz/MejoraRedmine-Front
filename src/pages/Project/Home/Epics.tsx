@@ -6,11 +6,16 @@ import PageTitle from '../../../components/Shared/Page/PageTitle/PageTitle';
 import Page from '../../../components/Shared/Page/Page';
 import AddButton from '../../../components/Shared/Buttons/AddButton';
 import { Epic } from '../../../api/models/epic';
+import CreateEpicDialog from '../../../components/Pages/Epics/CreateEpicDialog/CreateEpicDialog';
 
 const ProjectEpics = () => {
 	const { projectId, releaseId, sprintId } = useParams();
 	const navigate = useNavigate();
 	const [epics, setEpics] = useState<Epic[]>([]);
+	const [openCreateEpic, setOpenCreateEpic] = useState(false);
+	const [openEditEpic, setOpenEditEpic] = useState(false);
+	const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
+	const [selectedEpic, setSelectedEpic] = useState<Epic>();
 	
 	const getEpics = async () => {
 		try {
@@ -29,6 +34,29 @@ const ProjectEpics = () => {
 		navigate(`/project/${projectId}/release/${releaseId}/sprint/${sprintId}/epic/${id}`);
 	}
 
+	const handleCloseCreateEpic = (refresh?: boolean) => {
+		setOpenCreateEpic(false);
+		if (refresh) {
+			getEpics();
+		}
+	}
+
+	const handleCloseEditEpic = (refresh?: boolean) => {
+		setOpenEditEpic(false);
+		if (refresh) {
+			getEpics();
+		}
+		setSelectedEpic(undefined);
+	}
+
+	const handleCloseDeleteEpic = (refresh?: boolean) => {
+		setOpenDeleteEpic(false);
+		if (refresh) {
+			getEpics();
+		}
+		setSelectedEpic(undefined);
+	}
+
 	useEffect(() => {
 		console.log(sprintId)
 		getEpics();
@@ -36,9 +64,10 @@ const ProjectEpics = () => {
 	return(
 		<Sidebar>
 			<Page>
+				<CreateEpicDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} open={openCreateEpic} handleClose={handleCloseCreateEpic} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Epics" />
-					<AddButton />
+					<AddButton onClick={ () => { setOpenCreateEpic(true) } } />
 				</div>
 				<div>
 					<table className="w-full mt-[30px]">

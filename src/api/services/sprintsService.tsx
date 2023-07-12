@@ -19,7 +19,7 @@ export const createSprint = async (sprint: any): Promise<Sprint> => {
 			"releaseId": sprint.releaseId 
 		}
 	);
-	const newSprint: Sprint = response.data.sprint;
+	const newSprint: Sprint = response.data;
 	return newSprint;
 }
 
@@ -31,6 +31,5 @@ export const editSprint = async (sprint: any): Promise<Sprint> => {
 
 export const deleteSprint = async (sprintId: number): Promise<boolean> => {
 	const response = await api.delete(`/sprints/${sprintId}`);
-	console.log(response);
 	return true;
 }

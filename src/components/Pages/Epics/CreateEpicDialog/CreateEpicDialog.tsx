@@ -1,34 +1,33 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, Select, TextField } from "@mui/material";
+import MenuItem from '@mui/material/MenuItem';
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createSprint } from "../../../../api/services/sprintsService";
-import { Sprint } from "../../../../api/models/sprint";
+import { createEpic } from "../../../../api/services/epicsService";
+import { Epic } from "../../../../api/models/epic";
 
-interface CreateSprintDialogProps {
+interface CreateEpicDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
     projectId?: string;
     releaseId?: string;
+    sprintId?: string;
 }
 
-const CreateSprintDialog: React.FC<CreateSprintDialogProps> = ( { open, handleClose, projectId, releaseId } ) => {
+const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ( { open, handleClose, projectId, releaseId, sprintId } ) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [startDate, setStartDate] = useState<any>(null);
-    const [endDate, setEndDate] = useState<any>(null);
+    const [priority, setPriority] = useState<string>("");
     const [errorName, setErrorName] = useState(false);
 	const [errorDescription, setErrorDescription] = useState(false);
-    const [errorStartDate, setErrorStartDate] = useState(false);
-    const [errorEndDate, setErrorEndDate] = useState(false);
+    const [errorPriority, setErrorPriority] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
     const clearErrors = () => {
         setErrorName(false);
         setErrorDescription(false);
-        setErrorStartDate(false);
-        setErrorEndDate(false);
+        setErrorPriority(false);
         setServerErrors([]);
     }
 
@@ -42,12 +41,8 @@ const CreateSprintDialog: React.FC<CreateSprintDialogProps> = ( { open, handleCl
             setErrorDescription(true);
             errorFound = true;
         }
-        if (!startDate || !(new Date(startDate).getTime())) {
-            setErrorStartDate(true);
-            errorFound = true;
-        }
-        if (!endDate || !(new Date(endDate).getTime())) {
-            setErrorEndDate(true);
+        if (!priority || priority === "") {
+            setErrorPriority(true);
             errorFound = true;
         }
         return errorFound;
@@ -59,16 +54,16 @@ const CreateSprintDialog: React.FC<CreateSprintDialogProps> = ( { open, handleCl
 		if (errorFound) {
 			return;
 		}
-        let sprint = {
+        let epic = {
             "name": name,
             "description": description,
-            "startDate": new Date(startDate),
-            "endDate": new Date(endDate),
+            "priority": priority,
             "projectId": projectId,
-            "releaseId": releaseId
+            "releaseId": releaseId,
+            "sprintId": sprintId
         }
-        createSprint(sprint).then((sprint: Sprint) => {
-            console.log(sprint);
+        createEpic(epic).then((epic: Epic) => {
+            console.log(epic);
             handleCloseModal(true);
         }).catch((error) => {
             console.log(error)
@@ -79,8 +74,7 @@ const CreateSprintDialog: React.FC<CreateSprintDialogProps> = ( { open, handleCl
     const resetState = () => {
         setName("");
         setDescription("");
-        setStartDate(null);
-        setEndDate(null);
+        setPriority("");
         clearErrors();
     };
 
@@ -92,13 +86,27 @@ const CreateSprintDialog: React.FC<CreateSprintDialogProps> = ( { open, handleCl
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[400px]">
-                <DialogTitle>Create Sprint</DialogTitle>
+                <DialogTitle>Create Epic</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
-                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} className="w-full" id="sprint-name" label="Name" variant="outlined" />
-                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} className="w-full" multiline minRows={"2"} maxRows={"4"} id="sprint-description" label="Description" variant="outlined" />
-                        <DatePicker onChange={(date: any) => setStartDate(date)} slotProps={{ textField: { error: errorStartDate } }} label="Start Date" />
-                        <DatePicker onChange={(date: any) => setEndDate(date)} slotProps={{ textField: { error: errorEndDate } }} minDate={startDate} label="End Date" />
+                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} className="w-full" id="epic-name" label="Name" variant="outlined" />
+                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} className="w-full" multiline minRows={"2"} maxRows={"4"} id="epic-description" label="Description" variant="outlined" />
+                        <FormControl>
+                            <InputLabel id="priority-label" error={errorPriority}>Priority</InputLabel>
+                            <Select
+                                labelId="priority-label"
+                                value={priority}
+                                label="Priority"
+                                error={errorPriority}
+                                onChange={(e: any) => setPriority(e.target.value)}
+                            >
+                                <MenuItem value="Very low">Very low</MenuItem>
+                                <MenuItem value="Low">Low</MenuItem>
+                                <MenuItem value="Medium">Medium</MenuItem>
+                                <MenuItem value="High">High</MenuItem>
+                                <MenuItem value="Very high">Very high</MenuItem>
+                            </Select>
+                        </FormControl>
                         {serverErrors && serverErrors.length > 0 && <div className='mt-2 min-h-[10px] text-left'>
                             {serverErrors.map((error, index) => (<div key={index}>
                                 <p className='text-red-700'> { error }</p>
@@ -115,4 +123,4 @@ const CreateSprintDialog: React.FC<CreateSprintDialogProps> = ( { open, handleCl
     )
 }
 
-export default CreateSprintDialog;
+export default CreateEpicDialog;

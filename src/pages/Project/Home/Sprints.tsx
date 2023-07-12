@@ -46,7 +46,7 @@ const ProjectSprints = () => {
 		return `${month}/${day}/${year}`;
 	}
 
-	const handleCloseCreateRelease = (refresh?: boolean) => {
+	const handleCloseCreateSprint = (refresh?: boolean) => {
 		setOpenCreateSprint(false);
 		if (refresh) {
 			getSprints();
@@ -75,7 +75,7 @@ const ProjectSprints = () => {
 	return(
 		<Sidebar>
 			<Page>
-				<CreateSprintDialog projectId={projectId} releaseId={releaseId} open={openCreateSprint} handleClose={handleCloseCreateRelease} />
+				<CreateSprintDialog projectId={projectId} releaseId={releaseId} open={openCreateSprint} handleClose={handleCloseCreateSprint} />
 				<EditSprintDialog open={openEditSprint} sprintId={selectedSprint?.id} handleClose={handleCloseEditSprint} />
 				<DeleteDialog open={openDeleteSprint} id={selectedSprint?.id} handleClose={handleCloseDeleteSprint} deleteFunction={deleteSprint} name={selectedSprint?.name} />
 				<div className="flex gap-[15px] items-center">
