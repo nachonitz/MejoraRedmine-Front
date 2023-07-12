@@ -7,6 +7,10 @@ import Page from '../../../components/Shared/Page/Page';
 import AddButton from '../../../components/Shared/Buttons/AddButton';
 import { Epic } from '../../../api/models/epic';
 import CreateEpicDialog from '../../../components/Pages/Epics/CreateEpicDialog/CreateEpicDialog';
+import DeleteDialog from '../../../components/Shared/DeleteDialog/DeleteDialog';
+import { deleteEpic } from '../../../api/services/epicsService';
+import SettingsButton from '../../../components/Shared/Buttons/SettingsButton';
+import EditEpicDialog from '../../../components/Pages/Epics/EditEpicDialog/EditEpicDialog';
 
 const ProjectEpics = () => {
 	const { projectId, releaseId, sprintId } = useParams();
@@ -65,6 +69,8 @@ const ProjectEpics = () => {
 		<Sidebar>
 			<Page>
 				<CreateEpicDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} open={openCreateEpic} handleClose={handleCloseCreateEpic} />
+				<EditEpicDialog open={openEditEpic} epicId={selectedEpic?.id} handleClose={handleCloseEditEpic} />
+				<DeleteDialog open={openDeleteEpic} id={selectedEpic?.id} handleClose={handleCloseDeleteEpic} deleteFunction={deleteEpic} name={selectedEpic?.name} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Epics" />
 					<AddButton onClick={ () => { setOpenCreateEpic(true) } } />
@@ -88,6 +94,7 @@ const ProjectEpics = () => {
 										{epic.name}
 									</td>
 									<td className="text-left">{'0%'}</td>
+									<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedEpic(epic); setOpenEditEpic(true) }} onDelete={()=> { setSelectedEpic(epic); setOpenDeleteEpic(true)}} /></div></td>
 								</tr>
 							))}
 						</tbody>

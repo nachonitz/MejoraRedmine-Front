@@ -1,6 +1,6 @@
 export interface Epic {
     id: number;
-    name: number;
+    name: string;
     description: string;
     priority: string;
 }
