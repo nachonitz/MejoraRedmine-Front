@@ -1,6 +1,6 @@
 export interface Issue {
     id: number;
-    name: number;
+    subject: string;
     description: string;
     priority: string;
 }

@@ -48,14 +48,15 @@ export const getEpicsBySprintId = async (sprintId: number): Promise<Epic[]> => {
 export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
 	try {
 		const response = await api.get('/issues', { params: { epicId } });
-		const issues: Issue[] = response.data.items;
+		console.log(response.data)
+		const issues: Issue[] = response.data.issues;
 		return issues;
 	} catch (error) {
 		throw new Error('Error. Please try again.');
 	}
 }
 
-export const getProject = async (projectId: number): Promise<Project> => {
+export const getProjectById = async (projectId: number): Promise<Project> => {
 	const response = await api.get(`/projects/${projectId}`);
 	const project: Project = response.data;
 	return project;

@@ -3,7 +3,7 @@ import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useEffect, useState } from "react";
-import { editProject, getProject } from "../../../../api/services/projectsService";
+import { editProject, getProjectById } from "../../../../api/services/projectsService";
 import { Project } from "../../../../api/models/project";
 
 interface EditProjectDialogProps {
@@ -32,7 +32,7 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ( { open, handleClos
 
     const handleGetProject = () => {
         if (projectId) {
-            getProject(projectId).then((project: Project) => {
+            getProjectById(projectId).then((project: Project) => {
                 setName(project.name);
                 setDescription(project.description);
                 setIdentifier(project.identifier);

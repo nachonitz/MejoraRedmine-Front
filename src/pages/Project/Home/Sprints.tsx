@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Shared/Sidebar/Sidebar';
-import { getSprintsByReleaseId } from '../../../api/services/projectsService';
+import { getProjectById, getSprintsByReleaseId } from '../../../api/services/projectsService';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageTitle from '../../../components/Shared/Page/PageTitle/PageTitle';
 import Page from '../../../components/Shared/Page/Page';
@@ -11,15 +11,47 @@ import SettingsButton from '../../../components/Shared/Buttons/SettingsButton';
 import DeleteDialog from '../../../components/Shared/DeleteDialog/DeleteDialog';
 import { deleteSprint } from '../../../api/services/sprintsService';
 import EditSprintDialog from '../../../components/Pages/Sprints/EditSprintDialog/EditSprintDialog';
+import { Project } from '../../../api/models/project';
+import { getReleaseById } from '../../../api/services/releasesService';
+import { Release } from '../../../api/models/release';
+import ProjectBreadcrumbs from '../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs';
 
 const ProjectSprints = () => {
 	const { projectId, releaseId } = useParams();
 	const navigate = useNavigate();
+	const [project, setProject] = useState<Project>();
+	const [release, setRelease] = useState<Release>();
 	const [sprints, setSprints] = useState<Sprint[]>([]);
 	const [openCreateSprint, setOpenCreateSprint] = useState(false);
 	const [openEditSprint, setOpenEditSprint] = useState(false);
 	const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
 	const [selectedSprint, setSelectedSprint] = useState<Sprint>();
+
+	const getProject = async () => {
+		try {
+			if (projectId) {
+				let project = await getProjectById(parseInt(projectId));
+				setProject(project);
+				console.log(project)
+				return project;
+			}
+		} catch (error) {
+			throw new Error('Error. Please try again.');
+		}
+	}
+
+	const getRelease = async () => {
+		try {
+			if (releaseId) {
+				let release = await getReleaseById(parseInt(releaseId));
+				setRelease(release);
+				console.log(release)
+				return release;
+			}
+		} catch (error) {
+			throw new Error('Error. Please try again.');
+		}
+	}
 	
 	const getSprints = async () => {
 		try {
@@ -71,10 +103,13 @@ const ProjectSprints = () => {
 
 	useEffect(() => {  
 		getSprints();
+		getProject();
+		getRelease();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
+				<ProjectBreadcrumbs project={project} release={release} />
 				<CreateSprintDialog projectId={projectId} releaseId={releaseId} open={openCreateSprint} handleClose={handleCloseCreateSprint} />
 				<EditSprintDialog open={openEditSprint} sprintId={selectedSprint?.id} handleClose={handleCloseEditSprint} />
 				<DeleteDialog open={openDeleteSprint} id={selectedSprint?.id} handleClose={handleCloseDeleteSprint} deleteFunction={deleteSprint} name={selectedSprint?.name} />

@@ -2,7 +2,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLa
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useEffect, useState } from "react";
-import { editEpic, getEpic } from "../../../../api/services/epicsService";
+import { editEpic, getEpicById } from "../../../../api/services/epicsService";
 import { Epic } from "../../../../api/models/epic";
 
 interface EditEpicDialogProps {
@@ -30,7 +30,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ( { open, handleClose, epi
 
     const handleGetEpic = () => {
         if (epicId) {
-            getEpic(epicId).then((epic: Epic) => {
+            getEpicById(epicId).then((epic: Epic) => {
                 console.log(epic)
                 setName(epic.name);
                 setDescription(epic.description);

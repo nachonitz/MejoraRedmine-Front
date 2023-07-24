@@ -2,7 +2,7 @@ import { api } from "../api";
 import { Epic } from "../models/epic";
 
 
-export const getEpic = async (epicId: number): Promise<Epic> => {
+export const getEpicById = async (epicId: number): Promise<Epic> => {
 	const response = await api.get(`/epics/${epicId}`);
 	const epic: Epic = response.data;
 	return epic;

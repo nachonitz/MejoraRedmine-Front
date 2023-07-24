@@ -2,7 +2,7 @@ import { api } from "../api";
 import { Sprint } from "../models/sprint";
 
 
-export const getSprint = async (sprintId: number): Promise<Sprint> => {
+export const getSprintById = async (sprintId: number): Promise<Sprint> => {
 	const response = await api.get(`/sprints/${sprintId}`);
 	const sprint: Sprint = response.data;
 	return sprint;

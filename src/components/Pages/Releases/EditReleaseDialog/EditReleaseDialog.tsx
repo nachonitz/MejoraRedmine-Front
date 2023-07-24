@@ -3,7 +3,7 @@ import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useEffect, useState } from "react";
-import { editRelease, getReleasae } from "../../../../api/services/releasesService";
+import { editRelease, getReleaseById } from "../../../../api/services/releasesService";
 import { Release } from "../../../../api/models/release";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -35,7 +35,7 @@ const EditReleaseDialog: React.FC<EditReleaseDialogProps> = ( { open, handleClos
 
     const handleGetRelease = () => {
         if (releaseId) {
-            getReleasae(releaseId).then((release: Release) => {
+            getReleaseById(releaseId).then((release: Release) => {
                 console.log(release)
                 setName(release.name);
                 setDescription(release.description);

@@ -2,7 +2,7 @@ import { api } from "../api";
 import { Release } from "../models/release";
 
 
-export const getReleasae = async (releaseId: number): Promise<Release> => {
+export const getReleaseById = async (releaseId: number): Promise<Release> => {
 	const response = await api.get(`/releases/${releaseId}`);
 	const release: Release = response.data;
 	return release;

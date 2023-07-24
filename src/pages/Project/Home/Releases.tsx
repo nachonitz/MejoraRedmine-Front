@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Shared/Sidebar/Sidebar';
-import { getReleasesByProjectId } from '../../../api/services/projectsService';
+import { getProjectById, getReleasesByProjectId } from '../../../api/services/projectsService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Release } from '../../../api/models/release';
 import PageTitle from '../../../components/Shared/Page/PageTitle/PageTitle';
@@ -11,15 +11,31 @@ import SettingsButton from '../../../components/Shared/Buttons/SettingsButton';
 import DeleteDialog from '../../../components/Shared/DeleteDialog/DeleteDialog';
 import { deleteRelease } from '../../../api/services/releasesService';
 import EditReleaseDialog from '../../../components/Pages/Releases/EditReleaseDialog/EditReleaseDialog';
+import ProjectBreadcrumbs from '../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs';
+import { Project } from '../../../api/models/project';
 
 const ProjectReleases = () => {
 	const { projectId } = useParams();
 	const navigate = useNavigate();
+	const [project, setProject] = useState<Project>();
 	const [releases, setReleases] = useState<Release[]>([]);
 	const [openCreateRelease, setOpenCreateRelease] = useState(false);
 	const [openEditRelease, setOpenEditRelease] = useState(false);
 	const [openDeleteRelease, setOpenDeleteRelease] = useState(false);
 	const [selectedRelease, setSelectedRelease] = useState<Release>();
+
+	const getProject = async () => {
+		try {
+			if (projectId) {
+				let project = await getProjectById(parseInt(projectId));
+				setProject(project);
+				console.log(project)
+				return project;
+			}
+		} catch (error) {
+			throw new Error('Error. Please try again.');
+		}
+	}
 	
 	const getReleases = async () => {
 		try {
@@ -71,10 +87,12 @@ const ProjectReleases = () => {
 
 	useEffect(() => {  
 		getReleases();
+		getProject();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
+				<ProjectBreadcrumbs project={project} />
 				<CreateReleaseDialog projectId={projectId} open={openCreateRelease} handleClose={handleCloseCreateRelease} />
 				<EditReleaseDialog open={openEditRelease} releaseId={selectedRelease?.id} handleClose={handleCloseEditRelease} />
 				<DeleteDialog open={openDeleteRelease} id={selectedRelease?.id} handleClose={handleCloseDeleteRelease} deleteFunction={deleteRelease} name={selectedRelease?.name} />

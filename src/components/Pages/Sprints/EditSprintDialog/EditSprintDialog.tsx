@@ -5,7 +5,7 @@ import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { editSprint, getSprint } from "../../../../api/services/sprintsService";
+import { editSprint, getSprintById } from "../../../../api/services/sprintsService";
 import { Sprint } from "../../../../api/models/sprint";
 
 interface EditSprintDialogProps {
@@ -35,7 +35,7 @@ const EditSprintDialog: React.FC<EditSprintDialogProps> = ( { open, handleClose,
 
     const handleGetSprint = () => {
         if (sprintId) {
-            getSprint(sprintId).then((sprint: Sprint) => {
+            getSprintById(sprintId).then((sprint: Sprint) => {
                 console.log(sprint)
                 setName(sprint.name);
                 setDescription(sprint.description);
