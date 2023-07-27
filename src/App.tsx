@@ -11,6 +11,7 @@ import ProjectReleases from './pages/Project/Home/Releases';
 import ProjectSprints from './pages/Project/Home/Sprints';
 import ProjectEpics from './pages/Project/Home/Epics';
 import ProjectIssues from './pages/Project/Home/Issues';
+import Risks from './pages/Project/Risks/Risks';
 
 function App() {
 	const { isLoggedIn } = useContext(UserContext);
@@ -28,6 +29,7 @@ function App() {
 							<Route path="/project/:projectId/release/:releaseId" element={<ProjectSprints />} />
 							<Route path="/project/:projectId/release/:releaseId/sprint/:sprintId" element={<ProjectEpics />} />
 							<Route path="/project/:projectId/release/:releaseId/sprint/:sprintId/epic/:epicId" element={<ProjectIssues />} />
+							<Route path="/project/:projectId/risks" element={<Risks />} />
 							<Route path="*" element={<Navigate to="/" />} />
 						</>
 						:

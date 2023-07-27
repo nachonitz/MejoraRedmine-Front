@@ -29,6 +29,8 @@ axiosInstance.interceptors.response.use(
 	(error: any) => {
 		console.log(error)
 		if (error.response) {
+			var newError = { status: error.response?.data?.statusCode, messages: error.response?.data?.message }
+			console.log(newError)
 			throw { status: error.response?.data?.statusCode, messages: error.response?.data?.message };
 		} else if (error.request) {
 			// Error de solicitud (no se recibió respuesta del servidor)
