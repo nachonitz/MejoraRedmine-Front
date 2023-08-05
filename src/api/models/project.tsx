@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface Project {
     id: number;
     redmineId: number;
@@ -7,4 +9,5 @@ export interface Project {
     is_public: boolean;
     status: number;
     created_on: Date;
+    owner: User;
 }

@@ -83,6 +83,7 @@ const Projects = () => {
 							<th></th>
 							<th className="text-left">Name</th>
 							<th className="text-left">Created</th>
+							<th className="text-left">Owner</th>
 							<th className="text-right"></th>
 							{/* <th className="text-left">Owner</th> */}
 						</tr>
@@ -100,11 +101,19 @@ const Projects = () => {
 									</div>
 								</td>
 								<td className="text-left">{getFullDate(project.created_on)}</td>
+								<td className="text-left">{project.owner.firstname} {project.owner.lastname}</td>
 								<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedProject(project); setOpenEditProject(true) }} onDelete={()=> { setSelectedProject(project); setOpenDeleteProject(true)}} /></div></td>
 							</tr>
 						))}
 					</tbody>
 				</table>
+				{projects.length === 0 && (
+						<div className="text-[18px] h-[40px] w-full text-center mt-2">
+							<span className="text-center">
+								There are no projects yet
+							</span>
+						</div>
+				)}
 			</div>
 		</Page>
 	)

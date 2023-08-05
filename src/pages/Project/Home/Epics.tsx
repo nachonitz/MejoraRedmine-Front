@@ -30,32 +30,6 @@ const ProjectEpics = () => {
 	const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
 	const [selectedEpic, setSelectedEpic] = useState<Epic>();
 
-	const getProject = async () => {
-		try {
-			if (projectId) {
-				let project = await getProjectById(parseInt(projectId));
-				setProject(project);
-				console.log(project)
-				return project;
-			}
-		} catch (error) {
-			throw new Error('Error. Please try again.');
-		}
-	}
-
-	const getRelease = async () => {
-		try {
-			if (releaseId) {
-				let release = await getReleaseById(parseInt(releaseId));
-				setRelease(release);
-				console.log(release)
-				return release;
-			}
-		} catch (error) {
-			throw new Error('Error. Please try again.');
-		}
-	}
-
 	const getSprint = async () => {
 		try {
 			if (sprintId) {
@@ -111,15 +85,13 @@ const ProjectEpics = () => {
 
 	useEffect(() => {
 		console.log(sprintId)
-		getProject();
-		getRelease();
 		getSprint();
 		getEpics();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
-				<ProjectBreadcrumbs project={project} release={release} sprint={sprint} />
+				<ProjectBreadcrumbs project={sprint?.project} release={sprint?.release} sprint={sprint} />
 				<CreateEpicDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} open={openCreateEpic} handleClose={handleCloseCreateEpic} />
 				<EditEpicDialog open={openEditEpic} epicId={selectedEpic?.id} handleClose={handleCloseEditEpic} />
 				<DeleteDialog open={openDeleteEpic} id={selectedEpic?.id} handleClose={handleCloseDeleteEpic} deleteFunction={deleteEpic} name={selectedEpic?.name} />
@@ -151,6 +123,13 @@ const ProjectEpics = () => {
 							))}
 						</tbody>
 					</table>
+					{epics.length === 0 && (
+						<div className="text-[18px] h-[40px] w-full text-center mt-2">
+							<span className="text-center">
+								There are no epics yet
+							</span>
+						</div>
+					)}
 				</div>
 			</Page>
 		</Sidebar>

@@ -30,45 +30,6 @@ const ProjectIssues = () => {
 	const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
 	const [selectedIssue, setSelectedIssue] = useState<Issue>();
 
-	const getProject = async () => {
-		try {
-			if (projectId) {
-				let project = await getProjectById(parseInt(projectId));
-				setProject(project);
-				console.log(project)
-				return project;
-			}
-		} catch (error) {
-			throw new Error('Error. Please try again.');
-		}
-	}
-
-	const getRelease = async () => {
-		try {
-			if (releaseId) {
-				let release = await getReleaseById(parseInt(releaseId));
-				setRelease(release);
-				console.log(release)
-				return release;
-			}
-		} catch (error) {
-			throw new Error('Error. Please try again.');
-		}
-	}
-
-	const getSprint = async () => {
-		try {
-			if (sprintId) {
-				let sprint = await getSprintById(parseInt(sprintId));
-				setSprint(sprint);
-				console.log(sprint)
-				return sprint;
-			}
-		} catch (error) {
-			throw new Error('Error. Please try again.');
-		}
-	}
-
 	const getEpic = async () => {
 		try {
 			if (epicId) {
@@ -124,16 +85,13 @@ const ProjectIssues = () => {
 	}
 
 	useEffect(() => {
-		getProject();
-		getRelease();
-		getSprint();
 		getEpic();
 		getIssues();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
-				<ProjectBreadcrumbs project={project} release={release} sprint={sprint} epic={epic} />
+				<ProjectBreadcrumbs project={epic?.project} release={epic?.release} sprint={epic?.sprint} epic={epic} />
 				{/* <CreateEpicDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} open={openCreateEpic} handleClose={handleCloseCreateEpic} />
 				<EditEpicDialog open={openEditEpic} epicId={selectedEpic?.id} handleClose={handleCloseEditEpic} /> */}
 				<DeleteDialog open={openDeleteIssue} id={selectedIssue?.id} handleClose={handleCloseDeleteIssue} deleteFunction={deleteIssue} name={selectedIssue?.subject} />
@@ -165,6 +123,13 @@ const ProjectIssues = () => {
 							))}
 						</tbody>
 					</table>
+					{issues.length === 0 && (
+						<div className="text-[18px] h-[40px] w-full text-center mt-2">
+							<span className="text-center">
+								There are no issues yet
+							</span>
+						</div>
+					)}
 				</div>
 			</Page>
 		</Sidebar>

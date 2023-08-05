@@ -8,7 +8,8 @@ import { Sprint } from "../models/sprint";
 export const getProjects = async (): Promise<Project[]> => {
 	try {
 		const response = await api.get('/projects', {});
-		const projects: Project[] = response.data.projects;
+		console.log(response)
+		const projects: Project[] = response.data;
 		return projects;
 	} catch (error) {
 		throw new Error('Error. Please try again.');

@@ -27,19 +27,6 @@ const ProjectSprints = () => {
 	const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
 	const [selectedSprint, setSelectedSprint] = useState<Sprint>();
 
-	const getProject = async () => {
-		try {
-			if (projectId) {
-				let project = await getProjectById(parseInt(projectId));
-				setProject(project);
-				console.log(project)
-				return project;
-			}
-		} catch (error) {
-			throw new Error('Error. Please try again.');
-		}
-	}
-
 	const getRelease = async () => {
 		try {
 			if (releaseId) {
@@ -103,13 +90,12 @@ const ProjectSprints = () => {
 
 	useEffect(() => {  
 		getSprints();
-		getProject();
 		getRelease();
     }, []);
 	return(
 		<Sidebar>
 			<Page>
-				<ProjectBreadcrumbs project={project} release={release} />
+				<ProjectBreadcrumbs project={release?.project} release={release} />
 				<CreateSprintDialog projectId={projectId} releaseId={releaseId} open={openCreateSprint} handleClose={handleCloseCreateSprint} />
 				<EditSprintDialog open={openEditSprint} sprintId={selectedSprint?.id} handleClose={handleCloseEditSprint} />
 				<DeleteDialog open={openDeleteSprint} id={selectedSprint?.id} handleClose={handleCloseDeleteSprint} deleteFunction={deleteSprint} name={selectedSprint?.name} />
@@ -143,6 +129,13 @@ const ProjectSprints = () => {
 							))}
 						</tbody>
 					</table>
+					{sprints.length === 0 && (
+						<div className="text-[18px] h-[40px] w-full text-center mt-2">
+							<span className="text-center">
+								There are no sprints yet
+							</span>
+						</div>
+					)}
 				</div>
 			</Page>
 		</Sidebar>

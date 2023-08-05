@@ -139,6 +139,13 @@ const Risks = () => {
 							))}
 						</tbody>
 					</table>
+					{risks.length === 0 && (
+						<div className="text-[18px] h-[40px] w-full text-center mt-2">
+							<span className="text-center">
+								There are no risks yet
+							</span>
+						</div>
+					)}
 				</div>
 			</Page>
 		</Sidebar>
