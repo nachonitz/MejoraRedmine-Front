@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/Shared/Sidebar/Sidebar';
-import { getProjectById, getReleasesByProjectId } from '../../../api/services/projectsService';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Release } from '../../../api/models/release';
 import PageTitle from '../../../components/Shared/Page/PageTitle/PageTitle';
 import Page from '../../../components/Shared/Page/Page';
 import AddButton from '../../../components/Shared/Buttons/AddButton';
-import CreateReleaseDialog from '../../../components/Pages/Releases/CreateReleaseDialog/CreateReleaseDialog';
 import SettingsButton from '../../../components/Shared/Buttons/SettingsButton';
 import DeleteDialog from '../../../components/Shared/DeleteDialog/DeleteDialog';
-import { deleteRelease } from '../../../api/services/releasesService';
-import EditReleaseDialog from '../../../components/Pages/Releases/EditReleaseDialog/EditReleaseDialog';
-import { Project } from '../../../api/models/project';
 import { Risk } from '../../../api/models/risk';
 import { deleteRisk, getRisksByProjectId } from '../../../api/services/risksService';
 import CreateRiskDialog from '../../../components/Pages/Risks/CreateRiskDialog/CreateRiskDialog';
@@ -19,8 +13,6 @@ import EditRiskDialog from '../../../components/Pages/Risks/EditRiskDialog/EditR
 
 const Risks = () => {
 	const { projectId } = useParams();
-	const navigate = useNavigate();
-	const [project, setProject] = useState<Project>();
 	const [risks, setRisks] = useState<Risk[]>([]);
 	const [openCreateRisk, setOpenCreateRisk] = useState(false);
 	const [openEditRisk, setOpenEditRisk] = useState(false);
@@ -50,16 +42,11 @@ const Risks = () => {
 				let risks = await getRisksByProjectId(parseInt(projectId));
 				setRisks(risks);
 				console.log(risks)
-				return project;
+				return risks;
 			}
 		} catch (error) {
 			throw new Error('Error. Please try again.');
 		}
-	}
-
-	const goToRelease = (releaseId: number) => {
-		navigate(`/project/${projectId}/release/${releaseId}`);
-		console.log(projectId);
 	}
 
 	const getFullDate = (date: Date) => {
