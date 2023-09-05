@@ -13,4 +13,12 @@ export interface Issue {
     sprint: Sprint;
     release: Release;
     project: Project;
+    status: IssueStatus;
+    estimation: string;
+}
+
+export interface IssueStatus {
+    id: number;
+    name: string;
+    is_closed: boolean;
 }

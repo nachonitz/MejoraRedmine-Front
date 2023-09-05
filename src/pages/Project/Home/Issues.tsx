@@ -18,6 +18,7 @@ import { Release } from '../../../api/models/release';
 import { Sprint } from '../../../api/models/sprint';
 import ProjectBreadcrumbs from '../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs';
 import CreateIssueDialog from '../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog';
+import EditIssueDialog from '../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog';
 
 const ProjectIssues = () => {
 	const { projectId, releaseId, sprintId, epicId } = useParams();
@@ -94,7 +95,7 @@ const ProjectIssues = () => {
 			<Page>
 				<ProjectBreadcrumbs project={epic?.project} release={epic?.release} sprint={epic?.sprint} epic={epic} />
 				<CreateIssueDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} epicId={epicId} open={openCreateIssue} handleClose={handleCloseCreateIssue} />
-				{/* <EditEpicDialog open={openEditEpic} epicId={selectedEpic?.id} handleClose={handleCloseEditEpic} /> */}
+				<EditIssueDialog open={openEditIssue} issueId={selectedIssue?.id} handleClose={handleCloseEditIssue} />
 				<DeleteDialog open={openDeleteIssue} id={selectedIssue?.id} handleClose={handleCloseDeleteIssue} deleteFunction={deleteIssue} name={selectedIssue?.subject} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Issues" />

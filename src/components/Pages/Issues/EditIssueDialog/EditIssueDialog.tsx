@@ -6,22 +6,19 @@ import { useEffect, useState, useContext } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEpic } from "../../../../api/services/epicsService";
 import { Epic } from "../../../../api/models/epic";
-import { createIssue, getIssuesPriorities, getIssuesStatuses, getTrackers } from "../../../../api/services/issuesService";
+import { createIssue, editIssue, getIssueById, getIssuesPriorities, getIssuesStatuses, getTrackers } from "../../../../api/services/issuesService";
 import { Tracker } from "../../../../api/models/tracker";
 import { Enumeration } from "../../../../api/models/enumeration";
 import { Issue, IssueStatus } from "../../../../api/models/issue";
 import { UserContext } from "../../../../context/UserContext";
 
-interface CreateIssueDialogProps {
+interface EditIssueDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
-    projectId?: string;
-    releaseId?: string;
-    sprintId?: string;
-    epicId?: string;
+    issueId?: number;
 }
 
-const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ( { open, handleClose, projectId, releaseId, sprintId, epicId } ) => {
+const EditIssueDialog: React.FC<EditIssueDialogProps> = ( { open, handleClose, issueId } ) => {
     const { user } = useContext( UserContext );
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
@@ -46,7 +43,10 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ( { open, handleClos
         getAllIssuesPriorities();
         getAllTrackers();
         getAllIssuesStatuses();
-    }, []);
+        if (open && issueId) {
+            handleGetIssue();
+        }
+    }, [open, issueId]);
 
     const clearErrors = () => {
         setErrorName(false);
@@ -56,6 +56,22 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ( { open, handleClos
         setErrorEstimation(false);
         setErrorStatusId(false);
         setServerErrors([]);
+    }
+
+    const handleGetIssue = () => {
+        if (issueId) {
+            getIssueById(issueId).then((issue: Issue) => {
+                console.log(issue)
+                setName(issue.subject);
+                setDescription(issue.description);
+                setPriorityId(issue.priority.id);
+                setEstimation(issue.estimation)
+                setStatusId(issue.status.id);
+                setTrackerId(issue.tracker.id);
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
     }
 
     const getAllIssuesStatuses = () => {
@@ -122,15 +138,11 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ( { open, handleClos
             "description": description,
             "priorityId": priorityId,
             "trackerId": trackerId,
-            "projectId": projectId ? parseInt(projectId) : "",
-            "releaseId": releaseId ? parseInt(releaseId) : "",
-            "sprintId": sprintId ? parseInt(sprintId) : "",
-            "epicId": epicId ? parseInt(epicId) : "",
-            "assigneeId": user?.id,
+            "id": issueId,
             "estimation": estimation,
             "statusId": statusId
         }
-        createIssue(issue).then((issue: Issue) => {
+        editIssue(issue).then((issue: Issue) => {
             console.log(issue);
             handleCloseModal(true);
         }).catch((error) => {
@@ -157,11 +169,11 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ( { open, handleClos
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[400px]">
-                <DialogTitle>Create Issue</DialogTitle>
+                <DialogTitle>Edit Issue</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
-                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} className="w-full" id="epic-name" label="Name" variant="outlined" />
-                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} className="w-full" multiline minRows={"2"} maxRows={"4"} id="epic-description" label="Description" variant="outlined" />
+                        <TextField onChange={(e) => setName(e.target.value)} error={errorName} value={name} className="w-full" id="epic-name" label="Name" variant="outlined" />
+                        <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} value={description} className="w-full" multiline minRows={"2"} maxRows={"4"} id="epic-description" label="Description" variant="outlined" />
                         <FormControl>
                             <InputLabel id="priority-label" error={errorPriorityId}>Priority</InputLabel>
                             <Select
@@ -219,11 +231,11 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ( { open, handleClos
                 </DialogContent>
                 <DialogActions>
                     <SecondaryButton onClick={handleClose}>Close</SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleCreate}>Edit</PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>
     )
 }
 
-export default CreateIssueDialog;
+export default EditIssueDialog;
