@@ -1,18 +1,20 @@
-import { MdAdd } from 'react-icons/md';
+import { MdAdd } from "react-icons/md";
 
 interface AddButtonProps {
-    onClick?: () => void;
+  onClick?: () => void;
 }
 
-const AddButton: React.FC<AddButtonProps> = ( { onClick } ) => {
-
-    return (
-        <>
-            <button onClick={onClick} className="rounded-[50%] w-[44px] h-[44px] text-[26px] bg-secondary flex items-center justify-center text-white cursor-pointer">
-                <MdAdd />
-            </button>
-        </>
-    )
-}
+const AddButton = ({ onClick }: AddButtonProps) => {
+  return (
+    <>
+      <button
+        onClick={onClick}
+        className="rounded-[50%] w-[44px] h-[44px] text-[26px] bg-secondary flex items-center justify-center text-white cursor-pointer"
+      >
+        <MdAdd />
+      </button>
+    </>
+  );
+};
 
 export default AddButton;

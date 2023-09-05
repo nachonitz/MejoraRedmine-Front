@@ -1,12 +1,11 @@
-const Page = ( { children }: any ) => {
+import { ReactNode } from "react";
 
-    return (
-        <>
-            <div className="p-page mt-10 box-border w-full">
-                { children }
-            </div>
-        </>
-    )
+interface Props {
+  children: ReactNode;
 }
+
+const Page = ({ children }: Props) => {
+  return <div className="p-page mt-10 box-border w-full">{children}</div>;
+};
 
 export default Page;

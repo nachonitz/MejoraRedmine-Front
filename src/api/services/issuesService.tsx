@@ -1,15 +1,14 @@
 import { api } from "../api";
 import { Issue } from "../models/issue";
 
-
 export const getIssueById = async (issueId: number): Promise<Issue> => {
-	const response = await api.get(`/issues/${issueId}`);
-	const issue: Issue = response.data;
-	return issue;
-}
+  const response = await api.get(`/issues/${issueId}`);
+  const issue: Issue = response.data;
+  return issue;
+};
 
 // export const createEpic = async (epic: any): Promise<Epic> => {
-// 	const response = await api.post('/epics', 
+// 	const response = await api.post('/epics',
 // 		{
 // 			"name": epic.name,
 // 			"description": epic.description,
@@ -29,6 +28,6 @@ export const getIssueById = async (issueId: number): Promise<Issue> => {
 // }
 
 export const deleteIssue = async (issueId: number): Promise<boolean> => {
-	const response = await api.delete(`/issues/${issueId}`);
-	return true;
-}
+  const response = await api.delete(`/issues/${issueId}`);
+  return true;
+};

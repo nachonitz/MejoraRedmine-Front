@@ -1,16 +1,9 @@
-import { MdAdd } from 'react-icons/md';
-
-interface PageTitleProps {
-    title: string;
+interface Props {
+  title: string;
 }
 
-const PageTitle: React.FC<PageTitleProps> = ( { title } ) => {
-
-    return (
-        <>
-            <span className="text-[26px] text-primary">{ title }</span>
-        </>
-    )
-}
+const PageTitle = ({ title }: Props) => {
+  return <span className="text-[26px] text-primary">{title}</span>;
+};
 
 export default PageTitle;
