@@ -17,6 +17,7 @@ import { Project } from '../../../api/models/project';
 import { Release } from '../../../api/models/release';
 import { Sprint } from '../../../api/models/sprint';
 import ProjectBreadcrumbs from '../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs';
+import CreateIssueDialog from '../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog';
 
 const ProjectIssues = () => {
 	const { projectId, releaseId, sprintId, epicId } = useParams();
@@ -92,12 +93,12 @@ const ProjectIssues = () => {
 		<Sidebar>
 			<Page>
 				<ProjectBreadcrumbs project={epic?.project} release={epic?.release} sprint={epic?.sprint} epic={epic} />
-				{/* <CreateEpicDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} open={openCreateEpic} handleClose={handleCloseCreateEpic} />
-				<EditEpicDialog open={openEditEpic} epicId={selectedEpic?.id} handleClose={handleCloseEditEpic} /> */}
+				<CreateIssueDialog projectId={projectId} releaseId={releaseId} sprintId={sprintId} epicId={epicId} open={openCreateIssue} handleClose={handleCloseCreateIssue} />
+				{/* <EditEpicDialog open={openEditEpic} epicId={selectedEpic?.id} handleClose={handleCloseEditEpic} /> */}
 				<DeleteDialog open={openDeleteIssue} id={selectedIssue?.id} handleClose={handleCloseDeleteIssue} deleteFunction={deleteIssue} name={selectedIssue?.subject} />
 				<div className="flex gap-[15px] items-center">
 					<PageTitle title="Issues" />
-					<AddButton />
+					<AddButton onClick={ () => setOpenCreateIssue(true) } />
 				</div>
 				<div>
 					<table className="w-full mt-[30px]">
