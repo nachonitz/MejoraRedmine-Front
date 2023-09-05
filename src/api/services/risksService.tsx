@@ -1,5 +1,4 @@
 import { api } from "../api";
-import { Epic } from "../models/epic";
 import { Risk } from "../models/risk";
 
 

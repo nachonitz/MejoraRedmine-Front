@@ -97,10 +97,10 @@ const Projects = () => {
 								<td className="text-left">
 									<div className="gap-[10px] flex items-center">
 										{project.name}
-										{ !project.is_public && <IoLockClosed className="inline-block text-[18px] text-[#444]" />}
+										{ !project.isPublic && <IoLockClosed className="inline-block text-[18px] text-[#444]" />}
 									</div>
 								</td>
-								<td className="text-left">{getFullDate(project.created_on)}</td>
+								<td className="text-left">{getFullDate(project.createdAt)}</td>
 								<td className="text-left">{project.owner.firstname} {project.owner.lastname}</td>
 								<td className="text-right"><div className="flex justify-end"><SettingsButton onEdit={()=> { setSelectedProject(project); setOpenEditProject(true) }} onDelete={()=> { setSelectedProject(project); setOpenDeleteProject(true)}} /></div></td>
 							</tr>

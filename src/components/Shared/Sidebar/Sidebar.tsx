@@ -12,9 +12,9 @@ const Sidebar = ( { children }: any ) => {
                     <Item name="Home" icon="home-icon.png" onClick={()=>{ navigate(`/project/${projectId}`) }} />
                     <Item name="Dashboard" icon="dashboard-icon.png" onClick={()=>{ console.log("Click!") }} />
                     <Item name="Backlog" icon="backlog-icon.png" onClick={()=>{ console.log("Click!") }} />
-                    <Item name="Documents" icon="documents-icon.png" onClick={()=>{ console.log("Click!") }} />
+                    <Item name="Documents" icon="documents-icon.png" onClick={()=>{ navigate(`/project/${projectId}/documents`) }} />
                     <Item name="Risks" icon="risks-icon.png" onClick={()=>{ navigate(`/project/${projectId}/risks`) }} />
-                    <Item name="Settings" icon="settings-icon.png" onClick={()=>{ console.log("Click!") }} />
+                    <Item name="Settings" icon="settings-icon.png" onClick={()=>{ navigate(`/project/${projectId}/settings`) }} />
                 </div>
             </div>
             <div className="ml-56 w-full">

@@ -6,8 +6,8 @@ export interface Project {
     identifier: string;
     name: string;
     description: string;
-    is_public: boolean;
+    isPublic: boolean;
     status: number;
-    created_on: Date;
+    createdAt: Date;
     owner: User;
 }

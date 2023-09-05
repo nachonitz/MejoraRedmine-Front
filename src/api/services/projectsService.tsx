@@ -8,8 +8,7 @@ import { Sprint } from "../models/sprint";
 export const getProjects = async (): Promise<Project[]> => {
 	try {
 		const response = await api.get('/projects', {});
-		console.log(response)
-		const projects: Project[] = response.data;
+		const projects: Project[] = response.data.items;
 		return projects;
 	} catch (error) {
 		throw new Error('Error. Please try again.');
@@ -50,7 +49,7 @@ export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
 	try {
 		const response = await api.get('/issues', { params: { epicId } });
 		console.log(response.data)
-		const issues: Issue[] = response.data.issues;
+		const issues: Issue[] = response.data.items;
 		return issues;
 	} catch (error) {
 		throw new Error('Error. Please try again.');
@@ -64,13 +63,14 @@ export const getProjectById = async (projectId: number): Promise<Project> => {
 }
 
 export const createProject = async (project: any): Promise<Project> => {
-	const response = await api.post('/projects', { "name": project.name, "description": project.description, "identifier": project.identifier, "is_public": project.is_public });
+	const response = await api.post('/projects', { "name": project.name, "description": project.description, "identifier": project.identifier, "isPublic": project.is_public });
+	console.log(response)
 	const newProject: Project = response.data.project;
 	return newProject;
 }
 
 export const editProject = async (project: any): Promise<Project> => {
-	const response = await api.patch(`/projects/${project.id}`, { "name": project.name, "description": project.description, "identifier": project.identifier, "is_public": project.is_public });
+	const response = await api.patch(`/projects/${project.id}`, { "name": project.name, "description": project.description, "identifier": project.identifier, "isPublic": project.is_public });
 	const editedProject: Project = response.data.project;
 	return editedProject;
 }
