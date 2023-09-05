@@ -3,6 +3,7 @@ import { Epic } from "./epic";
 import { Project } from "./project";
 import { Release } from "./release";
 import { Sprint } from "./sprint";
+import { Tracker } from "./tracker";
 
 export interface Issue {
     id: number;
@@ -15,6 +16,7 @@ export interface Issue {
     project: Project;
     status: IssueStatus;
     estimation: string;
+    tracker: Tracker;
 }
 
 export interface IssueStatus {

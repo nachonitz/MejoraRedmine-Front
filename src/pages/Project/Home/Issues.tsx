@@ -86,6 +86,17 @@ const ProjectIssues = () => {
 		setSelectedIssue(undefined);
 	}
 
+	const getIssueIcon = (issueType: string) => {
+		switch (issueType) {
+			case 'Bug':
+				return '/src/assets/icons/bug-icon.png';
+			case 'Feature':
+				return '/src/assets/icons/user-story-icon.png';
+			case 'Task':
+				return '/src/assets/icons/user-story-icon.png';
+		}
+	}
+
 	useEffect(() => {
 		getEpic();
 		getIssues();
@@ -114,7 +125,7 @@ const ProjectIssues = () => {
 							{issues.map((issue: Issue) => (
 								<tr key={issue.id} onClick={()=> {goToIssue(issue.id)}} className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50">
 									<td className='w-[30px]'>
-										<img className="w-[24px] h-[24px]" src={'/src/assets/icons/user-story-icon.png'} />
+										<img className="w-[24px] h-[24px]" src={getIssueIcon(issue.tracker.name)} />
 									</td>
 									<td className="gap-[10px] text-left">
 										{issue.subject}
