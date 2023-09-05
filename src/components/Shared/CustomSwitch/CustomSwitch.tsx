@@ -15,7 +15,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ( { title, value, onClick, des
 
     return (
         <div className="flex w-full justify-between items-center">
-            <div className="flex flex-col gap-[10px] justify-center">
+            <div className="flex flex-col gap-[5px] justify-center">
                 <p className="text-[18px] text-[#444]">{title}</p>
                 {description && <p className="text-[16px] text-[#888]">{description}</p>}
             </div>

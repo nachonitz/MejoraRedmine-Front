@@ -36,7 +36,7 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ( { open, handleClos
                 setName(project.name);
                 setDescription(project.description);
                 setIdentifier(project.identifier);
-                setIsPrivate(!project.is_public);
+                setIsPrivate(!project.isPublic);
             }).catch((error) => {
                 console.log(error);
             });
