@@ -1,3 +1,4 @@
+import { Enumeration } from "./enumeration";
 import { Epic } from "./epic";
 import { Project } from "./project";
 import { Release } from "./release";
@@ -7,7 +8,7 @@ export interface Issue {
     id: number;
     subject: string;
     description: string;
-    priority: string;
+    priority: Enumeration;
     epic: Epic;
     sprint: Sprint;
     release: Release;

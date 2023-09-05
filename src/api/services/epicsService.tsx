@@ -13,7 +13,7 @@ export const createEpic = async (epic: any): Promise<Epic> => {
 		{
 			"name": epic.name,
 			"description": epic.description,
-			"priority": epic.priority,
+			"priorityId": epic.priorityId,
 			"projectId": epic.projectId,
 			"releaseId": epic.releaseId,
 			"sprintId": epic.sprintId
@@ -23,7 +23,7 @@ export const createEpic = async (epic: any): Promise<Epic> => {
 	return newEpic;
 }
 export const editEpic = async (epic: any): Promise<Epic> => {
-	const response = await api.patch(`/epics/${epic.id}`, { "name": epic.name, "description": epic.description, "priority": epic.priority });
+	const response = await api.patch(`/epics/${epic.id}`, { "name": epic.name, "description": epic.description, "priorityId": epic.priorityId });
 	const editedEpic: Epic = response.data.epic;
 	return editedEpic;
 }

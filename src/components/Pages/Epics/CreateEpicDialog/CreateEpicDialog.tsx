@@ -2,10 +2,12 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLa
 import MenuItem from '@mui/material/MenuItem';
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEpic } from "../../../../api/services/epicsService";
 import { Epic } from "../../../../api/models/epic";
+import { getIssuesPriorities } from "../../../../api/services/issuesService";
+import { Enumeration } from "../../../../api/models/enumeration";
 
 interface CreateEpicDialogProps {
     open: boolean;
@@ -16,18 +18,32 @@ interface CreateEpicDialogProps {
 }
 
 const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ( { open, handleClose, projectId, releaseId, sprintId } ) => {
+    const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [priority, setPriority] = useState<string>("");
+    const [priorityId, setPriorityId] = useState<string>("");
     const [errorName, setErrorName] = useState(false);
 	const [errorDescription, setErrorDescription] = useState(false);
-    const [errorPriority, setErrorPriority] = useState(false);
+    const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+
+    useEffect(() => {
+        resetState();
+        getAllIssuesPriorities();
+    }, []);
+    
+    const getAllIssuesPriorities = () => {
+        getIssuesPriorities().then((priorities: Enumeration[]) => {
+            setPriorities(priorities);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
 
     const clearErrors = () => {
         setErrorName(false);
         setErrorDescription(false);
-        setErrorPriority(false);
+        setErrorPriorityId(false);
         setServerErrors([]);
     }
 
@@ -41,8 +57,8 @@ const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ( { open, handleClose,
             setErrorDescription(true);
             errorFound = true;
         }
-        if (!priority || priority === "") {
-            setErrorPriority(true);
+        if (!priorityId || priorityId === "") {
+            setErrorPriorityId(true);
             errorFound = true;
         }
         return errorFound;
@@ -57,7 +73,7 @@ const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ( { open, handleClose,
         let epic = {
             "name": name,
             "description": description,
-            "priority": priority,
+            "priorityId": priorityId,
             "projectId": projectId,
             "releaseId": releaseId,
             "sprintId": sprintId
@@ -74,7 +90,7 @@ const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ( { open, handleClose,
     const resetState = () => {
         setName("");
         setDescription("");
-        setPriority("");
+        setPriorityId("");
         clearErrors();
     };
 
@@ -92,19 +108,15 @@ const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ( { open, handleClose,
                         <TextField onChange={(e) => setName(e.target.value)} error={errorName} className="w-full" id="epic-name" label="Name" variant="outlined" />
                         <TextField onChange={(e) => setDescription(e.target.value)} error={errorDescription} className="w-full" multiline minRows={"2"} maxRows={"4"} id="epic-description" label="Description" variant="outlined" />
                         <FormControl>
-                            <InputLabel id="priority-label" error={errorPriority}>Priority</InputLabel>
+                            <InputLabel id="priority-label" error={errorPriorityId}>Priority</InputLabel>
                             <Select
                                 labelId="priority-label"
-                                value={priority}
+                                value={priorityId}
                                 label="Priority"
-                                error={errorPriority}
-                                onChange={(e: any) => setPriority(e.target.value)}
+                                error={errorPriorityId}
+                                onChange={(e: any) => setPriorityId(e.target.value)}
                             >
-                                <MenuItem value="Very low">Very low</MenuItem>
-                                <MenuItem value="Low">Low</MenuItem>
-                                <MenuItem value="Medium">Medium</MenuItem>
-                                <MenuItem value="High">High</MenuItem>
-                                <MenuItem value="Very high">Very high</MenuItem>
+                                {priorities && priorities.map((priority: Enumeration) => (<MenuItem key={priority.id} value={priority.id}>{priority.name}</MenuItem>))}
                             </Select>
                         </FormControl>
                         {serverErrors && serverErrors.length > 0 && <div className='mt-2 min-h-[10px] text-left'>
