@@ -1,165 +1,192 @@
 import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  InputLabel,
-  Select,
-  TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    Select,
+    TextField,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Enumeration } from "../../../../api/models/enumeration";
 import { Epic } from "../../../../api/models/epic";
 import { createEpic } from "../../../../api/services/epicsService";
+import { getIssuesPriorities } from "../../../../api/services/issuesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
 interface CreateEpicDialogProps {
-  open: boolean;
-  handleClose: (refresh?: boolean) => void;
-  projectId?: string;
-  releaseId?: string;
-  sprintId?: string;
+    open: boolean;
+    handleClose: (refresh?: boolean) => void;
+    projectId?: string;
+    releaseId?: string;
+    sprintId?: string;
 }
 
-const CreateEpicDialog: React.FC<CreateEpicDialogProps> = ({
-  open,
-  handleClose,
-  projectId,
-  releaseId,
-  sprintId,
-}) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<string>("");
-  const [errorName, setErrorName] = useState(false);
-  const [errorDescription, setErrorDescription] = useState(false);
-  const [errorPriority, setErrorPriority] = useState(false);
-  const [serverErrors, setServerErrors] = useState<string[]>([]);
+const CreateEpicDialog = ({
+    open,
+    handleClose,
+    projectId,
+    releaseId,
+    sprintId,
+}: CreateEpicDialogProps) => {
+    const [priorities, setPriorities] = useState<Enumeration[]>([]);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [priorityId, setPriorityId] = useState<string>("");
+    const [errorName, setErrorName] = useState(false);
+    const [errorDescription, setErrorDescription] = useState(false);
+    const [errorPriorityId, setErrorPriorityId] = useState(false);
+    const [serverErrors, setServerErrors] = useState<string[]>([]);
 
-  const clearErrors = () => {
-    setErrorName(false);
-    setErrorDescription(false);
-    setErrorPriority(false);
-    setServerErrors([]);
-  };
+    const getAllIssuesPriorities = useCallback(() => {
+        getIssuesPriorities()
+            .then((priorities: Enumeration[]) => {
+                setPriorities(priorities);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
-  const checkForFieldsErrors = () => {
-    let errorFound = false;
-    if (!name) {
-      setErrorName(true);
-      errorFound = true;
-    }
-    if (!description) {
-      setErrorDescription(true);
-      errorFound = true;
-    }
-    if (!priority || priority === "") {
-      setErrorPriority(true);
-      errorFound = true;
-    }
-    return errorFound;
-  };
-
-  const handleCreate = () => {
-    clearErrors();
-    const errorFound = checkForFieldsErrors();
-    if (errorFound) {
-      return;
-    }
-    const epic = {
-      name: name,
-      description: description,
-      priority: priority,
-      projectId: projectId,
-      releaseId: releaseId,
-      sprintId: sprintId,
+    const clearErrors = () => {
+        setErrorName(false);
+        setErrorDescription(false);
+        setErrorPriorityId(false);
+        setServerErrors([]);
     };
-    createEpic(epic)
-      .then((epic: Epic) => {
-        console.log(epic);
-        handleCloseModal(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        setServerErrors(error.messages);
-      });
-  };
 
-  const resetState = () => {
-    setName("");
-    setDescription("");
-    setPriority("");
-    clearErrors();
-  };
+    const checkForFieldsErrors = () => {
+        let errorFound = false;
+        if (!name) {
+            setErrorName(true);
+            errorFound = true;
+        }
+        if (!description) {
+            setErrorDescription(true);
+            errorFound = true;
+        }
+        if (!priorityId || priorityId === "") {
+            setErrorPriorityId(true);
+            errorFound = true;
+        }
+        return errorFound;
+    };
 
-  const handleCloseModal = (refresh?: boolean) => {
-    resetState();
-    handleClose(refresh);
-  };
+    const handleCreate = () => {
+        clearErrors();
+        const errorFound = checkForFieldsErrors();
+        if (errorFound) {
+            return;
+        }
+        const epic = {
+            name: name,
+            description: description,
+            priorityId: priorityId,
+            projectId: projectId,
+            releaseId: releaseId,
+            sprintId: sprintId,
+        };
+        createEpic(epic)
+            .then((epic: Epic) => {
+                console.log(epic);
+                handleCloseModal(true);
+            })
+            .catch((error) => {
+                console.log(error);
+                setServerErrors(error.messages);
+            });
+    };
 
-  return (
-    <Dialog open={open} onClose={() => handleCloseModal()}>
-      <div className="w-[400px]">
-        <DialogTitle>Create Epic</DialogTitle>
-        <DialogContent>
-          <div className="mt-[5px] flex flex-col gap-[20px]">
-            <TextField
-              onChange={(e) => setName(e.target.value)}
-              error={errorName}
-              className="w-full"
-              id="epic-name"
-              label="Name"
-              variant="outlined"
-            />
-            <TextField
-              onChange={(e) => setDescription(e.target.value)}
-              error={errorDescription}
-              className="w-full"
-              multiline
-              minRows={"2"}
-              maxRows={"4"}
-              id="epic-description"
-              label="Description"
-              variant="outlined"
-            />
-            <FormControl>
-              <InputLabel id="priority-label" error={errorPriority}>
-                Priority
-              </InputLabel>
-              <Select
-                labelId="priority-label"
-                value={priority}
-                label="Priority"
-                error={errorPriority}
-                onChange={(e) => setPriority(e.target.value)}
-              >
-                <MenuItem value="Very low">Very low</MenuItem>
-                <MenuItem value="Low">Low</MenuItem>
-                <MenuItem value="Medium">Medium</MenuItem>
-                <MenuItem value="High">High</MenuItem>
-                <MenuItem value="Very high">Very high</MenuItem>
-              </Select>
-            </FormControl>
-            {serverErrors && serverErrors.length > 0 && (
-              <div className="mt-2 min-h-[10px] text-left">
-                {serverErrors.map((error, index) => (
-                  <div key={index}>
-                    <p className="text-red-700"> {error}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <SecondaryButton onClick={handleClose}>Close</SecondaryButton>
-          <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
-        </DialogActions>
-      </div>
-    </Dialog>
-  );
+    const resetState = useCallback(() => {
+        setName("");
+        setDescription("");
+        setPriorityId("");
+        clearErrors();
+    }, []);
+
+    const handleCloseModal = (refresh?: boolean) => {
+        resetState();
+        handleClose(refresh);
+    };
+
+    useEffect(() => {
+        resetState();
+        getAllIssuesPriorities();
+    }, [resetState, getAllIssuesPriorities]);
+
+    return (
+        <Dialog open={open} onClose={() => handleCloseModal()}>
+            <div className="w-[400px]">
+                <DialogTitle>Create Epic</DialogTitle>
+                <DialogContent>
+                    <div className="mt-[5px] flex flex-col gap-[20px]">
+                        <TextField
+                            onChange={(e) => setName(e.target.value)}
+                            error={errorName}
+                            className="w-full"
+                            id="epic-name"
+                            label="Name"
+                            variant="outlined"
+                        />
+                        <TextField
+                            onChange={(e) => setDescription(e.target.value)}
+                            error={errorDescription}
+                            className="w-full"
+                            multiline
+                            minRows={"2"}
+                            maxRows={"4"}
+                            id="epic-description"
+                            label="Description"
+                            variant="outlined"
+                        />
+                        <FormControl>
+                            <InputLabel
+                                id="priority-label"
+                                error={errorPriorityId}
+                            >
+                                Priority
+                            </InputLabel>
+                            <Select
+                                labelId="priority-label"
+                                value={priorityId}
+                                label="Priority"
+                                error={errorPriorityId}
+                                onChange={(e) => setPriorityId(e.target.value)}
+                            >
+                                {priorities &&
+                                    priorities.map((priority: Enumeration) => (
+                                        <MenuItem
+                                            key={priority.id}
+                                            value={priority.id}
+                                        >
+                                            {priority.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+                        {serverErrors && serverErrors.length > 0 && (
+                            <div className="mt-2 min-h-[10px] text-left">
+                                {serverErrors.map((error, index) => (
+                                    <div key={index}>
+                                        <p className="text-red-700"> {error}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <SecondaryButton onClick={handleClose}>
+                        Close
+                    </SecondaryButton>
+                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                </DialogActions>
+            </div>
+        </Dialog>
+    );
 };
 
 export default CreateEpicDialog;
