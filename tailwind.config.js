@@ -23,7 +23,8 @@ export default {
       },
       boxShadow: {
         login: '0px 0px 10px #DDDDDD',
-        card: '0px 3px 8px rgba(0, 0, 0, 0.24)'
+        card: '0px 3px 8px rgba(0, 0, 0, 0.24)',
+        userStory: '1px 1px 2px 0px rgba(0, 0, 0, 0.25)'
       }
     },
   },

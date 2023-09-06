@@ -9,6 +9,7 @@ interface Props {
 const Sidebar = ({ children }: Props) => {
     const navigate = useNavigate();
     const { projectId } = useParams();
+
     return (
         <>
             <div className="flex h-screen fixed top-header mt-header bg-lightblue w-56">
@@ -31,7 +32,7 @@ const Sidebar = ({ children }: Props) => {
                         name="Backlog"
                         icon="backlog-icon.png"
                         onClick={() => {
-                            console.log("Click!");
+                            navigate(`/project/${projectId}/backlog`);
                         }}
                     />
                     <Item

@@ -1,22 +1,27 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+import {
+    getIssuesByEpicId,
+    getProjectById,
+} from "../../../api/services/projectsService";
 import { useParams } from "react-router-dom";
+import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import Page from "../../../components/Shared/Page/Page";
+import AddButton from "../../../components/Shared/Buttons/AddButton";
 import { Epic } from "../../../api/models/epic";
 import { Issue } from "../../../api/models/issue";
+import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
+import { deleteIssue } from "../../../api/services/issuesService";
+import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
+import { getEpicById } from "../../../api/services/epicsService";
+import { getSprintById } from "../../../api/services/sprintsService";
+import { getReleaseById } from "../../../api/services/releasesService";
 import { Project } from "../../../api/models/project";
 import { Release } from "../../../api/models/release";
 import { Sprint } from "../../../api/models/sprint";
-import { getEpicById } from "../../../api/services/epicsService";
-import { deleteIssue } from "../../../api/services/issuesService";
-import { getIssuesByEpicId } from "../../../api/services/projectsService";
+import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
-import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
-import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
-import Page from "../../../components/Shared/Page/Page";
-import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
-import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
-import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 
 const ProjectIssues = () => {
     const { projectId, releaseId, sprintId, epicId } = useParams();
@@ -30,7 +35,7 @@ const ProjectIssues = () => {
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
 
-    const getEpic = useCallback(async () => {
+    const getEpic = async () => {
         try {
             if (epicId) {
                 const epic = await getEpicById(parseInt(epicId));
@@ -41,9 +46,9 @@ const ProjectIssues = () => {
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
-    }, [epicId]);
+    };
 
-    const getIssues = useCallback(async () => {
+    const getIssues = async () => {
         try {
             if (epicId) {
                 const issues = await getIssuesByEpicId(parseInt(epicId));
@@ -54,7 +59,7 @@ const ProjectIssues = () => {
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
-    }, [epicId]);
+    };
 
     const goToIssue = (id: number) => {
         // navigate(`/project/${id}`);
@@ -98,8 +103,7 @@ const ProjectIssues = () => {
     useEffect(() => {
         getEpic();
         getIssues();
-    }, [getEpic, getIssues]);
-
+    }, []);
     return (
         <Sidebar>
             <Page>

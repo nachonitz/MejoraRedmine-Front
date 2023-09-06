@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Header from "./components/Shared/Header/Header";
 import { UserContext } from "./context/UserContext";
 import Login from "./pages/Login";
+import Backlog from "./pages/Project/Backlog/Backlog";
 import Documents from "./pages/Project/Documents/Documents";
 import NewDocument from "./pages/Project/Documents/NewDocument";
 import ProjectEpics from "./pages/Project/Home/Epics";
@@ -57,6 +58,10 @@ function App() {
                             <Route
                                 path="/project/:projectId/settings"
                                 element={<Settings />}
+                            />
+                            <Route
+                                path="/project/:projectId/backlog"
+                                element={<Backlog />}
                             />
                             <Route path="*" element={<Navigate to="/" />} />
                         </>

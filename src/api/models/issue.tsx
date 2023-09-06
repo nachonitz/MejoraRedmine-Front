@@ -13,6 +13,14 @@ export interface Issue {
     epic: Epic;
     sprint: Sprint;
     release: Release;
-    tracker: Tracker;
     project: Project;
+    status: IssueStatus;
+    estimation: string;
+    tracker: Tracker;
+}
+
+export interface IssueStatus {
+    id: number;
+    name: string;
+    is_closed: boolean;
 }
