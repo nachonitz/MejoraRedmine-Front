@@ -11,7 +11,7 @@ const Sidebar = ( { children }: any ) => {
                 <div className="flex flex-col mt-5 w-full px-[2px] box-border">
                     <Item name="Home" icon="home-icon.png" onClick={()=>{ navigate(`/project/${projectId}`) }} />
                     <Item name="Dashboard" icon="dashboard-icon.png" onClick={()=>{ console.log("Click!") }} />
-                    <Item name="Backlog" icon="backlog-icon.png" onClick={()=>{ console.log("Click!") }} />
+                    <Item name="Backlog" icon="backlog-icon.png" onClick={()=>{ navigate(`/project/${projectId}/backlog`) }} />
                     <Item name="Documents" icon="documents-icon.png" onClick={()=>{ navigate(`/project/${projectId}/documents`) }} />
                     <Item name="Risks" icon="risks-icon.png" onClick={()=>{ navigate(`/project/${projectId}/risks`) }} />
                     <Item name="Settings" icon="settings-icon.png" onClick={()=>{ navigate(`/project/${projectId}/settings`) }} />

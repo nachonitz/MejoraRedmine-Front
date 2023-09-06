@@ -15,6 +15,7 @@ import Risks from './pages/Project/Risks/Risks';
 import Documents from './pages/Project/Documents/Documents';
 import Settings from './pages/Project/Settings/Settings';
 import NewDocument from './pages/Project/Documents/NewDocument';
+import Backlog from './pages/Project/Backlog/Backlog';
 
 function App() {
 	const { isLoggedIn } = useContext(UserContext);
@@ -36,6 +37,7 @@ function App() {
 							<Route path="/project/:projectId/documents" element={<Documents />} />
 							<Route path="/project/:projectId/documents/new" element={<NewDocument />} />
 							<Route path="/project/:projectId/settings" element={<Settings />} />
+							<Route path="/project/:projectId/backlog" element={<Backlog />} />
 							<Route path="*" element={<Navigate to="/" />} />
 						</>
 						:
