@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.0.5",
+    "@dnd-kit/sortable": "^7.0.1",
     "@mui/lab": "^5.0.0-alpha.140",
     "postcss-cli": "^10.1.0",
     "react": "^18.2.0",

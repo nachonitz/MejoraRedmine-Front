@@ -15,6 +15,13 @@ export const getTrackers = async (): Promise<Tracker[]> => {
     return trackers;
 };
 
+export const getAllIssues = async (projectId: number): Promise<Issue[]> => {
+	const response = await api.get("/issues" , {params: { projectId: projectId }});
+	const issues: Issue[] = response.data.items;
+	console.log(issues)
+	return issues;
+};
+
 export const getIssuesPriorities = async (): Promise<Enumeration[]> => {
     const response = await api.get("/enumerations", {
         params: { type: "IssuePriority" },

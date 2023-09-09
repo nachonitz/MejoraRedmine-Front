@@ -22,6 +22,7 @@ import { Sprint } from "../../../api/models/sprint";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
+import { getIssueIcon, getIssuePriorityColor } from "../../../utilities/utilities";
 
 const ProjectIssues = () => {
     const { projectId, releaseId, sprintId, epicId } = useParams();
@@ -87,17 +88,6 @@ const ProjectIssues = () => {
             getIssues();
         }
         setSelectedIssue(undefined);
-    };
-
-    const getIssueIcon = (issueType: string) => {
-        switch (issueType) {
-            case "Bug":
-                return "/src/assets/icons/bug-icon.png";
-            case "Feature":
-                return "/src/assets/icons/user-story-icon.png";
-            case "Task":
-                return "/src/assets/icons/user-story-icon.png";
-        }
     };
 
     useEffect(() => {
@@ -166,7 +156,7 @@ const ProjectIssues = () => {
                                     <td className="gap-[10px] text-left">
                                         {issue.subject}
                                     </td>
-                                    <td className="text-left">
+                                    <td style={{color: getIssuePriorityColor(issue.priority["name"])}} className="text-left">
                                         {issue.priority["name"]}
                                     </td>
                                     <td className="text-right">

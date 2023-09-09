@@ -4,6 +4,7 @@ import { Project } from "./project";
 import { Release } from "./release";
 import { Sprint } from "./sprint";
 import { Tracker } from "./tracker";
+import { User } from "./user";
 
 export interface Issue {
     id: number;
@@ -17,6 +18,7 @@ export interface Issue {
     status: IssueStatus;
     estimation: string;
     tracker: Tracker;
+    assignee: User;
 }
 
 export interface IssueStatus {
