@@ -1,148 +1,146 @@
 import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField,
 } from "@mui/material";
-import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useState } from "react";
+import { CreateProjectDto } from "../../../../api/models/project";
 import { createProject } from "../../../../api/services/projectsService";
-import { Project } from "../../../../api/models/project";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
 
 interface CreateProjectDialogProps {
-  open: boolean;
-  handleClose: (refresh?: boolean) => void;
+    open: boolean;
+    handleClose: (refresh?: boolean) => void;
 }
 
 const CreateProjectDialog = ({
-  open,
-  handleClose,
+    open,
+    handleClose,
 }: CreateProjectDialogProps) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [identifier, setIdentifier] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [errorName, setErrorName] = useState(false);
-  const [errorDescription, setErrorDescription] = useState(false);
-  const [errorIdentifier, setErrorIdentifier] = useState(false);
-  const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [identifier, setIdentifier] = useState("");
+    const [isPrivate, setIsPrivate] = useState(false);
+    const [errorName, setErrorName] = useState(false);
+    const [errorIdentifier, setErrorIdentifier] = useState(false);
+    const [serverErrors, setServerErrors] = useState<string[]>([]);
 
-  const clearErrors = () => {
-    setErrorName(false);
-    setErrorDescription(false);
-    setErrorIdentifier(false);
-    setServerErrors([]);
-  };
-
-  const checkForFieldsErrors = () => {
-    let errorFound = false;
-    if (!name) {
-      setErrorName(true);
-      errorFound = true;
-    }
-    if (!description) {
-      setErrorDescription(true);
-      errorFound = true;
-    }
-    if (!identifier) {
-      setErrorIdentifier(true);
-      errorFound = true;
-    }
-    return errorFound;
-  };
-
-  const handleCreate = () => {
-    clearErrors();
-    const errorFound = checkForFieldsErrors();
-    if (errorFound) {
-      return;
-    }
-    const project = {
-      name: name,
-      description: description,
-      identifier: identifier,
-      is_public: !isPrivate,
+    const clearErrors = () => {
+        setErrorName(false);
+        setErrorIdentifier(false);
+        setServerErrors([]);
     };
-    createProject(project)
-      .then((project: Project) => {
-        console.log(project);
-        handleCloseModal(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        setServerErrors(error.messages);
-      });
-  };
 
-  const resetState = () => {
-    setName("");
-    setDescription("");
-    setIdentifier("");
-    setIsPrivate(false);
-    clearErrors();
-  };
+    const checkForFieldsErrors = () => {
+        let errorFound = false;
+        if (!name) {
+            setErrorName(true);
+            errorFound = true;
+        }
+        if (!identifier) {
+            setErrorIdentifier(true);
+            errorFound = true;
+        }
+        return errorFound;
+    };
 
-  const handleCloseModal = (refresh?: boolean) => {
-    resetState();
-    handleClose(refresh);
-  };
+    const handleCreate = () => {
+        clearErrors();
+        const errorFound = checkForFieldsErrors();
+        if (errorFound) {
+            return;
+        }
+        const project: CreateProjectDto = {
+            name: name,
+            description: description,
+            identifier: identifier,
+            isPublic: !isPrivate,
+        };
+        createProject(project)
+            .then(() => handleCloseModal(true))
+            .catch((error) => {
+                console.log(error);
+                setServerErrors(error.messages);
+            });
+    };
 
-  return (
-    <Dialog open={open} onClose={() => handleCloseModal()}>
-      <div className="w-[400px]">
-        <DialogTitle>Create Project</DialogTitle>
-        <DialogContent>
-          <div className="mt-[5px] flex flex-col gap-[20px]">
-            <TextField
-              onChange={(e) => setName(e.target.value)}
-              error={errorName}
-              className="w-full"
-              id="project-name"
-              label="Name"
-              variant="outlined"
-            />
-            <TextField
-              onChange={(e) => setIdentifier(e.target.value)}
-              error={errorIdentifier}
-              className="w-full"
-              id="project-identifier"
-              placeholder="project-identifier"
-              label="Identifier"
-              variant="outlined"
-            />
-            <TextField
-              onChange={(e) => setDescription(e.target.value)}
-              error={errorDescription}
-              className="w-full"
-              multiline
-              minRows={"2"}
-              maxRows={"4"}
-              id="project-description"
-              label="Description"
-              variant="outlined"
-            />
-            <CustomSwitch onClick={setIsPrivate} title="Private" />
-            {serverErrors && serverErrors.length > 0 && (
-              <div className="mt-2 min-h-[10px] text-left">
-                {serverErrors.map((error, index) => (
-                  <div key={index}>
-                    <p className="text-red-700"> {error}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <SecondaryButton onClick={handleClose}>Close</SecondaryButton>
-          <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
-        </DialogActions>
-      </div>
-    </Dialog>
-  );
+    const resetState = () => {
+        setName("");
+        setDescription("");
+        setIdentifier("");
+        setIsPrivate(false);
+        clearErrors();
+    };
+
+    const handleCloseModal = (refresh?: boolean) => {
+        resetState();
+        handleClose(refresh);
+    };
+
+    const handleChangeName = (name: string) => {
+        setName(name);
+        setIdentifier(name.toLowerCase().replace(/ /g, "-"));
+    };
+
+    return (
+        <Dialog open={open} onClose={() => handleCloseModal()}>
+            <div className="w-[600px] p-2">
+                <DialogTitle>Create Project</DialogTitle>
+                <DialogContent>
+                    <div className="flex flex-col gap-[20px]">
+                        <TextField
+                            onChange={(e) => handleChangeName(e.target.value)}
+                            error={errorName}
+                            className="w-full"
+                            id="project-name"
+                            label="Name"
+                            variant="outlined"
+                        />
+                        <TextField
+                            onChange={(e) => setIdentifier(e.target.value)}
+                            error={errorIdentifier}
+                            value={identifier}
+                            className="w-full"
+                            id="project-identifier"
+                            placeholder="project-identifier"
+                            label="Identifier"
+                            variant="outlined"
+                        />
+                        <TextField
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="w-full"
+                            multiline
+                            minRows={"2"}
+                            maxRows={"4"}
+                            id="project-description"
+                            label="Description"
+                            variant="outlined"
+                        />
+                        <CustomSwitch onClick={setIsPrivate} title="Private" />
+                        {serverErrors && serverErrors.length > 0 && (
+                            <div className="mt-2 min-h-[10px] text-left">
+                                {serverErrors.map((error, index) => (
+                                    <div key={index}>
+                                        <p className="text-red-700"> {error}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <SecondaryButton onClick={handleCloseModal}>
+                        Close
+                    </SecondaryButton>
+                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                </DialogActions>
+            </div>
+        </Dialog>
+    );
 };
 
 export default CreateProjectDialog;

@@ -1,20 +1,48 @@
+import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
+import { ListedResponse } from "../models/common";
 import { Epic } from "../models/epic";
 import { Issue } from "../models/issue";
-import { Project } from "../models/project";
+import {
+    CreateProjectDto,
+    Project,
+    ProjectFilter,
+    UpdateProjectDto,
+} from "../models/project";
 import { Release } from "../models/release";
 import { Sprint } from "../models/sprint";
 
-export const getProjects = async (): Promise<Project[]> => {
-    try {
-        const response = await api.get("/projects", {});
-        const projects: Project[] = response.data.items;
-        return projects;
-    } catch (error) {
-        throw new Error("Error. Please try again.");
-    }
+export const getProjects = async (filter: ProjectFilter) => {
+    const { data } = await api.get<ListedResponse<Project>>(
+        `/projects?${filterToQueryParams(filter)}`
+    );
+    return { data };
 };
 
+export const getProjectById = async (id: Project["id"]) => {
+    const { data } = await api.get<Project>(`/projects/${id}`);
+    return data;
+};
+
+export const createProject = async (project: CreateProjectDto) => {
+    const { data } = await api.post("/projects", project);
+    return data;
+};
+
+export const editProject = async (
+    id: Project["id"],
+    project: UpdateProjectDto
+) => {
+    const { data } = await api.patch(`/projects/${id}`, project);
+    return data;
+};
+
+export const deleteProject = async (id: Project["id"]) => {
+    const { data } = await api.delete(`/projects/${id}`);
+    return data;
+};
+
+//TODO: mover los de abajo a los servicios correspondientes
 export const getReleasesByProjectId = async (
     projectId: number
 ): Promise<Release[]> => {
@@ -58,39 +86,4 @@ export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
     } catch (error) {
         throw new Error("Error. Please try again.");
     }
-};
-
-export const getProjectById = async (projectId: number): Promise<Project> => {
-    const response = await api.get(`/projects/${projectId}`);
-    const project: Project = response.data;
-    return project;
-};
-
-export const createProject = async (project: any): Promise<Project> => {
-    const response = await api.post("/projects", {
-        name: project.name,
-        description: project.description,
-        identifier: project.identifier,
-        isPublic: project.is_public,
-    });
-    console.log(response);
-    const newProject: Project = response.data.project;
-    return newProject;
-};
-
-export const editProject = async (project: any): Promise<Project> => {
-    const response = await api.patch(`/projects/${project.id}`, {
-        name: project.name,
-        description: project.description,
-        identifier: project.identifier,
-        isPublic: project.is_public,
-    });
-    const editedProject: Project = response.data.project;
-    return editedProject;
-};
-
-export const deleteProject = async (projectId: number): Promise<boolean> => {
-    const response = await api.delete(`/projects/${projectId}`);
-    console.log(response);
-    return true;
 };
