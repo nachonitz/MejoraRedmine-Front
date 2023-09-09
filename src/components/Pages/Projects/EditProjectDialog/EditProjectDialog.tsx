@@ -110,7 +110,7 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
 
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[400px]">
+            <div className="w-[600px]">
                 <DialogTitle>Edit Project</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">

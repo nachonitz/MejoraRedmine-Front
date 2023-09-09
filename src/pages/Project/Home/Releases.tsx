@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../api/models/project";
-import { Release } from "../../../api/models/release";
+import { Release, ReleaseFilter } from "../../../api/models/release";
+import { getProjectById } from "../../../api/services/projectsService";
 import {
-    getProjectById,
-    getReleasesByProjectId,
-} from "../../../api/services/projectsService";
-import { deleteRelease } from "../../../api/services/releasesService";
+    deleteRelease,
+    getReleases,
+} from "../../../api/services/releasesService";
 import CreateReleaseDialog from "../../../components/Pages/Releases/CreateReleaseDialog/CreateReleaseDialog";
 import EditReleaseDialog from "../../../components/Pages/Releases/EditReleaseDialog/EditReleaseDialog";
 import AddButton from "../../../components/Shared/Buttons/AddButton";
@@ -17,6 +17,11 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate } from "../../../lib/utils";
+
+const defaultFilters: ReleaseFilter = {
+    page: 1,
+    limit: 10,
+};
 
 const ProjectReleases = () => {
     const { projectId } = useParams();
@@ -31,25 +36,22 @@ const ProjectReleases = () => {
     const getProject = useCallback(async () => {
         try {
             if (projectId) {
-                const project = await getProjectById(parseInt(projectId));
+                const project = await getProjectById(+projectId);
                 setProject(project);
-                console.log(project);
-                return project;
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
     }, [projectId]);
 
-    const getReleases = useCallback(async () => {
+    const getAllReleases = useCallback(async () => {
         try {
             if (projectId) {
-                const releases = await getReleasesByProjectId(
-                    parseInt(projectId)
-                );
-                setReleases(releases);
-                console.log(releases);
-                return releases;
+                const { data } = await getReleases({
+                    ...defaultFilters,
+                    projectId: +projectId,
+                });
+                setReleases(data.items);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -58,20 +60,19 @@ const ProjectReleases = () => {
 
     const goToRelease = (releaseId: number) => {
         navigate(`/project/${projectId}/release/${releaseId}`);
-        console.log(projectId);
     };
 
     const handleCloseCreateRelease = (refresh?: boolean) => {
         setOpenCreateRelease(false);
         if (refresh) {
-            getReleases();
+            getAllReleases();
         }
     };
 
     const handleCloseEditRelease = (refresh?: boolean) => {
         setOpenEditRelease(false);
         if (refresh) {
-            getReleases();
+            getAllReleases();
         }
         setSelectedRelease(undefined);
     };
@@ -79,37 +80,45 @@ const ProjectReleases = () => {
     const handleCloseDeleteRelease = (refresh?: boolean) => {
         setOpenDeleteRelease(false);
         if (refresh) {
-            getReleases();
+            getAllReleases();
         }
         setSelectedRelease(undefined);
     };
 
     useEffect(() => {
-        getReleases();
+        getAllReleases();
         getProject();
-    }, [getReleases, getProject]);
+    }, [getAllReleases, getProject]);
 
     return (
         <Sidebar>
             <Page>
                 <ProjectBreadcrumbs project={project} />
-                <CreateReleaseDialog
-                    projectId={projectId}
-                    open={openCreateRelease}
-                    handleClose={handleCloseCreateRelease}
-                />
-                <EditReleaseDialog
-                    open={openEditRelease}
-                    releaseId={selectedRelease?.id}
-                    handleClose={handleCloseEditRelease}
-                />
-                <DeleteDialog
-                    open={openDeleteRelease}
-                    id={selectedRelease?.id}
-                    handleClose={handleCloseDeleteRelease}
-                    deleteFunction={deleteRelease}
-                    name={selectedRelease?.name}
-                />
+                {projectId && (
+                    <>
+                        <CreateReleaseDialog
+                            projectId={+projectId}
+                            open={openCreateRelease}
+                            handleClose={handleCloseCreateRelease}
+                        />
+                        {selectedRelease && (
+                            <>
+                                <EditReleaseDialog
+                                    open={openEditRelease}
+                                    releaseId={selectedRelease?.id}
+                                    handleClose={handleCloseEditRelease}
+                                />
+                                <DeleteDialog
+                                    open={openDeleteRelease}
+                                    id={selectedRelease?.id}
+                                    handleClose={handleCloseDeleteRelease}
+                                    deleteFunction={deleteRelease}
+                                    name={selectedRelease?.name}
+                                />
+                            </>
+                        )}
+                    </>
+                )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Releases" />
                     <AddButton

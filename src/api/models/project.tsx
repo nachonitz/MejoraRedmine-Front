@@ -8,13 +8,9 @@ interface BaseProject {
     isPublic: boolean;
 }
 
-export interface Project {
+export interface Project extends BaseProject {
     id: number;
     redmineId: number;
-    identifier: string;
-    name: string;
-    description?: string;
-    isPublic: boolean;
     createdAt: Date;
     owner: User;
 }

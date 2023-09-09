@@ -1,7 +1,8 @@
 import { ProjectFilter } from "../api/models/project";
+import { ReleaseFilter } from "../api/models/release";
 
 // Add all filters here
-type Filters = ProjectFilter;
+type Filters = ProjectFilter | ReleaseFilter;
 
 export function filterToQueryParams(filter: Filters): string {
     const obj = {} as Record<keyof Filters, string>;

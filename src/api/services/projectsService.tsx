@@ -9,7 +9,6 @@ import {
     ProjectFilter,
     UpdateProjectDto,
 } from "../models/project";
-import { Release } from "../models/release";
 import { Sprint } from "../models/sprint";
 
 export const getProjects = async (filter: ProjectFilter) => {
@@ -43,17 +42,6 @@ export const deleteProject = async (id: Project["id"]) => {
 };
 
 //TODO: mover los de abajo a los servicios correspondientes
-export const getReleasesByProjectId = async (
-    projectId: number
-): Promise<Release[]> => {
-    try {
-        const response = await api.get("/releases", { params: { projectId } });
-        const releases: Release[] = response.data.items;
-        return releases;
-    } catch (error) {
-        throw new Error("Error. Please try again.");
-    }
-};
 
 export const getSprintsByReleaseId = async (
     releaseId: number
