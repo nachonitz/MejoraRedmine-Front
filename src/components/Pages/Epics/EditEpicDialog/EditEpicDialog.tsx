@@ -10,10 +10,13 @@ import {
     TextField,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { Enumeration } from "../../../../api/models/enumeration";
+import {
+    Enumeration,
+    EnumerationType,
+} from "../../../../api/models/enumeration";
 import { Epic, UpdateEpicDto } from "../../../../api/models/epic";
+import { getEnumerations } from "../../../../api/services/enumerationsService";
 import { editEpic, getEpicById } from "../../../../api/services/epicsService";
-import { getIssuesPriorities } from "../../../../api/services/issuesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
@@ -37,14 +40,11 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
-    const getAllIssuesPriorities = () => {
-        getIssuesPriorities()
-            .then((priorities: Enumeration[]) => {
-                setPriorities(priorities);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getAllIssuesPriorities = async () => {
+        const { data } = await getEnumerations({
+            type: EnumerationType.PRIORITY,
+        });
+        setPriorities(data.items);
     };
 
     const handleGetEpic = useCallback(() => {
@@ -117,11 +117,14 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
     };
 
     useEffect(() => {
-        resetState();
-        getAllIssuesPriorities();
-        if (open && epicId) {
-            handleGetEpic();
-        }
+        const fetch = async () => {
+            resetState();
+            await getAllIssuesPriorities();
+            if (open && epicId) {
+                handleGetEpic();
+            }
+        };
+        fetch();
     }, [open, epicId, resetState, handleGetEpic]);
 
     return (

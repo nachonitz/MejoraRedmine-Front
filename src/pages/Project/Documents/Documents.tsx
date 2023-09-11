@@ -4,10 +4,10 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { MdAdd, MdUpload } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { Document } from "../../../api/models/document";
-import { Enumeration } from "../../../api/models/enumeration";
+import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import { Risk } from "../../../api/models/risk";
 import { getDocumentsByProjectId } from "../../../api/services/documentsService";
-import { getDocumentCategories } from "../../../api/services/enumerationsService";
+import { getEnumerations } from "../../../api/services/enumerationsService";
 import { deleteRisk } from "../../../api/services/risksService";
 import UploadDocumentDialog from "../../../components/Pages/Documents/UploadDocumentDialog/UploadDocumentDialog";
 import EditRiskDialog from "../../../components/Pages/Risks/EditRiskDialog/EditRiskDialog";
@@ -49,10 +49,10 @@ const Documents = () => {
     const getCategories = async () => {
         try {
             if (projectId) {
-                const categories = await getDocumentCategories();
-                setDocumentCategories(categories);
-                console.log(categories);
-                return categories;
+                const { data } = await getEnumerations({
+                    type: EnumerationType.DOCUMENT_CATEGORY,
+                });
+                setDocumentCategories(data.items);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");

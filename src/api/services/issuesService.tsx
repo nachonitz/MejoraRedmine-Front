@@ -1,5 +1,4 @@
 import { api } from "../api";
-import { Enumeration } from "../models/enumeration";
 import { Issue, IssueStatus } from "../models/issue";
 import { Tracker } from "../models/tracker";
 
@@ -13,15 +12,6 @@ export const getTrackers = async (): Promise<Tracker[]> => {
     const response = await api.get("/trackers");
     const trackers: Tracker[] = response.data;
     return trackers;
-};
-
-export const getIssuesPriorities = async (): Promise<Enumeration[]> => {
-    const response = await api.get("/enumerations", {
-        params: { type: "IssuePriority" },
-    });
-    console.log(response);
-    const priorities: Enumeration[] = response.data;
-    return priorities;
 };
 
 export const getIssuesStatuses = async (): Promise<IssueStatus[]> => {

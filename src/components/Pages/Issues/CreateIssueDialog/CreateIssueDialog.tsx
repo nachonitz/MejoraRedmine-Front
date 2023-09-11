@@ -9,22 +9,22 @@ import {
     TextField,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
-import { useEffect, useState, useContext } from "react";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEpic } from "../../../../api/services/epicsService";
-import { Epic } from "../../../../api/models/epic";
+import { useContext, useEffect, useState } from "react";
+import {
+    Enumeration,
+    EnumerationType,
+} from "../../../../api/models/enumeration";
+import { Issue, IssueStatus } from "../../../../api/models/issue";
+import { Tracker } from "../../../../api/models/tracker";
+import { getEnumerations } from "../../../../api/services/enumerationsService";
 import {
     createIssue,
-    getIssuesPriorities,
     getIssuesStatuses,
     getTrackers,
 } from "../../../../api/services/issuesService";
-import { Tracker } from "../../../../api/models/tracker";
-import { Enumeration } from "../../../../api/models/enumeration";
-import { Issue, IssueStatus } from "../../../../api/models/issue";
 import { UserContext } from "../../../../context/UserContext";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
 interface CreateIssueDialogProps {
     open: boolean;
@@ -69,10 +69,13 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
     useEffect(() => {
-        resetState();
-        getAllIssuesPriorities();
-        getAllTrackers();
-        getAllIssuesStatuses();
+        const fetch = async () => {
+            resetState();
+            await getAllIssuesPriorities();
+            getAllTrackers();
+            getAllIssuesStatuses();
+        };
+        fetch();
     }, []);
 
     const clearErrors = () => {
@@ -95,14 +98,11 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             });
     };
 
-    const getAllIssuesPriorities = () => {
-        getIssuesPriorities()
-            .then((priorities: Enumeration[]) => {
-                setPriorities(priorities);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getAllIssuesPriorities = async () => {
+        const { data } = await getEnumerations({
+            type: EnumerationType.PRIORITY,
+        });
+        setPriorities(data.items);
     };
 
     const getAllTrackers = () => {
@@ -146,11 +146,11 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
 
     const handleCreate = () => {
         clearErrors();
-        let errorFound = checkForFieldsErrors();
+        const errorFound = checkForFieldsErrors();
         if (errorFound) {
             return;
         }
-        let issue = {
+        const issue = {
             subject: name,
             description: description,
             priorityId: priorityId,

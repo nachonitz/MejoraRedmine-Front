@@ -1,8 +1,10 @@
+import { EnumerationFilter } from "../api/models/enumeration";
 import { EpicFilter } from "../api/models/epic";
 import { ProjectFilter } from "../api/models/project";
 import { ReleaseFilter } from "../api/models/release";
 import { RiskFilter } from "../api/models/risk";
 import { SprintFilter } from "../api/models/sprint";
+import { UserFilter } from "../api/models/user";
 
 // Add all filters here
 type Filters =
@@ -10,7 +12,9 @@ type Filters =
     | ReleaseFilter
     | SprintFilter
     | EpicFilter
-    | RiskFilter;
+    | RiskFilter
+    | UserFilter
+    | EnumerationFilter;
 
 export function filterToQueryParams(filter: Filters): string {
     const obj = {} as Record<keyof Filters, string>;

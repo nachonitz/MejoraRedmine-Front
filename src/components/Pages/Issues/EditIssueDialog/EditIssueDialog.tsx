@@ -10,13 +10,16 @@ import {
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { useContext, useEffect, useState } from "react";
-import { Enumeration } from "../../../../api/models/enumeration";
+import {
+    Enumeration,
+    EnumerationType,
+} from "../../../../api/models/enumeration";
 import { Issue, IssueStatus } from "../../../../api/models/issue";
 import { Tracker } from "../../../../api/models/tracker";
+import { getEnumerations } from "../../../../api/services/enumerationsService";
 import {
     editIssue,
     getIssueById,
-    getIssuesPriorities,
     getIssuesStatuses,
     getTrackers,
 } from "../../../../api/services/issuesService";
@@ -61,13 +64,16 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
     useEffect(() => {
-        resetState();
-        getAllIssuesPriorities();
-        getAllTrackers();
-        getAllIssuesStatuses();
-        if (open && issueId) {
-            handleGetIssue();
-        }
+        const fetch = async () => {
+            resetState();
+            await getAllIssuesPriorities();
+            getAllTrackers();
+            getAllIssuesStatuses();
+            if (open && issueId) {
+                handleGetIssue();
+            }
+        };
+        fetch();
     }, [open, issueId]);
 
     const clearErrors = () => {
@@ -108,14 +114,11 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             });
     };
 
-    const getAllIssuesPriorities = () => {
-        getIssuesPriorities()
-            .then((priorities: Enumeration[]) => {
-                setPriorities(priorities);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getAllIssuesPriorities = async () => {
+        const { data } = await getEnumerations({
+            type: EnumerationType.PRIORITY,
+        });
+        setPriorities(data.items);
     };
 
     const getAllTrackers = () => {

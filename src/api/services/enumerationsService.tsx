@@ -1,9 +1,18 @@
+import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
-import { Enumeration } from "../models/enumeration";
+import { ListedResponse } from "../models/common";
+import { Enumeration, EnumerationFilter } from "../models/enumeration";
 
+export const getEnumerations = async (filter: EnumerationFilter) => {
+    const { data } = await api.get<ListedResponse<Enumeration>>(
+        `/enumerations?${filterToQueryParams(filter)}`
+    );
+    return { data };
+};
 
-export const getDocumentCategories = async (): Promise<Enumeration[]> => {
-	const response = await api.get('/enumerations', { params: { "type": "DocumentCategory" } });
-	const documentCategories: Enumeration[] = response.data;
-	return documentCategories;
-}
+export const getEnumerationById = async (
+    id: Enumeration["id"]
+): Promise<Enumeration> => {
+    const { data } = await api.get<Enumeration>(`/enumerations/${id}`);
+    return data;
+};

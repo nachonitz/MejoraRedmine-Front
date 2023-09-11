@@ -35,7 +35,7 @@ export const editRelease = async (
     return data;
 };
 
-export const deleteRelease = async (id: number): Promise<Release> => {
+export const deleteRelease = async (id: Release["id"]): Promise<Release> => {
     const { data } = await api.delete(`/releases/${id}`);
     return data;
 };

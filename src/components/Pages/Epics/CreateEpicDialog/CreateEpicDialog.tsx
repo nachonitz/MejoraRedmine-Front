@@ -10,12 +10,15 @@ import {
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { useCallback, useEffect, useState } from "react";
-import { Enumeration } from "../../../../api/models/enumeration";
+import {
+    Enumeration,
+    EnumerationType,
+} from "../../../../api/models/enumeration";
 import { CreateEpicDto, Epic } from "../../../../api/models/epic";
 import { createEpic } from "../../../../api/services/epicsService";
-import { getIssuesPriorities } from "../../../../api/services/issuesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { getEnumerations } from "../../../../api/services/enumerationsService";
 
 interface CreateEpicDialogProps {
     open: boolean;
@@ -40,14 +43,11 @@ const CreateEpicDialog = ({
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
-    const getAllIssuesPriorities = useCallback(() => {
-        getIssuesPriorities()
-            .then((priorities: Enumeration[]) => {
-                setPriorities(priorities);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getAllIssuesPriorities = useCallback(async () => {
+        const { data } = await getEnumerations({
+            type: EnumerationType.PRIORITY,
+        });
+        setPriorities(data.items);
     }, []);
 
     const clearErrors = () => {
