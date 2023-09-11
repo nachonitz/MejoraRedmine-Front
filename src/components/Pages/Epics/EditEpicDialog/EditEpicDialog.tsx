@@ -9,16 +9,16 @@ import {
     Select,
     TextField,
 } from "@mui/material";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
-import { useEffect, useState } from "react";
-import { editEpic, getEpicById } from "../../../../api/services/epicsService";
-import { Epic } from "../../../../api/models/epic";
-import { getIssuesPriorities } from "../../../../api/services/issuesService";
+import { useCallback, useEffect, useState } from "react";
 import { Enumeration } from "../../../../api/models/enumeration";
+import { Epic, UpdateEpicDto } from "../../../../api/models/epic";
+import { editEpic, getEpicById } from "../../../../api/services/epicsService";
+import { getIssuesPriorities } from "../../../../api/services/issuesService";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
 interface EditEpicDialogProps {
-    epicId?: number;
+    epicId: number;
     open: boolean;
     handleClose: (refresh?: boolean) => void;
 }
@@ -30,7 +30,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
 }) => {
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [priorityId, setPriorityId] = useState<number>();
     const [errorName, setErrorName] = useState(false);
     const [errorDescription, setErrorDescription] = useState(false);
@@ -47,19 +47,10 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
             });
     };
 
-    useEffect(() => {
-        resetState();
-        getAllIssuesPriorities();
-        if (open && epicId) {
-            handleGetEpic();
-        }
-    }, [open, epicId]);
-
-    const handleGetEpic = () => {
+    const handleGetEpic = useCallback(() => {
         if (epicId) {
             getEpicById(epicId)
                 .then((epic: Epic) => {
-                    console.log(epic);
                     setName(epic.name);
                     setDescription(epic.description);
                     setPriorityId(epic.priority.id);
@@ -68,7 +59,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                     console.log(error);
                 });
         }
-    };
+    }, [epicId]);
 
     const clearErrors = () => {
         setErrorName(false);
@@ -100,33 +91,38 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
         if (errorFound) {
             return;
         }
-        const epic = {
-            id: epicId,
+        const epic: UpdateEpicDto = {
             name: name,
             description: description,
             priorityId: priorityId,
         };
-        editEpic(epic)
-            .then(() => {
-                handleCloseModal(true);
-            })
+        editEpic(epicId, epic)
+            .then(() => handleCloseModal(true))
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
             });
     };
 
-    const resetState = () => {
+    const resetState = useCallback(() => {
         setName("");
         setDescription("");
         setPriorityId(undefined);
         clearErrors();
-    };
+    }, []);
 
     const handleCloseModal = (refresh?: boolean) => {
         handleClose(refresh);
         resetState();
     };
+
+    useEffect(() => {
+        resetState();
+        getAllIssuesPriorities();
+        if (open && epicId) {
+            handleGetEpic();
+        }
+    }, [open, epicId, resetState, handleGetEpic]);
 
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>

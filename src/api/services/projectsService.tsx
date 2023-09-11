@@ -1,7 +1,6 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { Epic } from "../models/epic";
 import { Issue } from "../models/issue";
 import {
     CreateProjectDto,
@@ -9,7 +8,6 @@ import {
     ProjectFilter,
     UpdateProjectDto,
 } from "../models/project";
-import { Sprint } from "../models/sprint";
 
 export const getProjects = async (filter: ProjectFilter) => {
     const { data } = await api.get<ListedResponse<Project>>(
@@ -42,28 +40,6 @@ export const deleteProject = async (id: Project["id"]) => {
 };
 
 //TODO: mover los de abajo a los servicios correspondientes
-
-export const getSprintsByReleaseId = async (
-    releaseId: number
-): Promise<Sprint[]> => {
-    try {
-        const response = await api.get("/sprints", { params: { releaseId } });
-        const sprints: Sprint[] = response.data.items;
-        return sprints;
-    } catch (error) {
-        throw new Error("Error. Please try again.");
-    }
-};
-
-export const getEpicsBySprintId = async (sprintId: number): Promise<Epic[]> => {
-    try {
-        const response = await api.get("/epics", { params: { sprintId } });
-        const epics: Epic[] = response.data.items;
-        return epics;
-    } catch (error) {
-        throw new Error("Error. Please try again.");
-    }
-};
 
 export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
     try {

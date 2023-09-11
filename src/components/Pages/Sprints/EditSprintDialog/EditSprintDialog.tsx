@@ -8,7 +8,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
-import { Sprint } from "../../../../api/models/sprint";
+import { Sprint, UpdateSprintDto } from "../../../../api/models/sprint";
 import {
     editSprint,
     getSprintById,
@@ -17,7 +17,7 @@ import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
 interface EditSprintDialogProps {
-    sprintId?: number;
+    sprintId: number;
     open: boolean;
     handleClose: (refresh?: boolean) => void;
 }
@@ -28,11 +28,10 @@ const EditSprintDialog = ({
     sprintId,
 }: EditSprintDialogProps) => {
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [startDate, setStartDate] = useState<any>(null);
     const [endDate, setEndDate] = useState<any>(null);
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
@@ -54,7 +53,6 @@ const EditSprintDialog = ({
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorStartDate(false);
         setErrorEndDate(false);
         setServerErrors([]);
@@ -64,10 +62,6 @@ const EditSprintDialog = ({
         let errorFound = false;
         if (!name) {
             setErrorName(true);
-            errorFound = true;
-        }
-        if (!description) {
-            setErrorDescription(true);
             errorFound = true;
         }
         if (!startDate || !new Date(startDate).getTime()) {
@@ -87,14 +81,13 @@ const EditSprintDialog = ({
         if (errorFound) {
             return;
         }
-        const sprint = {
-            id: sprintId,
+        const sprint: UpdateSprintDto = {
             name: name,
             description: description,
             startDate: startDate,
             endDate: endDate,
         };
-        editSprint(sprint)
+        editSprint(sprintId, sprint)
             .then(() => {
                 handleCloseModal(true);
             })
@@ -141,7 +134,6 @@ const EditSprintDialog = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             value={description}
                             className="w-full"
                             multiline
@@ -152,13 +144,13 @@ const EditSprintDialog = ({
                             variant="outlined"
                         />
                         <DatePicker
-                            onChange={(date: any) => setStartDate(date)}
+                            onChange={(date) => setStartDate(date)}
                             slotProps={{ textField: { error: errorStartDate } }}
                             value={startDate}
                             label="Start Date"
                         />
                         <DatePicker
-                            onChange={(date: any) => setEndDate(date)}
+                            onChange={(date) => setEndDate(date)}
                             slotProps={{ textField: { error: errorEndDate } }}
                             minDate={startDate}
                             value={endDate}

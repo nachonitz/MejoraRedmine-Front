@@ -5,18 +5,18 @@ import {
     DialogTitle,
     TextField,
 } from "@mui/material";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
-import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useState } from "react";
+import { CreateSprintDto } from "../../../../api/models/sprint";
 import { createSprint } from "../../../../api/services/sprintsService";
-import { Sprint } from "../../../../api/models/sprint";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
 interface CreateSprintDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
-    projectId?: string;
-    releaseId?: string;
+    projectId: number;
+    releaseId: number;
 }
 
 const CreateSprintDialog = ({
@@ -26,18 +26,16 @@ const CreateSprintDialog = ({
     releaseId,
 }: CreateSprintDialogProps) => {
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [startDate, setStartDate] = useState<any>(null);
     const [endDate, setEndDate] = useState<any>(null);
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorStartDate(false);
         setErrorEndDate(false);
         setServerErrors([]);
@@ -47,10 +45,6 @@ const CreateSprintDialog = ({
         let errorFound = false;
         if (!name) {
             setErrorName(true);
-            errorFound = true;
-        }
-        if (!description) {
-            setErrorDescription(true);
             errorFound = true;
         }
         if (!startDate || !new Date(startDate).getTime()) {
@@ -70,19 +64,16 @@ const CreateSprintDialog = ({
         if (errorFound) {
             return;
         }
-        const sprint = {
+        const sprint: CreateSprintDto = {
             name: name,
             description: description,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
-            projectId: projectId,
-            releaseId: releaseId,
+            releaseId,
+            projectId,
         };
         createSprint(sprint)
-            .then((sprint: Sprint) => {
-                console.log(sprint);
-                handleCloseModal(true);
-            })
+            .then(() => handleCloseModal(true))
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
@@ -118,7 +109,6 @@ const CreateSprintDialog = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             className="w-full"
                             multiline
                             minRows={"2"}
@@ -128,12 +118,12 @@ const CreateSprintDialog = ({
                             variant="outlined"
                         />
                         <DatePicker
-                            onChange={(date: any) => setStartDate(date)}
+                            onChange={(date) => setStartDate(date)}
                             slotProps={{ textField: { error: errorStartDate } }}
                             label="Start Date"
                         />
                         <DatePicker
-                            onChange={(date: any) => setEndDate(date)}
+                            onChange={(date) => setEndDate(date)}
                             slotProps={{ textField: { error: errorEndDate } }}
                             minDate={startDate}
                             label="End Date"

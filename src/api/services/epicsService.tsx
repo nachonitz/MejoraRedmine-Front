@@ -1,36 +1,31 @@
+import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
-import { Epic } from "../models/epic";
+import { ListedResponse } from "../models/common";
+import { CreateEpicDto, Epic, EpicFilter, UpdateEpicDto } from "../models/epic";
 
-export const getEpicById = async (epicId: number): Promise<Epic> => {
-    const response = await api.get(`/epics/${epicId}`);
-    const epic: Epic = response.data;
-    return epic;
+export const getEpics = async (filter: EpicFilter) => {
+    const { data } = await api.get<ListedResponse<Epic>>(
+        `/epics?${filterToQueryParams(filter)}`
+    );
+    return { data };
 };
 
-export const createEpic = async (epic: any): Promise<Epic> => {
-    const response = await api.post("/epics", {
-        name: epic.name,
-        description: epic.description,
-        priorityId: epic.priorityId,
-        projectId: epic.projectId,
-        releaseId: epic.releaseId,
-        sprintId: epic.sprintId,
-    });
-    const newEpic: Epic = response.data;
-    return newEpic;
+export const getEpicById = async (id: Epic["id"]): Promise<Epic> => {
+    const { data } = await api.get<Epic>(`/epics/${id}`);
+    return data;
 };
 
-export const editEpic = async (epic: any): Promise<Epic> => {
-    const response = await api.patch(`/epics/${epic.id}`, {
-        name: epic.name,
-        description: epic.description,
-        priorityId: epic.priorityId,
-    });
-    const editedEpic: Epic = response.data.epic;
-    return editedEpic;
+export const createEpic = async (epic: CreateEpicDto) => {
+    const { data } = await api.post("/epics", epic);
+    return data;
 };
 
-export const deleteEpic = async (epicId: number): Promise<boolean> => {
-    const response = await api.delete(`/epics/${epicId}`);
-    return true;
+export const editEpic = async (id: Epic["id"], epic: UpdateEpicDto) => {
+    const { data } = await api.patch(`/epics/${id}`, epic);
+    return data;
+};
+
+export const deleteEpic = async (id: Epic["id"]): Promise<boolean> => {
+    const { data } = await api.delete(`/epics/${id}`);
+    return data;
 };

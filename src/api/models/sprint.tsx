@@ -1,12 +1,36 @@
+import { PaginationFilters } from "./common";
 import { Project } from "./project";
 import { Release } from "./release";
 
-export interface Sprint {
-  id: number;
-  name: string;
-  description: string;
-  startDate: Date;
-  endDate: Date;
-  release: Release;
-  project: Project;
+interface BaseSprint {
+    name: string;
+    description?: string;
+    startDate: Date;
+    endDate: Date;
+}
+
+export interface Sprint extends BaseSprint {
+    id: number;
+    release: Release;
+    project: Project;
+    progress: number;
+}
+
+export interface CreateSprintDto extends BaseSprint {
+    releaseId: number;
+    projectId: number;
+}
+
+export type UpdateSprintDto = Partial<CreateSprintDto>;
+
+type AscDesc = "asc" | "desc";
+type FilterOrder = `${keyof Sprint}:${AscDesc}`;
+
+export interface SprintFilter extends PaginationFilters {
+    name?: string;
+    projectId?: number;
+    releaseId?: number;
+    startDate?: Date;
+    endDate?: Date;
+    order?: FilterOrder;
 }

@@ -11,6 +11,7 @@ interface BaseRelease {
 export interface Release extends BaseRelease {
     id: number;
     project: Project;
+    progress: number;
 }
 
 export interface CreateReleaseDto extends BaseRelease {

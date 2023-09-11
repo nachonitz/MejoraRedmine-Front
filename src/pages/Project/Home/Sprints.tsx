@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Release } from "../../../api/models/release";
-import { Sprint } from "../../../api/models/sprint";
-import { getSprintsByReleaseId } from "../../../api/services/projectsService";
+import { Sprint, SprintFilter } from "../../../api/models/sprint";
 import { getReleaseById } from "../../../api/services/releasesService";
-import { deleteSprint } from "../../../api/services/sprintsService";
+import { deleteSprint, getSprints } from "../../../api/services/sprintsService";
 import CreateSprintDialog from "../../../components/Pages/Sprints/CreateSprintDialog/CreateSprintDialog";
 import EditSprintDialog from "../../../components/Pages/Sprints/EditSprintDialog/EditSprintDialog";
 import AddButton from "../../../components/Shared/Buttons/AddButton";
@@ -15,6 +14,11 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate } from "../../../lib/utils";
+
+const defaultFilters: SprintFilter = {
+    page: 1,
+    limit: 10,
+};
 
 const ProjectSprints = () => {
     const { projectId, releaseId } = useParams();
@@ -39,15 +43,14 @@ const ProjectSprints = () => {
         }
     }, [releaseId]);
 
-    const getSprints = useCallback(async () => {
+    const getAllSprints = useCallback(async () => {
         try {
             if (releaseId) {
-                const sprints = await getSprintsByReleaseId(
-                    parseInt(releaseId)
-                );
-                setSprints(sprints);
-                console.log(sprints);
-                return sprints;
+                const { data } = await getSprints({
+                    ...defaultFilters,
+                    releaseId: +releaseId,
+                });
+                setSprints(data.items);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -62,14 +65,14 @@ const ProjectSprints = () => {
     const handleCloseCreateSprint = (refresh?: boolean) => {
         setOpenCreateSprint(false);
         if (refresh) {
-            getSprints();
+            getAllSprints();
         }
     };
 
     const handleCloseEditSprint = (refresh?: boolean) => {
         setOpenEditSprint(false);
         if (refresh) {
-            getSprints();
+            getAllSprints();
         }
         setSelectedSprint(undefined);
     };
@@ -77,15 +80,15 @@ const ProjectSprints = () => {
     const handleCloseDeleteSprint = (refresh?: boolean) => {
         setOpenDeleteSprint(false);
         if (refresh) {
-            getSprints();
+            getAllSprints();
         }
         setSelectedSprint(undefined);
     };
 
     useEffect(() => {
-        getSprints();
+        getAllSprints();
         getRelease();
-    }, [getSprints, getRelease]);
+    }, [getAllSprints, getRelease]);
 
     return (
         <Sidebar>
@@ -94,24 +97,31 @@ const ProjectSprints = () => {
                     project={release?.project}
                     release={release}
                 />
-                <CreateSprintDialog
-                    projectId={projectId}
-                    releaseId={releaseId}
-                    open={openCreateSprint}
-                    handleClose={handleCloseCreateSprint}
-                />
-                <EditSprintDialog
-                    open={openEditSprint}
-                    sprintId={selectedSprint?.id}
-                    handleClose={handleCloseEditSprint}
-                />
-                <DeleteDialog
-                    open={openDeleteSprint}
-                    id={selectedSprint?.id}
-                    handleClose={handleCloseDeleteSprint}
-                    deleteFunction={deleteSprint}
-                    name={selectedSprint?.name}
-                />
+                {releaseId && projectId && (
+                    <CreateSprintDialog
+                        projectId={+projectId}
+                        releaseId={+releaseId}
+                        open={openCreateSprint}
+                        handleClose={handleCloseCreateSprint}
+                    />
+                )}
+                {selectedSprint && (
+                    <>
+                        <EditSprintDialog
+                            open={openEditSprint}
+                            sprintId={selectedSprint.id}
+                            handleClose={handleCloseEditSprint}
+                        />
+                        <DeleteDialog
+                            open={openDeleteSprint}
+                            id={selectedSprint.id}
+                            handleClose={handleCloseDeleteSprint}
+                            deleteFunction={deleteSprint}
+                            name={selectedSprint.name}
+                        />
+                    </>
+                )}
+
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Sprints" />
                     <AddButton
