@@ -12,8 +12,8 @@ import {
     arrayMove,
     sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { Issue } from "../../../api/models/issue";
-import { getAllIssues } from "../../../api/services/issuesService";
+import { Issue, IssueStatus } from "../../../api/models/issue";
+import { changeIssueStatus, getAllIssues, getIssuesStatuses } from "../../../api/services/issuesService";
 import IssuesColumn from "../../../components/Pages/Backlog/IssuesColumn/IssuesColumn";
 
 export type Column = {
@@ -24,9 +24,6 @@ export type Column = {
 const Backlog = () => {
     const { projectId } = useParams();
     const [issues, setIssues] = useState<Issue[]>([]);
-    // const [toDoIssues, setToDoIssues] = useState<Issue[]>([]);
-    // const [inProgressIssues, setInProgressIssues] = useState<Issue[]>([]);
-    // const [doneIssues, setDoneIssues] = useState<Issue[]>([]);
     const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
     const [columns, setColumns] = useState<Column>(
         {
@@ -34,8 +31,13 @@ const Backlog = () => {
             "inProgress": [],
             "done": []
         }
-    );
-    // const [boardSections, setBoardSections] = useState<BoardSectionsType>(initialBoardSections);
+        );
+    const [statuses, setStatuses] = useState<IssueStatus[]>([]);
+    const columnsStatuses = {
+        "toDo": "New",
+        "inProgress": "In Progress",
+        "done": "Resolved"
+    };
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -46,7 +48,29 @@ const Backlog = () => {
 
     useEffect(() => {
         getIssues();
+        getAllIssuesStatuses();
     }, []);
+
+    const getAllIssuesStatuses = () => {
+        getIssuesStatuses().then((statuses: IssueStatus[]) => {
+            setStatuses(statuses);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    const changeStatus = (issue: Issue, statusId: number) => {
+        changeIssueStatus(issue.id, statusId).then((newIssue: Issue) => {
+            console.log(newIssue);
+            issue.status.id = newIssue?.status.id;
+            issue.status.name = newIssue?.status?.name;
+            issue.status.is_closed = newIssue?.status?.is_closed;
+            console.log(issue);
+        }
+        ).catch((error) => {
+            console.log(error);
+        });
+    }
 
     const getColumn = (id: string) => {
         if (id in columns) {
@@ -61,21 +85,17 @@ const Backlog = () => {
         return column;
     }
 
-
     const getIssues = async () => {
         try {
             if (projectId) {
                 const issues = await getAllIssues(parseInt(projectId));
                 setColumns(
                     {
-                        "toDo": issues.filter((issue) => issue.status.name === "New"),
-                        "inProgress": issues.filter((issue) => issue.status.name === "In Progress"),
-                        "done": issues.filter((issue) => issue.status.name === "Resolved")
+                        "toDo": issues.filter((issue) => issue.status.name === columnsStatuses.toDo),
+                        "inProgress": issues.filter((issue) => issue.status.name === columnsStatuses.inProgress),
+                        "done": issues.filter((issue) => issue.status.name === columnsStatuses.done)
                     }
                 );
-                // issues.filter((issue) => issue.status.name === "New"));
-                // setInProgressIssues(issues.filter((issue) => issue.status.name === "In Progress"));
-                // setDoneIssues(issues.filter((issue) => issue.status.name === "Resolved"));
                 setIssues(issues);
                 return issues;
             }
@@ -89,8 +109,8 @@ const Backlog = () => {
     };
 
     const handleDragOver = ({ active, over }: DragOverEvent) => {
-        let activeColumnName = getColumn(active.id.toString() as string);
-        let overColumnName = getColumn(over?.id.toString() as string);
+        let activeColumnName: string = getColumn(active.id.toString() as string);
+        let overColumnName: string = getColumn(over?.id.toString() as string);
     
         if (!activeColumnName || !overColumnName || activeColumnName === overColumnName) {
           return;
@@ -102,6 +122,7 @@ const Backlog = () => {
         const activeIndex = activeItems.findIndex(
             (issue: Issue) => issue.id === active.id
         );
+        let activeIssue = activeItems.find((issue: Issue) => issue.id === active.id);
 
         const overIndex = overItems.findIndex((issue: Issue) => issue.id !== over?.id);
         
@@ -113,6 +134,10 @@ const Backlog = () => {
             [activeColumnName]: newActiveColumn,
             [overColumnName]: newOverColumn
         }));
+
+        if (activeIssue) {
+            changeStatus(activeIssue, statuses.find((status) => status.name === columnsStatuses[overColumnName])?.id as number);
+        }
     }
 
     const handleDragEnd = ({ active, over }: DragEndEvent) => {

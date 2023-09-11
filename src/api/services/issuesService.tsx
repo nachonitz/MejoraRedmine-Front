@@ -73,3 +73,11 @@ export const deleteIssue = async (issueId: number): Promise<boolean> => {
     const response = await api.delete(`/issues/${issueId}`);
     return true;
 };
+
+export const changeIssueStatus = async (issueId: number, statusId: number): Promise<Issue> => {
+    const response = await api.patch(`/issues/${issueId}`, {
+        statusId: statusId,
+    });
+    const editedIssue: Issue = response.data.issue;
+    return editedIssue;
+}
