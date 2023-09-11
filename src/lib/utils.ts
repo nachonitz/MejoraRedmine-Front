@@ -1,10 +1,16 @@
 import { EpicFilter } from "../api/models/epic";
 import { ProjectFilter } from "../api/models/project";
 import { ReleaseFilter } from "../api/models/release";
+import { RiskFilter } from "../api/models/risk";
 import { SprintFilter } from "../api/models/sprint";
 
 // Add all filters here
-type Filters = ProjectFilter | ReleaseFilter | SprintFilter | EpicFilter;
+type Filters =
+    | ProjectFilter
+    | ReleaseFilter
+    | SprintFilter
+    | EpicFilter
+    | RiskFilter;
 
 export function filterToQueryParams(filter: Filters): string {
     const obj = {} as Record<keyof Filters, string>;

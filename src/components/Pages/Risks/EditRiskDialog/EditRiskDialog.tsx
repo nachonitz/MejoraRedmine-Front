@@ -9,14 +9,19 @@ import {
     Select,
     TextField,
 } from "@mui/material";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useCallback, useEffect, useState } from "react";
-import { Risk } from "../../../../api/models/risk";
+import {
+    Risk,
+    RiskEnumeration,
+    RiskStatus,
+    UpdateRiskDto,
+} from "../../../../api/models/risk";
 import { editRisk, getRiskById } from "../../../../api/services/risksService";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 
 interface EditRiskDialogProps {
-    riskId?: number;
+    riskId: number;
     open: boolean;
     handleClose: (refresh?: boolean) => void;
     projectId?: number;
@@ -29,12 +34,13 @@ const EditRiskDialog = ({
     projectId,
 }: EditRiskDialogProps) => {
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [probability, setProbability] = useState<string>("");
-    const [impact, setImpact] = useState<string>("");
-    const [status, setStatus] = useState<string>("");
+    const [description, setDescription] = useState<string | undefined>("");
+    const [probability, setProbability] = useState<RiskEnumeration>(
+        RiskEnumeration.LOW
+    );
+    const [impact, setImpact] = useState<RiskEnumeration>(RiskEnumeration.LOW);
+    const [status, setStatus] = useState<RiskStatus>(RiskStatus.OPEN);
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorProbability, setErrorProbability] = useState(false);
     const [errorImpact, setErrorImpact] = useState(false);
     const [errorStatus, setErrorStatus] = useState(false);
@@ -44,7 +50,6 @@ const EditRiskDialog = ({
         if (riskId) {
             getRiskById(riskId)
                 .then((risk: Risk) => {
-                    console.log(risk);
                     setName(risk.name);
                     setDescription(risk.description);
                     setProbability(risk.probability);
@@ -59,7 +64,6 @@ const EditRiskDialog = ({
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorProbability(false);
         setErrorImpact(false);
         setErrorStatus(false);
@@ -72,19 +76,15 @@ const EditRiskDialog = ({
             setErrorName(true);
             errorFound = true;
         }
-        if (!description) {
-            setErrorDescription(true);
-            errorFound = true;
-        }
-        if (!probability || probability === "") {
+        if (!probability) {
             setErrorProbability(true);
             errorFound = true;
         }
-        if (!impact || impact === "") {
+        if (!impact) {
             setErrorImpact(true);
             errorFound = true;
         }
-        if (!status || status === "") {
+        if (!status) {
             setErrorStatus(true);
             errorFound = true;
         }
@@ -97,8 +97,7 @@ const EditRiskDialog = ({
         if (errorFound) {
             return;
         }
-        const risk = {
-            id: riskId,
+        const risk: UpdateRiskDto = {
             name: name,
             description: description,
             probability: probability,
@@ -106,7 +105,7 @@ const EditRiskDialog = ({
             impact: impact,
             status: status,
         };
-        editRisk(risk)
+        editRisk(riskId, risk)
             .then(() => {
                 handleCloseModal(true);
             })
@@ -119,9 +118,9 @@ const EditRiskDialog = ({
     const resetState = useCallback(() => {
         setName("");
         setDescription("");
-        setProbability("");
-        setImpact("");
-        setStatus("");
+        setProbability(RiskEnumeration.LOW);
+        setImpact(RiskEnumeration.LOW);
+        setStatus(RiskStatus.OPEN);
         clearErrors();
     }, []);
 
@@ -154,7 +153,6 @@ const EditRiskDialog = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             value={description}
                             className="w-full"
                             multiline
@@ -176,12 +174,20 @@ const EditRiskDialog = ({
                                 value={probability}
                                 label="Probability"
                                 error={errorProbability}
-                                onChange={(e) => setProbability(e.target.value)}
+                                onChange={(e) =>
+                                    setProbability(
+                                        e.target.value as RiskEnumeration
+                                    )
+                                }
                                 defaultValue={probability}
                             >
-                                <MenuItem value="Low">Low</MenuItem>
-                                <MenuItem value="Medium">Medium</MenuItem>
-                                <MenuItem value="High">High</MenuItem>
+                                {Object.entries(RiskEnumeration).map(
+                                    ([key, value]) => (
+                                        <MenuItem key={key} value={value}>
+                                            {value}
+                                        </MenuItem>
+                                    )
+                                )}
                             </Select>
                         </FormControl>
                         <FormControl>
@@ -193,12 +199,18 @@ const EditRiskDialog = ({
                                 value={impact}
                                 label="Impact"
                                 error={errorImpact}
-                                onChange={(e) => setImpact(e.target.value)}
+                                onChange={(e) =>
+                                    setImpact(e.target.value as RiskEnumeration)
+                                }
                                 defaultValue={impact}
                             >
-                                <MenuItem value="Low">Low</MenuItem>
-                                <MenuItem value="Medium">Medium</MenuItem>
-                                <MenuItem value="High">High</MenuItem>
+                                {Object.entries(RiskEnumeration).map(
+                                    ([key, value]) => (
+                                        <MenuItem key={key} value={value}>
+                                            {value}
+                                        </MenuItem>
+                                    )
+                                )}
                             </Select>
                         </FormControl>
                         <FormControl>
@@ -210,11 +222,18 @@ const EditRiskDialog = ({
                                 value={status}
                                 label="Status"
                                 error={errorStatus}
-                                onChange={(e) => setStatus(e.target.value)}
+                                onChange={(e) =>
+                                    setStatus(e.target.value as RiskStatus)
+                                }
                                 defaultValue={status}
                             >
-                                <MenuItem value="Open">Open</MenuItem>
-                                <MenuItem value="Closed">Closed</MenuItem>
+                                {Object.entries(RiskStatus).map(
+                                    ([key, value]) => (
+                                        <MenuItem key={key} value={value}>
+                                            {value}
+                                        </MenuItem>
+                                    )
+                                )}
                             </Select>
                         </FormControl>
                         {serverErrors && serverErrors.length > 0 && (

@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Risk } from "../../../api/models/risk";
-import {
-    deleteRisk,
-    getRisksByProjectId,
-} from "../../../api/services/risksService";
+import { RISK_COLOR, Risk, RiskFilter } from "../../../api/models/risk";
+import { deleteRisk, getRisks } from "../../../api/services/risksService";
 import CreateRiskDialog from "../../../components/Pages/Risks/CreateRiskDialog/CreateRiskDialog";
 import EditRiskDialog from "../../../components/Pages/Risks/EditRiskDialog/EditRiskDialog";
 import AddButton from "../../../components/Shared/Buttons/AddButton";
@@ -15,6 +12,11 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate } from "../../../lib/utils";
 
+const defaultFilters: RiskFilter = {
+    page: 1,
+    limit: 10,
+};
+
 const Risks = () => {
     const { projectId } = useParams();
     const [risks, setRisks] = useState<Risk[]>([]);
@@ -23,30 +25,14 @@ const Risks = () => {
     const [openDeleteRisk, setOpenDeleteRisk] = useState(false);
     const [selectedRisk, setSelectedRisk] = useState<Risk>();
 
-    const getColor = (status: string) => {
-        switch (status) {
-            case "High":
-                return "#E80000";
-            case "Medium":
-                return "#FFAA04";
-            case "Low":
-                return "#43B000";
-            case "Very Low":
-                return "#338800";
-            case "Very High":
-                return "#c30000";
-            default:
-                return "#000000";
-        }
-    };
-
-    const getRisks = useCallback(async () => {
+    const getAllRisks = useCallback(async () => {
         try {
             if (projectId) {
-                const risks = await getRisksByProjectId(parseInt(projectId));
-                setRisks(risks);
-                console.log(risks);
-                return risks;
+                const { data } = await getRisks({
+                    ...defaultFilters,
+                    projectId: +projectId,
+                });
+                setRisks(data.items);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -56,14 +42,14 @@ const Risks = () => {
     const handleCloseCreateRisk = (refresh?: boolean) => {
         setOpenCreateRisk(false);
         if (refresh) {
-            getRisks();
+            getAllRisks();
         }
     };
 
     const handleCloseEditRisk = (refresh?: boolean) => {
         setOpenEditRisk(false);
         if (refresh) {
-            getRisks();
+            getAllRisks();
         }
         setSelectedRisk(undefined);
     };
@@ -71,34 +57,40 @@ const Risks = () => {
     const handleCloseDeleteRisk = (refresh?: boolean) => {
         setOpenDeleteRisk(false);
         if (refresh) {
-            getRisks();
+            getAllRisks();
         }
         setSelectedRisk(undefined);
     };
 
     useEffect(() => {
-        getRisks();
-    }, [getRisks]);
+        getAllRisks();
+    }, [getAllRisks]);
     return (
         <Sidebar>
             <Page>
-                <CreateRiskDialog
-                    projectId={projectId}
-                    open={openCreateRisk}
-                    handleClose={handleCloseCreateRisk}
-                />
-                <EditRiskDialog
-                    open={openEditRisk}
-                    riskId={selectedRisk?.id}
-                    handleClose={handleCloseEditRisk}
-                />
-                <DeleteDialog
-                    open={openDeleteRisk}
-                    id={selectedRisk?.id}
-                    handleClose={handleCloseDeleteRisk}
-                    deleteFunction={deleteRisk}
-                    name={selectedRisk?.name}
-                />
+                {projectId && (
+                    <CreateRiskDialog
+                        projectId={projectId}
+                        open={openCreateRisk}
+                        handleClose={handleCloseCreateRisk}
+                    />
+                )}
+                {selectedRisk && (
+                    <>
+                        <EditRiskDialog
+                            open={openEditRisk}
+                            riskId={selectedRisk.id}
+                            handleClose={handleCloseEditRisk}
+                        />
+                        <DeleteDialog
+                            open={openDeleteRisk}
+                            id={selectedRisk.id}
+                            handleClose={handleCloseDeleteRisk}
+                            deleteFunction={deleteRisk}
+                            name={selectedRisk.name}
+                        />
+                    </>
+                )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Risks" />
                     <AddButton
@@ -133,14 +125,16 @@ const Risks = () => {
                                     </td>
                                     <td
                                         style={{
-                                            color: getColor(risk.probability),
+                                            color: RISK_COLOR[risk.probability],
                                         }}
                                         className="text-center"
                                     >
                                         {risk.probability}
                                     </td>
                                     <td
-                                        style={{ color: getColor(risk.impact) }}
+                                        style={{
+                                            color: RISK_COLOR[risk.impact],
+                                        }}
                                         className="text-center"
                                     >
                                         {risk.impact}
@@ -149,9 +143,8 @@ const Risks = () => {
                                         <div className="w-full flex justify-center">
                                             <div
                                                 style={{
-                                                    backgroundColor: getColor(
-                                                        risk.level
-                                                    ),
+                                                    backgroundColor:
+                                                        RISK_COLOR[risk.level],
                                                 }}
                                                 className="rounded-[18px] p-1 bg-red-500 text-white w-[120px]"
                                             >

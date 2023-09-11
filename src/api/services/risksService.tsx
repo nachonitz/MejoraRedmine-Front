@@ -1,33 +1,34 @@
+import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
-import { Risk } from "../models/risk";
+import { ListedResponse } from "../models/common";
+import { CreateRiskDto, Risk, RiskFilter, UpdateRiskDto } from "../models/risk";
 
-export const getRisksByProjectId = async (
-  projectId: number
-): Promise<Risk[]> => {
-  const response = await api.get("/risks", { params: { projectId } });
-  const risks: Risk[] = response.data.items;
-  return risks;
+export const getRisks = async (filter: RiskFilter) => {
+    const { data } = await api.get<ListedResponse<Risk>>(
+        `/risks?${filterToQueryParams(filter)}`
+    );
+    return { data };
 };
 
-export const createRisk = async (risk: any): Promise<Risk> => {
-  const response = await api.post("/risks", risk);
-  const newRisk: Risk = response.data;
-  return newRisk;
+export const getRiskById = async (id: number): Promise<Risk> => {
+    const { data } = await api.get<Risk>(`/risks/${id}`);
+    return data;
 };
 
-export const getRiskById = async (riskId: number): Promise<Risk> => {
-  const response = await api.get(`/risks/${riskId}`);
-  const risk: Risk = response.data;
-  return risk;
+export const createRisk = async (risk: CreateRiskDto) => {
+    const { data } = await api.post("/risks", risk);
+    return data;
 };
 
-export const editRisk = async (risk: any): Promise<Risk> => {
-  const response = await api.patch(`/risks/${risk.id}`, risk);
-  const editedRisk: Risk = response.data.risk;
-  return editedRisk;
+export const editRisk = async (
+    id: Risk["id"],
+    risk: UpdateRiskDto
+): Promise<Risk> => {
+    const { data } = await api.patch(`/risks/${id}`, risk);
+    return data;
 };
 
-export const deleteRisk = async (riskId: number): Promise<boolean> => {
-  const response = await api.delete(`/risks/${riskId}`);
-  return true;
+export const deleteRisk = async (id: number) => {
+    const { data } = await api.delete(`/risks/${id}`);
+    return data;
 };
