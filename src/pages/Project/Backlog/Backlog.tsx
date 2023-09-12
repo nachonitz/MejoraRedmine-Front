@@ -15,6 +15,7 @@ import {
 import { Issue, IssueStatus } from "../../../api/models/issue";
 import { changeIssueStatus, getAllIssues, getIssuesStatuses } from "../../../api/services/issuesService";
 import IssuesColumn from "../../../components/Pages/Backlog/IssuesColumn/IssuesColumn";
+import { Tab, Tabs } from "@mui/material";
 
 export type Column = {
     [name: string]: Issue[];
@@ -31,12 +32,18 @@ const Backlog = () => {
             "inProgress": [],
             "done": []
         }
-        );
+    );
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
     const columnsStatuses = {
         "toDo": "New",
         "inProgress": "In Progress",
         "done": "Resolved"
+    };
+
+    const [tab, setTab] = useState<string>("kanban");
+
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTab(newValue);
     };
 
     const sensors = useSensors(
@@ -177,23 +184,37 @@ const Backlog = () => {
 		<Sidebar>
 			<Page>
                 <PageTitle title="Backlog" />
-                <div className="mt-[30px] mb-[10px]">
-                    <DndContext
-                        collisionDetection={closestCorners}
-                        onDragEnd={handleDragEnd}
-                        onDragStart={handleDragStart}
-                        onDragOver={handleDragOver}
-                        sensors={sensors}
+                <div className="mt-[30px]">
+                    <Tabs
+                        value={tab}
+                        onChange={handleChange}
+                        textColor="primary"
+                        indicatorColor="primary"
+                        aria-label="secondary tabs example"
                     >
-                        <div className="flex gap-7">
-                            <IssuesColumn issues={columns.toDo} id="toDo" title="To Do" />
-                            <IssuesColumn issues={columns.inProgress} id="inProgress" title="In Progress" />
-                            <IssuesColumn issues={columns.done} id="done" title="Done" />
-                            <DragOverlay dropAnimation={dropAnimation}>
-                                {issue ? <IssueCard key={issue.id} issue={issue} /> : null}
-                            </DragOverlay>
-                        </div>
-                    </DndContext>
+                        <Tab disableRipple value="kanban" label="Kanban"></Tab>
+                        <Tab disableRipple value="list" label="List"></Tab>
+                    </Tabs>
+                </div>
+                <div className="mt-[30px] mb-[10px]">
+                    <div hidden={tab !== 'kanban'}>
+                        <DndContext
+                            collisionDetection={closestCorners}
+                            onDragEnd={handleDragEnd}
+                            onDragStart={handleDragStart}
+                            onDragOver={handleDragOver}
+                            sensors={sensors}
+                        >
+                            <div className="flex gap-7">
+                                <IssuesColumn issues={columns.toDo} id="toDo" title="To Do" />
+                                <IssuesColumn issues={columns.inProgress} id="inProgress" title="In Progress" />
+                                <IssuesColumn issues={columns.done} id="done" title="Done" />
+                                <DragOverlay dropAnimation={dropAnimation}>
+                                    {issue ? <IssueCard key={issue.id} issue={issue} /> : null}
+                                </DragOverlay>
+                            </div>
+                        </DndContext>
+                    </div>
                 </div>
             </Page>
         </Sidebar>
