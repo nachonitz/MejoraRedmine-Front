@@ -58,18 +58,24 @@ const IssueCard: React.FC<IssueCardProps> = ( { issue, getIssues } ) => {
                 open={openCreateIssue}
                 handleClose={handleCloseCreateIssue}
             /> */}
-            <EditIssueDialog
-                open={openEditIssue}
-                issueId={selectedIssue?.id}
-                handleClose={handleCloseEditIssue}
-            />
-            <DeleteDialog
-                open={openDeleteIssue}
-                id={selectedIssue?.id}
-                handleClose={handleCloseDeleteIssue}
-                deleteFunction={deleteIssue}
-                name={selectedIssue?.subject}
-            />
+            {
+                selectedIssue && (
+                    <>
+                        <EditIssueDialog
+                            open={openEditIssue}
+                            issueId={selectedIssue?.id}
+                            handleClose={handleCloseEditIssue}
+                        />
+                        <DeleteDialog
+                            open={openDeleteIssue}
+                            id={selectedIssue?.id}
+                            handleClose={handleCloseDeleteIssue}
+                            deleteFunction={deleteIssue}
+                            name={selectedIssue?.subject}
+                        />
+                    </>
+                )
+            }
             <div className="bg-white w-[346px] shadow-userStory p-[4px] box-border flex flex-col gap-[3px]">
                 <div className="flex items-center justify-between">
                     <div className="flex gap-[2px] items-center">
@@ -105,8 +111,8 @@ const IssueCard: React.FC<IssueCardProps> = ( { issue, getIssues } ) => {
                             className="flex justify-center items-center rounded-[50%] h-[28px] w-[28px] bg-[#d9d9d9] cursor-pointer text-[14px] text-primary"
                         >
                             <span>
-                            {issue?.assignee.firstname[0]}
-                            {issue?.assignee.lastname[0]}
+                            {issue.assignee?.firstname[0]}
+                            {issue.assignee?.lastname[0]}
                             </span>
                         </div>
                     </div>

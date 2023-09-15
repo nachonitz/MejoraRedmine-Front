@@ -4,7 +4,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle"
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar"
 import { useEffect, useState } from "react";
 import { Issue, IssueStatus } from "../../../api/models/issue";
-import { getAllIssues, getIssuesStatuses } from "../../../api/services/issuesService";
+import { getIssues, getIssuesStatuses } from "../../../api/services/issuesService";
 import { Tab, Tabs } from "@mui/material";
 import Board from "../../../components/Pages/Backlog/Board/Board";
 
@@ -25,7 +25,7 @@ const Backlog = () => {
     };
 
     useEffect(() => {
-        getIssues();
+        getAllIssues();
         getAllIssuesStatuses();
     }, []);
 
@@ -37,11 +37,13 @@ const Backlog = () => {
         });
     }
 
-    const getIssues = async () => {
+    const getAllIssues = async () => {
         try {
             if (projectId) {
-                const issues = await getAllIssues(parseInt(projectId));
-                setIssues(issues);
+                const { data:issues } = await getIssues({
+                    projectId: parseInt(projectId),
+                });
+                setIssues(issues.items);
                 return issues;
             }
         } catch (error) {
@@ -68,7 +70,7 @@ const Backlog = () => {
                 </div>
                 <div className="mt-[30px] mb-[10px]">
                     <div hidden={tab !== 'kanban'}>
-                        <Board issues={issues} statuses={statuses} getIssues={getIssues} />
+                        <Board issues={issues} statuses={statuses} getIssues={getAllIssues} />
                     </div>
                 </div>
             </Page>
