@@ -14,7 +14,11 @@ import {
     Enumeration,
     EnumerationType,
 } from "../../../../api/models/enumeration";
-import { Issue, IssueStatus } from "../../../../api/models/issue";
+import {
+    Issue,
+    IssueStatus,
+    UpdateIssueDto,
+} from "../../../../api/models/issue";
 import { Tracker } from "../../../../api/models/tracker";
 import { getEnumerations } from "../../../../api/services/enumerationsService";
 import {
@@ -30,7 +34,7 @@ import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 interface EditIssueDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
-    issueId?: number;
+    issueId: number;
 }
 
 const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
@@ -50,16 +54,14 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         "XL",
     ]);
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [priorityId, setPriorityId] = useState<string>("");
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
-    const [estimation, setEstimation] = useState<string>("");
+    const [estimation, setEstimation] = useState<string | undefined>("");
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [errorTrackerId, setErrorTrackerId] = useState(false);
-    const [errorEstimation, setErrorEstimation] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
@@ -78,10 +80,8 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorPriorityId(false);
         setErrorTrackerId(false);
-        setErrorEstimation(false);
         setErrorStatusId(false);
         setServerErrors([]);
     };
@@ -93,10 +93,10 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                     console.log(issue);
                     setName(issue.subject);
                     setDescription(issue.description);
-                    setPriorityId(issue.priority.id);
+                    setPriorityId(issue.priority.id.toString());
                     setEstimation(issue.estimation);
-                    setStatusId(issue.status.id);
-                    setTrackerId(issue.tracker.id);
+                    setStatusId(issue.status.id.toString());
+                    setTrackerId(issue.tracker.id.toString());
                 })
                 .catch((error) => {
                     console.log(error);
@@ -118,7 +118,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         const { data } = await getEnumerations({
             type: EnumerationType.PRIORITY,
         });
-        setPriorities(data.items);
+        setPriorities(data);
     };
 
     const getAllTrackers = () => {
@@ -137,20 +137,12 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             setErrorName(true);
             errorFound = true;
         }
-        if (!description) {
-            setErrorDescription(true);
-            errorFound = true;
-        }
         if (!priorityId || priorityId === "") {
             setErrorPriorityId(true);
             errorFound = true;
         }
         if (!trackerId || trackerId === "") {
             setErrorTrackerId(true);
-            errorFound = true;
-        }
-        if (!estimation || estimation === "") {
-            setErrorEstimation(true);
             errorFound = true;
         }
         if (!statusId || statusId === "") {
@@ -166,20 +158,16 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         if (errorFound) {
             return;
         }
-        const issue = {
+        const issue: UpdateIssueDto = {
             subject: name,
             description: description,
-            priorityId: priorityId,
-            trackerId: trackerId,
-            id: issueId,
+            priorityId: +priorityId,
+            trackerId: +trackerId,
             estimation: estimation,
-            statusId: statusId,
+            statusId: +statusId,
         };
-        editIssue(issue)
-            .then((issue: Issue) => {
-                console.log(issue);
-                handleCloseModal(true);
-            })
+        editIssue(issueId, issue)
+            .then(() => handleCloseModal(true))
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
@@ -218,7 +206,6 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             value={description}
                             className="w-full"
                             multiline
@@ -279,17 +266,13 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                             </Select>
                         </FormControl>
                         <FormControl>
-                            <InputLabel
-                                id="priority-label"
-                                error={errorEstimation}
-                            >
+                            <InputLabel id="priority-label">
                                 Estimation
                             </InputLabel>
                             <Select
                                 labelId="priority-label"
                                 value={estimation}
                                 label="Priority"
-                                error={errorEstimation}
                                 onChange={(e) => setEstimation(e.target.value)}
                             >
                                 {estimations &&

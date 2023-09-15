@@ -44,7 +44,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
         const { data } = await getEnumerations({
             type: EnumerationType.PRIORITY,
         });
-        setPriorities(data.items);
+        setPriorities(data);
     };
 
     const handleGetEpic = useCallback(() => {

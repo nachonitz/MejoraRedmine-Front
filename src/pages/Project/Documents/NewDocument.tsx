@@ -73,7 +73,7 @@ const NewDocument = () => {
                 const { data } = await getEnumerations({
                     type: EnumerationType.DOCUMENT_CATEGORY,
                 });
-                setDocumentCategories(data.items);
+                setDocumentCategories(data);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");

@@ -14,7 +14,7 @@ import {
     Enumeration,
     EnumerationType,
 } from "../../../../api/models/enumeration";
-import { Issue, IssueStatus } from "../../../../api/models/issue";
+import { CreateIssueDto, IssueStatus } from "../../../../api/models/issue";
 import { Tracker } from "../../../../api/models/tracker";
 import { getEnumerations } from "../../../../api/services/enumerationsService";
 import {
@@ -29,10 +29,10 @@ import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 interface CreateIssueDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
-    projectId?: string;
-    releaseId?: string;
-    sprintId?: string;
-    epicId?: string;
+    projectId: string;
+    releaseId: string;
+    sprintId: string;
+    epicId: string;
 }
 
 const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
@@ -55,16 +55,14 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         "XL",
     ]);
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [priorityId, setPriorityId] = useState<string>("");
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
-    const [estimation, setEstimation] = useState<string>("");
+    const [estimation, setEstimation] = useState<string | undefined>("");
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [errorTrackerId, setErrorTrackerId] = useState(false);
-    const [errorEstimation, setErrorEstimation] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
@@ -80,10 +78,8 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorPriorityId(false);
         setErrorTrackerId(false);
-        setErrorEstimation(false);
         setErrorStatusId(false);
         setServerErrors([]);
     };
@@ -102,7 +98,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         const { data } = await getEnumerations({
             type: EnumerationType.PRIORITY,
         });
-        setPriorities(data.items);
+        setPriorities(data);
     };
 
     const getAllTrackers = () => {
@@ -121,20 +117,12 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             setErrorName(true);
             errorFound = true;
         }
-        if (!description) {
-            setErrorDescription(true);
-            errorFound = true;
-        }
         if (!priorityId || priorityId === "") {
             setErrorPriorityId(true);
             errorFound = true;
         }
         if (!trackerId || trackerId === "") {
             setErrorTrackerId(true);
-            errorFound = true;
-        }
-        if (!estimation || estimation === "") {
-            setErrorEstimation(true);
             errorFound = true;
         }
         if (!statusId || statusId === "") {
@@ -150,24 +138,21 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         if (errorFound) {
             return;
         }
-        const issue = {
+        const issue: CreateIssueDto = {
             subject: name,
             description: description,
-            priorityId: priorityId,
-            trackerId: trackerId,
-            projectId: projectId ? parseInt(projectId) : "",
-            releaseId: releaseId ? parseInt(releaseId) : "",
-            sprintId: sprintId ? parseInt(sprintId) : "",
-            epicId: epicId ? parseInt(epicId) : "",
+            priorityId: +priorityId,
+            trackerId: +trackerId,
+            statusId: +statusId,
+            projectId: +projectId,
+            releaseId: +releaseId,
+            sprintId: +sprintId,
+            epicId: +epicId,
             assigneeId: user?.id,
             estimation: estimation,
-            statusId: statusId,
         };
         createIssue(issue)
-            .then((issue: Issue) => {
-                console.log(issue);
-                handleCloseModal(true);
-            })
+            .then(() => handleCloseModal(true))
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
@@ -205,7 +190,6 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             className="w-full"
                             multiline
                             minRows={"2"}
@@ -226,9 +210,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                 value={priorityId}
                                 label="Priority"
                                 error={errorPriorityId}
-                                onChange={(e: any) =>
-                                    setPriorityId(e.target.value)
-                                }
+                                onChange={(e) => setPriorityId(e.target.value)}
                             >
                                 {priorities &&
                                     priorities.map((priority: Enumeration) => (
@@ -253,9 +235,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                 value={trackerId}
                                 label="Priority"
                                 error={errorTrackerId}
-                                onChange={(e: any) =>
-                                    setTrackerId(e.target.value)
-                                }
+                                onChange={(e) => setTrackerId(e.target.value)}
                             >
                                 {trackers &&
                                     trackers.map((tracker: Tracker) => (
@@ -269,20 +249,14 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                             </Select>
                         </FormControl>
                         <FormControl>
-                            <InputLabel
-                                id="priority-label"
-                                error={errorEstimation}
-                            >
+                            <InputLabel id="priority-label">
                                 Estimation
                             </InputLabel>
                             <Select
                                 labelId="priority-label"
                                 value={estimation}
                                 label="Priority"
-                                error={errorEstimation}
-                                onChange={(e: any) =>
-                                    setEstimation(e.target.value)
-                                }
+                                onChange={(e) => setEstimation(e.target.value)}
                             >
                                 {estimations &&
                                     estimations.map((estimation: string) => (
@@ -307,9 +281,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                 value={statusId}
                                 label="Priority"
                                 error={errorStatusId}
-                                onChange={(e: any) =>
-                                    setStatusId(e.target.value)
-                                }
+                                onChange={(e) => setStatusId(e.target.value)}
                             >
                                 {statuses &&
                                     statuses.map((status: IssueStatus) => (

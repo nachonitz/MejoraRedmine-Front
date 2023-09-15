@@ -1,7 +1,6 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { Issue } from "../models/issue";
 import {
     CreateProjectDto,
     Project,
@@ -37,17 +36,4 @@ export const editProject = async (
 export const deleteProject = async (id: Project["id"]) => {
     const { data } = await api.delete(`/projects/${id}`);
     return data;
-};
-
-//TODO: mover los de abajo a los servicios correspondientes
-
-export const getIssuesByEpicId = async (epicId: number): Promise<Issue[]> => {
-    try {
-        const response = await api.get("/issues", { params: { epicId } });
-        console.log(response.data);
-        const issues: Issue[] = response.data.items;
-        return issues;
-    } catch (error) {
-        throw new Error("Error. Please try again.");
-    }
 };

@@ -47,7 +47,7 @@ const CreateEpicDialog = ({
         const { data } = await getEnumerations({
             type: EnumerationType.PRIORITY,
         });
-        setPriorities(data.items);
+        setPriorities(data);
     }, []);
 
     const clearErrors = () => {
