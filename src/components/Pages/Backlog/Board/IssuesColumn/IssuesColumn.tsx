@@ -4,16 +4,17 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Issue } from '../../../../api/models/issue';
+import { Issue } from '../../../../../api/models/issue';
 import IssueCard from '../IssueCard/IssueCard';
 
 type BoardSectionProps = {
     id: string;
     title: string;
     issues: Issue[];
+    getIssues: () => void;
 };
 
-const IssuesColumn = ({ id, title, issues }: BoardSectionProps) => {
+const IssuesColumn = ({ id, title, issues, getIssues }: BoardSectionProps) => {
     const { setNodeRef } = useDroppable({
         id,
     });
@@ -29,7 +30,7 @@ const IssuesColumn = ({ id, title, issues }: BoardSectionProps) => {
                 strategy={verticalListSortingStrategy}
             >
                 <div className="flex flex-col gap-[6px]" ref={setNodeRef}>
-                    { issues && issues.map((issue: Issue) => ( <IssueCard key={issue.id} issue={issue} /> )) }
+                    { issues && issues.map((issue: Issue) => ( <IssueCard key={issue.id} issue={issue} getIssues={getIssues} /> )) }
                 </div>
             </SortableContext>
         </div>
