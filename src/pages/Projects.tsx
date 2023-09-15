@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoLockClosed } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { Project } from "../api/models/project";
+import { Project, ProjectFilter } from "../api/models/project";
 import { deleteProject, getProjects } from "../api/services/projectsService";
 import CreateProjectDialog from "../components/Pages/Projects/CreateProjectDialog/CreateProjectDialog";
 import EditProjectDialog from "../components/Pages/Projects/EditProjectDialog/EditProjectDialog";
@@ -9,6 +9,13 @@ import AddButton from "../components/Shared/Buttons/AddButton";
 import SettingsButton from "../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../components/Shared/Page/Page";
+import { getFullDate } from "../lib/utils";
+
+const defaultFilters: ProjectFilter = {
+    page: 1,
+    limit: 10,
+    order: "id:asc",
+};
 
 const Projects = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -20,9 +27,8 @@ const Projects = () => {
 
     const getAllProjects = async () => {
         try {
-            const projects = await getProjects();
-            setProjects(projects);
-            return projects;
+            const { data } = await getProjects(defaultFilters);
+            setProjects(data.items);
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
@@ -30,13 +36,6 @@ const Projects = () => {
 
     const goToProject = (id: number) => {
         navigate(`/project/${id}`);
-    };
-
-    const getFullDate = (date: Date) => {
-        const day = new Date(date).getDate();
-        const month = new Date(date).getMonth() + 1;
-        const year = new Date(date).getFullYear();
-        return `${month}/${day}/${year}`;
     };
 
     const handleCloseEditProject = (refresh?: boolean) => {
@@ -65,6 +64,7 @@ const Projects = () => {
     useEffect(() => {
         getAllProjects();
     }, []);
+
     return (
         <Page>
             <CreateProjectDialog
@@ -100,7 +100,6 @@ const Projects = () => {
                             <th className="text-left">Created</th>
                             <th className="text-left">Owner</th>
                             <th className="text-right"></th>
-                            {/* <th className="text-left">Owner</th> */}
                         </tr>
                     </thead>
                     <tbody>

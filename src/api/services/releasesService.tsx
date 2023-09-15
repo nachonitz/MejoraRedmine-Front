@@ -1,37 +1,41 @@
+import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
-import { Release } from "../models/release";
+import { ListedResponse } from "../models/common";
+import {
+    CreateReleaseDto,
+    Release,
+    ReleaseFilter,
+    UpdateReleaseDto,
+} from "../models/release";
 
-export const getReleaseById = async (releaseId: number): Promise<Release> => {
-  const response = await api.get(`/releases/${releaseId}`);
-  const release: Release = response.data;
-  return release;
+export const getReleases = async (filter: ReleaseFilter) => {
+    const { data } = await api.get<ListedResponse<Release>>(
+        `/releases?${filterToQueryParams(filter)}`
+    );
+    return { data };
 };
 
-export const createRelease = async (release: any): Promise<Release> => {
-  const response = await api.post("/releases", {
-    name: release.name,
-    description: release.description,
-    startDate: release.startDate,
-    endDate: release.endDate,
-    projectId: release.projectId,
-  });
-  const newRelease: Release = response.data.release;
-  return newRelease;
+export const getReleaseById = async (id: Release["id"]): Promise<Release> => {
+    const { data } = await api.get<Release>(`/releases/${id}`);
+    return data;
 };
 
-export const editRelease = async (release: any): Promise<Release> => {
-  const response = await api.patch(`/releases/${release.id}`, {
-    name: release.name,
-    description: release.description,
-    startDate: release.startDate,
-    endDate: release.endDate,
-  });
-  const editedRelease: Release = response.data.release;
-  return editedRelease;
+export const createRelease = async (
+    release: CreateReleaseDto
+): Promise<Release> => {
+    const { data } = await api.post("/releases", release);
+    return data;
 };
 
-export const deleteRelease = async (releaseId: number): Promise<boolean> => {
-  const response = await api.delete(`/releases/${releaseId}`);
-  console.log(response);
-  return true;
+export const editRelease = async (
+    id: Release["id"],
+    release: UpdateReleaseDto
+): Promise<Release> => {
+    const { data } = await api.patch(`/releases/${id}`, release);
+    return data;
+};
+
+export const deleteRelease = async (id: Release["id"]): Promise<Release> => {
+    const { data } = await api.delete(`/releases/${id}`);
+    return data;
 };

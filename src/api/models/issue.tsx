@@ -1,3 +1,4 @@
+import { PaginationFilters } from "./common";
 import { Enumeration } from "./enumeration";
 import { Epic } from "./epic";
 import { Project } from "./project";
@@ -6,19 +7,55 @@ import { Sprint } from "./sprint";
 import { Tracker } from "./tracker";
 import { User } from "./user";
 
-export interface Issue {
-    id: number;
+interface BaseIssue {
     subject: string;
-    description: string;
+    description?: string;
+    estimation?: string;
+}
+
+export interface Issue extends BaseIssue {
+    id: number;
+    redmineId: number;
     priority: Enumeration;
-    epic: Epic;
-    sprint: Sprint;
-    release: Release;
+    epic?: Epic;
+    sprint?: Sprint;
+    release?: Release;
     project: Project;
     status: IssueStatus;
-    estimation: string;
     tracker: Tracker;
-    assignee: User;
+    createdAt: string;
+    assignee?: User;
+}
+
+export interface CreateIssueDto extends BaseIssue {
+    priorityId: number;
+    trackerId: number;
+    projectId: number;
+    releaseId?: number;
+    sprintId?: number;
+    epicId?: number;
+    statusId?: number;
+    assigneeId?: number;
+}
+
+export type UpdateIssueDto = Partial<CreateIssueDto>;
+
+type AscDesc = "asc" | "desc";
+type FilterOrder = `${keyof Issue}:${AscDesc}`;
+
+export interface IssueFilter extends PaginationFilters {
+    subject?: string;
+    projectId?: number;
+    trackerId?: number;
+    priorityId?: number;
+    statusId?: number;
+    releaseId?: number;
+    sprintId?: number;
+    epicId?: number;
+    assigneeId?: number;
+    estimation?: string;
+    isEstimated?: boolean;
+    order?: FilterOrder;
 }
 
 export interface IssueStatus {

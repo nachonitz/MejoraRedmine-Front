@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from "react";
-import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import {
-    getIssuesByEpicId,
-    getProjectById,
-} from "../../../api/services/projectsService";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
-import Page from "../../../components/Shared/Page/Page";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
 import { Epic } from "../../../api/models/epic";
-import { Issue } from "../../../api/models/issue";
-import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
-import { deleteIssue } from "../../../api/services/issuesService";
-import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
-import { getEpicById } from "../../../api/services/epicsService";
-import { getSprintById } from "../../../api/services/sprintsService";
-import { getReleaseById } from "../../../api/services/releasesService";
+import { Issue, IssueFilter } from "../../../api/models/issue";
 import { Project } from "../../../api/models/project";
 import { Release } from "../../../api/models/release";
 import { Sprint } from "../../../api/models/sprint";
-import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
+import { getEpicById } from "../../../api/services/epicsService";
+import { deleteIssue, getIssues } from "../../../api/services/issuesService";
 import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
 import { getIssueIcon, getIssuePriorityColor } from "../../../utilities/utilities";
+import AddButton from "../../../components/Shared/Buttons/AddButton";
+import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
+import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
+import Page from "../../../components/Shared/Page/Page";
+import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
+import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+
+const defaultFilters: IssueFilter = {
+    page: 1,
+    limit: 10,
+};
 
 const ProjectIssues = () => {
     const { projectId, releaseId, sprintId, epicId } = useParams();
@@ -41,21 +40,20 @@ const ProjectIssues = () => {
             if (epicId) {
                 const epic = await getEpicById(parseInt(epicId));
                 setEpic(epic);
-                console.log(epic);
-                return epic;
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
     };
 
-    const getIssues = async () => {
+    const getAllIssues = async () => {
         try {
             if (epicId) {
-                const issues = await getIssuesByEpicId(parseInt(epicId));
-                setIssues(issues);
-                console.log(issues);
-                return issues;
+                const { data } = await getIssues({
+                    ...defaultFilters,
+                    epicId: parseInt(epicId),
+                });
+                setIssues(data.items);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -70,14 +68,14 @@ const ProjectIssues = () => {
     const handleCloseCreateIssue = (refresh?: boolean) => {
         setOpenCreateIssue(false);
         if (refresh) {
-            getIssues();
+            getAllIssues();
         }
     };
 
     const handleCloseEditIssue = (refresh?: boolean) => {
         setOpenEditIssue(false);
         if (refresh) {
-            getIssues();
+            getAllIssues();
         }
         setSelectedIssue(undefined);
     };
@@ -85,15 +83,16 @@ const ProjectIssues = () => {
     const handleCloseDeleteIssue = (refresh?: boolean) => {
         setOpenDeleteIssue(false);
         if (refresh) {
-            getIssues();
+            getAllIssues();
         }
         setSelectedIssue(undefined);
     };
 
     useEffect(() => {
         getEpic();
-        getIssues();
+        getAllIssues();
     }, []);
+
     return (
         <Sidebar>
             <Page>
@@ -103,26 +102,32 @@ const ProjectIssues = () => {
                     sprint={epic?.sprint}
                     epic={epic}
                 />
-                <CreateIssueDialog
-                    projectId={projectId}
-                    releaseId={releaseId}
-                    sprintId={sprintId}
-                    epicId={epicId}
-                    open={openCreateIssue}
-                    handleClose={handleCloseCreateIssue}
-                />
-                <EditIssueDialog
-                    open={openEditIssue}
-                    issueId={selectedIssue?.id}
-                    handleClose={handleCloseEditIssue}
-                />
-                <DeleteDialog
-                    open={openDeleteIssue}
-                    id={selectedIssue?.id}
-                    handleClose={handleCloseDeleteIssue}
-                    deleteFunction={deleteIssue}
-                    name={selectedIssue?.subject}
-                />
+                {epicId && projectId && releaseId && sprintId && (
+                    <CreateIssueDialog
+                        projectId={projectId}
+                        releaseId={releaseId}
+                        sprintId={sprintId}
+                        epicId={epicId}
+                        open={openCreateIssue}
+                        handleClose={handleCloseCreateIssue}
+                    />
+                )}
+                {selectedIssue && (
+                    <>
+                        <EditIssueDialog
+                            open={openEditIssue}
+                            issueId={selectedIssue.id}
+                            handleClose={handleCloseEditIssue}
+                        />
+                        <DeleteDialog
+                            open={openDeleteIssue}
+                            id={selectedIssue.id}
+                            handleClose={handleCloseDeleteIssue}
+                            deleteFunction={deleteIssue}
+                            name={selectedIssue.subject}
+                        />
+                    </>
+                )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Issues" />
                     <AddButton onClick={() => setOpenCreateIssue(true)} />

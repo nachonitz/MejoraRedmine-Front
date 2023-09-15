@@ -6,7 +6,7 @@ import {
     TextField,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { Project } from "../../../../api/models/project";
+import { Project, UpdateProjectDto } from "../../../../api/models/project";
 import {
     editProject,
     getProjectById,
@@ -27,11 +27,10 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
     projectId,
 }) => {
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [identifier, setIdentifier] = useState("");
     const [isPrivate, setIsPrivate] = useState(false);
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorIdentifier, setErrorIdentifier] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
@@ -52,7 +51,6 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorIdentifier(false);
         setServerErrors([]);
     };
@@ -61,10 +59,6 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
         let errorFound = false;
         if (!name) {
             setErrorName(true);
-            errorFound = true;
-        }
-        if (!description) {
-            setErrorDescription(true);
             errorFound = true;
         }
         if (!identifier) {
@@ -77,20 +71,17 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
     const handleSubmit = () => {
         clearErrors();
         const errorFound = checkForFieldsErrors();
-        if (errorFound) {
+        if (errorFound || !projectId) {
             return;
         }
-        const project = {
-            id: projectId,
+        const project: UpdateProjectDto = {
             name: name,
             description: description,
             identifier: identifier,
-            is_public: !isPrivate,
+            isPublic: !isPrivate,
         };
-        editProject(project)
-            .then(() => {
-                handleCloseModal(true);
-            })
+        editProject(projectId, project)
+            .then(() => handleCloseModal(true))
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
@@ -119,7 +110,7 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
 
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[400px]">
+            <div className="w-[600px]">
                 <DialogTitle>Edit Project</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
@@ -145,7 +136,6 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             value={description}
                             className="w-full"
                             multiline

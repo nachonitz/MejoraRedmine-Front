@@ -10,17 +10,20 @@ import {
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { useCallback, useEffect, useState } from "react";
-import { Enumeration } from "../../../../api/models/enumeration";
-import { Epic } from "../../../../api/models/epic";
+import {
+    Enumeration,
+    EnumerationType,
+} from "../../../../api/models/enumeration";
+import { CreateEpicDto, Epic } from "../../../../api/models/epic";
 import { createEpic } from "../../../../api/services/epicsService";
-import { getIssuesPriorities } from "../../../../api/services/issuesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { getEnumerations } from "../../../../api/services/enumerationsService";
 
 interface CreateEpicDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
-    projectId?: string;
+    projectId: string;
     releaseId?: string;
     sprintId?: string;
 }
@@ -34,26 +37,21 @@ const CreateEpicDialog = ({
 }: CreateEpicDialogProps) => {
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState<string | undefined>("");
     const [priorityId, setPriorityId] = useState<string>("");
     const [errorName, setErrorName] = useState(false);
-    const [errorDescription, setErrorDescription] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
 
-    const getAllIssuesPriorities = useCallback(() => {
-        getIssuesPriorities()
-            .then((priorities: Enumeration[]) => {
-                setPriorities(priorities);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    const getAllIssuesPriorities = useCallback(async () => {
+        const { data } = await getEnumerations({
+            type: EnumerationType.PRIORITY,
+        });
+        setPriorities(data);
     }, []);
 
     const clearErrors = () => {
         setErrorName(false);
-        setErrorDescription(false);
         setErrorPriorityId(false);
         setServerErrors([]);
     };
@@ -62,10 +60,6 @@ const CreateEpicDialog = ({
         let errorFound = false;
         if (!name) {
             setErrorName(true);
-            errorFound = true;
-        }
-        if (!description) {
-            setErrorDescription(true);
             errorFound = true;
         }
         if (!priorityId || priorityId === "") {
@@ -81,13 +75,13 @@ const CreateEpicDialog = ({
         if (errorFound) {
             return;
         }
-        const epic = {
+        const epic: CreateEpicDto = {
             name: name,
             description: description,
-            priorityId: priorityId,
-            projectId: projectId,
-            releaseId: releaseId,
-            sprintId: sprintId,
+            priorityId: +priorityId,
+            projectId: +projectId,
+            releaseId: releaseId ? +releaseId : undefined,
+            sprintId: sprintId ? +sprintId : undefined,
         };
         createEpic(epic)
             .then((epic: Epic) => {
@@ -119,7 +113,7 @@ const CreateEpicDialog = ({
 
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[400px]">
+            <div className="w-[600px]">
                 <DialogTitle>Create Epic</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
@@ -133,7 +127,6 @@ const CreateEpicDialog = ({
                         />
                         <TextField
                             onChange={(e) => setDescription(e.target.value)}
-                            error={errorDescription}
                             className="w-full"
                             multiline
                             minRows={"2"}
