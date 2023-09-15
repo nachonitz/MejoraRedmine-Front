@@ -1,17 +1,19 @@
 import { useParams } from "react-router-dom";
-import Page from "../../../components/Shared/Page/Page"
-import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle"
-import Sidebar from "../../../components/Shared/Sidebar/Sidebar"
+import Page from "../../../components/Shared/Page/Page";
+import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
 import { Issue, IssueStatus } from "../../../api/models/issue";
-import { getIssues, getIssuesStatuses } from "../../../api/services/issuesService";
+import {
+    getIssues,
+    getIssuesStatuses,
+} from "../../../api/services/issuesService";
 import { Tab, Tabs } from "@mui/material";
 import Board from "../../../components/Pages/Backlog/Board/Board";
 
 export type Column = {
     [name: string]: Issue[];
 };
-  
 
 const Backlog = () => {
     const { projectId } = useParams();
@@ -30,17 +32,19 @@ const Backlog = () => {
     }, []);
 
     const getAllIssuesStatuses = () => {
-        getIssuesStatuses().then((statuses: IssueStatus[]) => {
-            setStatuses(statuses);
-        }).catch((error) => {
-            console.log(error);
-        });
-    }
+        getIssuesStatuses()
+            .then((statuses: IssueStatus[]) => {
+                setStatuses(statuses);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
     const getAllIssues = async () => {
         try {
             if (projectId) {
-                const { data:issues } = await getIssues({
+                const { data: issues } = await getIssues({
                     projectId: parseInt(projectId),
                 });
                 setIssues(issues.items);
@@ -51,10 +55,9 @@ const Backlog = () => {
         }
     };
 
-
-    return(
-		<Sidebar>
-			<Page>
+    return (
+        <Sidebar>
+            <Page>
                 <PageTitle title="Backlog" />
                 <div className="mt-[30px]">
                     <Tabs
@@ -69,13 +72,17 @@ const Backlog = () => {
                     </Tabs>
                 </div>
                 <div className="mt-[30px] mb-[10px]">
-                    <div hidden={tab !== 'kanban'}>
-                        <Board issues={issues} statuses={statuses} getIssues={getAllIssues} />
+                    <div hidden={tab !== "kanban"}>
+                        <Board
+                            issues={issues}
+                            statuses={statuses}
+                            getIssues={getAllIssues}
+                        />
                     </div>
                 </div>
             </Page>
         </Sidebar>
     );
-}
+};
 
 export default Backlog;
