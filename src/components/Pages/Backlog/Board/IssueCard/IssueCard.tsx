@@ -79,7 +79,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue, getIssues }) => {
                     />
                 </>
             )}
-            <div className="bg-white w-[346px] shadow-userStory p-[4px] box-border flex flex-col gap-[3px]">
+            <div className="bg-white w-[346px] shadow-userStory p-[4px] box-border flex flex-col gap-[3px] select-none">
                 <div className="flex items-center justify-between">
                     <div className="flex gap-[2px] items-center">
                         <img
