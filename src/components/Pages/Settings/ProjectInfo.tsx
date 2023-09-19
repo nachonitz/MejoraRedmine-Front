@@ -86,8 +86,8 @@ export const ProjectInfo = ({ projectId }: Props) => {
     }, [projectId, handleGetProject]);
 
     return (
-        <div className="w-full mt-[30px] flex flex-col gap-5">
-            <div className="mt-[5px] flex flex-col gap-[20px]">
+        <div className="w-full mt-4 flex flex-col gap-5">
+            <div className="flex flex-col gap-[20px]">
                 <TextField
                     onChange={(e) => setName(e.target.value)}
                     error={errorName}

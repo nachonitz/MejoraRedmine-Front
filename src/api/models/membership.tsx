@@ -24,6 +24,8 @@ type FilterOrder = `${keyof ProjectMembership}:${AscDesc}`;
 
 export interface ProjectMembershipFilter extends PaginationFilters {
     userId?: number;
+    search?: string;
     projectId?: number;
+    roleId?: number;
     order?: FilterOrder;
 }
