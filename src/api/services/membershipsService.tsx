@@ -15,6 +15,23 @@ export const getMemberships = async (filters: ProjectMembershipFilter) => {
     return { data };
 };
 
+export const getMyPermissions = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user") ?? "");
+    if (!currentUser) throw new Error("Not logged in");
+    const { data } = await api.get<ListedResponse<ProjectMembership>>(
+        `/memberships?${filterToQueryParams({
+            userId: currentUser.id,
+        })}`
+    );
+    const rolesByProject = data.items.map((membership) => ({
+        projectId: membership.project.id,
+        roles: membership.roles
+            .flatMap((role) => role.permissions)
+            .filter((role, index, self) => self.indexOf(role) === index),
+    }));
+    return rolesByProject;
+};
+
 export const getMembershipById = async (id: ProjectMembership["id"]) => {
     const { data } = await api.get<ProjectMembership>(`/memberships/${id}`);
     return data;

@@ -5,6 +5,7 @@ import { ProjectRole } from "../../../../api/models/role";
 import {
     deleteMembership,
     getMemberships,
+    getMyPermissions,
 } from "../../../../api/services/membershipsService";
 import { getRoles } from "../../../../api/services/rolesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
@@ -53,6 +54,8 @@ export const ProjectMembers = ({ projectId }: Props) => {
                     selectedRole === ALL_ROLES_ID ? undefined : selectedRole,
             });
             setMemberships(data.items);
+            const asd = await getMyPermissions();
+            console.log({ asd });
         };
         if (projectId) fetchProjectRoles();
     }, [projectId, selectedRole]);

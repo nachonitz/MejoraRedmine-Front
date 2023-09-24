@@ -20,7 +20,7 @@ const Settings = () => {
         <Sidebar>
             <Page>
                 <div className="flex gap-[15px] items-center">
-                    <PageTitle title="Settings" />
+                    <PageTitle title="Project Settings" />
                 </div>
                 <Box
                     sx={{

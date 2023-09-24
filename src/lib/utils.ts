@@ -39,3 +39,25 @@ export const getFullDate = (date: Date) => {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
 };
+
+/**
+ * Returns true if the user has access to all of the required permissions or if the
+ * user is an admin. Gets the current user from local storage.
+ */
+export const hasAccess = (
+    userPermissions: string[],
+    requiredPermissions: string[]
+) => {
+    const currentUser = JSON.parse(localStorage.getItem("user") ?? "");
+    if (!currentUser) return false;
+    if (currentUser.admin) return true;
+    return requiredPermissions.every((permission) =>
+        userPermissions.includes(permission)
+    );
+};
+
+export const hasAdminAccess = () => {
+    const currentUser = JSON.parse(localStorage.getItem("user") ?? "");
+    if (!currentUser) return false;
+    return currentUser.admin;
+};

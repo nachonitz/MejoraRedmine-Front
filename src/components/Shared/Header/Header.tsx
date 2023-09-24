@@ -3,6 +3,7 @@ import { IoApps } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/UserContext";
 import { menu } from "./menu";
+import { hasAdminAccess } from "../../../lib/utils";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -71,17 +72,31 @@ const Header = () => {
                     </Link>
                     {isLoggedIn && (
                         <div className="flex flex-row h-full text-white items-center">
-                            {menu.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    to={item.path}
-                                    className="h-full"
-                                >
-                                    <button className="hover:bg-white/10 h-full px-4">
-                                        {item.name}
-                                    </button>
-                                </Link>
-                            ))}
+                            {menu.map((item) =>
+                                item.requiresAdmin ? (
+                                    hasAdminAccess() && (
+                                        <Link
+                                            key={item.name}
+                                            to={item.path}
+                                            className="h-full"
+                                        >
+                                            <button className="hover:bg-white/10 h-full px-4">
+                                                {item.name}
+                                            </button>
+                                        </Link>
+                                    )
+                                ) : (
+                                    <Link
+                                        key={item.name}
+                                        to={item.path}
+                                        className="h-full"
+                                    >
+                                        <button className="hover:bg-white/10 h-full px-4">
+                                            {item.name}
+                                        </button>
+                                    </Link>
+                                )
+                            )}
                         </div>
                     )}
                 </div>
