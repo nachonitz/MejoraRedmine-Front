@@ -15,6 +15,7 @@ import {
 } from "../../../../api/services/sprintsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface EditSprintDialogProps {
     sprintId: number;
@@ -90,10 +91,12 @@ const EditSprintDialog = ({
         editSprint(sprintId, sprint)
             .then(() => {
                 handleCloseModal(true);
+                successToast("Sprint edited successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

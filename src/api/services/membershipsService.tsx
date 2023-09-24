@@ -23,16 +23,16 @@ export const getMembershipById = async (id: ProjectMembership["id"]) => {
 export const createMembership = async (
     membership: CreateProjectMembershipDto
 ) => {
-    const { data } = await api.post("/memberships", membership);
-    return data;
+    const { data, status } = await api.post("/memberships", membership);
+    return { data, status };
 };
 
 export const editMembership = async (
     id: ProjectMembership["id"],
     membership: UpdateProjectMembershipDto
 ) => {
-    const { data } = await api.patch(`/memberships/${id}`, membership);
-    return data;
+    const { data, status } = await api.patch(`/memberships/${id}`, membership);
+    return { data, status };
 };
 
 export const deleteMembership = async (id: ProjectMembership["id"]) => {

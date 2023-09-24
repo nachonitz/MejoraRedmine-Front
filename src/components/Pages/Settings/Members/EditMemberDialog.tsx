@@ -19,6 +19,7 @@ import { getRoles } from "../../../../api/services/rolesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { editMembership } from "../../../../api/services/membershipsService";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface Props {
     membership: ProjectMembership;
@@ -56,7 +57,12 @@ export const EditMemberDialog = ({ membership, open, onClose }: Props) => {
         const res = await editMembership(membership.id, {
             roleIds: selectedRoles.map((role) => role.id),
         });
-        console.log({ res });
+
+        if (res.status === 201 || res.status === 200) {
+            successToast("Membership edited successfully");
+        } else {
+            errorToast("Something went wrong");
+        }
         onClose();
     };
 

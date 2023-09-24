@@ -21,6 +21,7 @@ import { getRoles } from "../../../../api/services/rolesService";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { createMembership } from "../../../../api/services/membershipsService";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface Props {
     projectId: number;
@@ -60,7 +61,11 @@ export const CreateMemberDialog = ({ projectId, open, onClose }: Props) => {
             userId: userId!,
             roleIds: selectedRoles.map((role) => role.id),
         });
-        console.log({ res });
+        if (res.status === 201 || res.status === 200) {
+            successToast("Membership created successfully");
+        } else {
+            errorToast("Something went wrong");
+        }
         onClose();
     };
 

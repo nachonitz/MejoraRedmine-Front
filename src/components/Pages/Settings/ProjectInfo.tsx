@@ -8,6 +8,7 @@ import {
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import CustomSwitch from "../../../components/Shared/CustomSwitch/CustomSwitch";
 import { LoadingIcon } from "../../Shared/Loading/LoadingIcon";
+import { errorToast, successToast } from "../../Shared/Toast";
 
 interface Props {
     projectId?: string;
@@ -73,9 +74,13 @@ export const ProjectInfo = ({ projectId }: Props) => {
             isPublic: !isPrivate,
         };
         editProject(+projectId, project)
-            .then(() => setLoading(false))
+            .then(() => {
+                setLoading(false);
+                successToast("Project edited successfully");
+            })
             .catch((error) => {
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

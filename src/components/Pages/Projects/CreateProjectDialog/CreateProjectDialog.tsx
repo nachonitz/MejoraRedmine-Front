@@ -11,6 +11,7 @@ import { createProject } from "../../../../api/services/projectsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface CreateProjectDialogProps {
     open: boolean;
@@ -61,10 +62,14 @@ const CreateProjectDialog = ({
             isPublic: !isPrivate,
         };
         createProject(project)
-            .then(() => handleCloseModal(true))
+            .then(() => {
+                handleCloseModal(true);
+                successToast("Project created successfully");
+            })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

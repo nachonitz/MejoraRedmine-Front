@@ -14,6 +14,7 @@ import {
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import CustomSwitch from "../../../Shared/CustomSwitch/CustomSwitch";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface EditProjectDialogProps {
     projectId?: number;
@@ -81,10 +82,14 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
             isPublic: !isPrivate,
         };
         editProject(projectId, project)
-            .then(() => handleCloseModal(true))
+            .then(() => {
+                handleCloseModal(true);
+                successToast("Project edited successfully");
+            })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

@@ -25,6 +25,7 @@ import {
 import { UserContext } from "../../../../context/UserContext";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface CreateIssueDialogProps {
     open: boolean;
@@ -152,10 +153,14 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             estimation: estimation,
         };
         createIssue(issue)
-            .then(() => handleCloseModal(true))
+            .then(() => {
+                handleCloseModal(true);
+                successToast("Issue created successfully");
+            })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

@@ -95,10 +95,10 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
     };
 
     const handleDragOver = ({ active, over }: DragOverEvent) => {
-        let activeColumnName: string = getColumn(
+        const activeColumnName: string = getColumn(
             active.id.toString() as string
         );
-        let overColumnName: string = getColumn(over?.id.toString() as string);
+        const overColumnName: string = getColumn(over?.id.toString() as string);
 
         if (
             !activeColumnName ||
@@ -114,7 +114,7 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
         const activeIndex = activeItems.findIndex(
             (issue: Issue) => issue.id === active.id
         );
-        let activeIssue = activeItems.find(
+        const activeIssue = activeItems.find(
             (issue: Issue) => issue.id === active.id
         );
 
@@ -122,10 +122,10 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
             (issue: Issue) => issue.id !== over?.id
         );
 
-        let newActiveColumn = columns[activeColumnName].filter(
+        const newActiveColumn = columns[activeColumnName].filter(
             (issue) => issue.id !== active.id
         );
-        let newOverColumn = columns[overColumnName]
+        const newOverColumn = columns[overColumnName]
             .slice(0, overIndex)
             .concat(columns[activeColumnName][activeIndex])
             .concat(
@@ -151,8 +151,8 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
     };
 
     const handleDragEnd = ({ active, over }: DragEndEvent) => {
-        let activeColumnName = getColumn(active.id.toString() as string);
-        let overColumnName = getColumn(over?.id.toString() as string);
+        const activeColumnName = getColumn(active.id.toString() as string);
+        const overColumnName = getColumn(over?.id.toString() as string);
 
         if (
             !activeColumnName ||

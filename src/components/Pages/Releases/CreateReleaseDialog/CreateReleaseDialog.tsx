@@ -7,10 +7,11 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState } from "react";
-import { CreateReleaseDto, Release } from "../../../../api/models/release";
+import { CreateReleaseDto } from "../../../../api/models/release";
 import { createRelease } from "../../../../api/services/releasesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface CreateReleaseDialogProps {
     open: boolean;
@@ -76,13 +77,14 @@ const CreateReleaseDialog = ({
             projectId: projectId,
         };
         createRelease(release)
-            .then((release: Release) => {
-                console.log(release);
+            .then(() => {
                 handleCloseModal(true);
+                successToast("Release created successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

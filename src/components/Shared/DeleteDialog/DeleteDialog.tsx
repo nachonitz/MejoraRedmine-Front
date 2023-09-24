@@ -2,6 +2,7 @@ import { Dialog, DialogActions, DialogContent } from "@mui/material";
 import { useState } from "react";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SecondaryButton from "../Buttons/SecondaryButton";
+import { errorToast, successToast } from "../Toast";
 
 interface DeleteDialogProps {
     name?: string;
@@ -30,11 +31,13 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
             deleteFunction(id)
                 .then(() => {
                     handleCloseModal(true);
+                    successToast("Deleted successfully");
                 })
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .catch((error: any) => {
                     console.log(error);
                     setServerErrors(error.messages);
+                    errorToast("Something went wrong");
                 });
         }
     };

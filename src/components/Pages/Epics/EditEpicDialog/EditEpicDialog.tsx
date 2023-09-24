@@ -19,6 +19,7 @@ import { getEnumerations } from "../../../../api/services/enumerationsService";
 import { editEpic, getEpicById } from "../../../../api/services/epicsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface EditEpicDialogProps {
     epicId: number;
@@ -97,10 +98,14 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
             priorityId: priorityId,
         };
         editEpic(epicId, epic)
-            .then(() => handleCloseModal(true))
+            .then(() => {
+                handleCloseModal(true);
+                successToast("Epic edited successfully");
+            })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

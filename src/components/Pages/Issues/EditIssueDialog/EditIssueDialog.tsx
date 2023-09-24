@@ -30,6 +30,7 @@ import {
 import { UserContext } from "../../../../context/UserContext";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface EditIssueDialogProps {
     open: boolean;
@@ -167,10 +168,14 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             statusId: +statusId,
         };
         editIssue(issueId, issue)
-            .then(() => handleCloseModal(true))
+            .then(() => {
+                handleCloseModal(true);
+                successToast("Issue edited successfully");
+            })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

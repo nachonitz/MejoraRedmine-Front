@@ -19,6 +19,7 @@ import {
 import { editRisk, getRiskById } from "../../../../api/services/risksService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface EditRiskDialogProps {
     riskId: number;
@@ -108,10 +109,12 @@ const EditRiskDialog = ({
         editRisk(riskId, risk)
             .then(() => {
                 handleCloseModal(true);
+                successToast("Risk edited successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 
