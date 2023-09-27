@@ -10,6 +10,9 @@ import {
 } from "../../../api/services/issuesService";
 import { Tab, Tabs } from "@mui/material";
 import Board from "../../../components/Pages/Backlog/Board/Board";
+import List from "../../../components/Pages/Backlog/List/List";
+import { Epic } from "../../../api/models/epic";
+import { getEpics } from "../../../api/services/epicsService";
 
 export type Column = {
     [name: string]: Issue[];
@@ -18,6 +21,8 @@ export type Column = {
 const Backlog = () => {
     const { projectId } = useParams();
     const [issues, setIssues] = useState<Issue[]>([]);
+    const [issuesWithoutEpic, setIssuesWithoutEpic] = useState<Issue[]>([]);
+    const [epics, setEpics] = useState<Epic[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
 
     const [tab, setTab] = useState<string>("kanban");
@@ -28,6 +33,8 @@ const Backlog = () => {
 
     useEffect(() => {
         getAllIssues();
+        getAllEpics();
+        getAllIssuesWithoutEpic();
         getAllIssuesStatuses();
     }, []);
 
@@ -41,6 +48,20 @@ const Backlog = () => {
             });
     };
 
+    const getAllEpics = async () => {
+        try {
+            if (projectId) {
+                const { data: epics } = await getEpics({
+                    projectId: parseInt(projectId),
+                });
+                setEpics(epics.items);
+                return issues;
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
+
     const getAllIssues = async () => {
         try {
             if (projectId) {
@@ -48,6 +69,21 @@ const Backlog = () => {
                     projectId: parseInt(projectId),
                 });
                 setIssues(issues.items);
+                return issues;
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
+
+    const getAllIssuesWithoutEpic = async () => {
+        try {
+            if (projectId) {
+                const { data: issues } = await getIssues({
+                    projectId: parseInt(projectId),
+                    epicId: undefined,
+                });
+                setIssuesWithoutEpic(issues.items);
                 return issues;
             }
         } catch (error) {
@@ -77,6 +113,13 @@ const Backlog = () => {
                             issues={issues}
                             statuses={statuses}
                             getIssues={getAllIssues}
+                        />
+                    </div>
+                    <div hidden={tab !== "list"}>
+                        <List
+                            issues={issuesWithoutEpic}
+                            epics={epics}
+                            getEpics={getAllEpics}
                         />
                     </div>
                 </div>

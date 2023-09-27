@@ -22,4 +22,21 @@ export const getIssuePriorityColor = (issuePriority: string) => {
         case "Immediate":
             return "#890000";
     }
-}
+};
+
+export const getIssueStatusBackgroundColor = (issueStatus: string) => {
+    switch (issueStatus) {
+        case "New":
+            return "#8A8A8A";
+        case "In Progress":
+            return "#FFAA04";
+        case "Resolved":
+            return "#086700";
+        case "Feedback":
+            return "#086700";
+        case "Closed":
+            return "#086700";
+        case "Rejected":
+            return "#FF0000";
+    }
+};
