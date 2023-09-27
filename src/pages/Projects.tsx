@@ -9,7 +9,7 @@ import AddButton from "../components/Shared/Buttons/AddButton";
 import SettingsButton from "../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../components/Shared/Page/Page";
-import { getFullDate } from "../lib/utils";
+import { getFullDate, hasAdminAccess } from "../lib/utils";
 
 const defaultFilters: ProjectFilter = {
     page: 1,
@@ -67,29 +67,35 @@ const Projects = () => {
 
     return (
         <Page>
-            <CreateProjectDialog
-                open={openCreateProject}
-                handleClose={handleCloseCreateProject}
-            />
-            <EditProjectDialog
-                open={openEditProject}
-                projectId={selectedProject?.id}
-                handleClose={handleCloseEditProject}
-            />
-            <DeleteDialog
-                open={openDeleteProject}
-                id={selectedProject?.id}
-                handleClose={handleCloseDeleteProject}
-                deleteFunction={deleteProject}
-                name={selectedProject?.name}
-            />
+            {hasAdminAccess() && (
+                <>
+                    <CreateProjectDialog
+                        open={openCreateProject}
+                        handleClose={handleCloseCreateProject}
+                    />
+                    <EditProjectDialog
+                        open={openEditProject}
+                        projectId={selectedProject?.id}
+                        handleClose={handleCloseEditProject}
+                    />
+                    <DeleteDialog
+                        open={openDeleteProject}
+                        id={selectedProject?.id}
+                        handleClose={handleCloseDeleteProject}
+                        deleteFunction={deleteProject}
+                        name={selectedProject?.name}
+                    />
+                </>
+            )}
             <div className="text-[26px] text-primary flex gap-[15px] items-center">
                 <span>Projects</span>
-                <AddButton
-                    onClick={() => {
-                        setOpenCreateProject(true);
-                    }}
-                />
+                {hasAdminAccess() && (
+                    <AddButton
+                        onClick={() => {
+                            setOpenCreateProject(true);
+                        }}
+                    />
+                )}
             </div>
             <div>
                 <table className="w-full mt-[30px]">
@@ -135,18 +141,20 @@ const Projects = () => {
                                     {project.owner.lastname}
                                 </td>
                                 <td className="text-right">
-                                    <div className="flex justify-end">
-                                        <SettingsButton
-                                            onEdit={() => {
-                                                setSelectedProject(project);
-                                                setOpenEditProject(true);
-                                            }}
-                                            onDelete={() => {
-                                                setSelectedProject(project);
-                                                setOpenDeleteProject(true);
-                                            }}
-                                        />
-                                    </div>
+                                    {hasAdminAccess() && (
+                                        <div className="flex justify-end">
+                                            <SettingsButton
+                                                onEdit={() => {
+                                                    setSelectedProject(project);
+                                                    setOpenEditProject(true);
+                                                }}
+                                                onDelete={() => {
+                                                    setSelectedProject(project);
+                                                    setOpenDeleteProject(true);
+                                                }}
+                                            />
+                                        </div>
+                                    )}
                                 </td>
                             </tr>
                         ))}

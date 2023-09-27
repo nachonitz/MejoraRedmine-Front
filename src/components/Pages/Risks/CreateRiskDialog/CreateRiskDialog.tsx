@@ -9,16 +9,16 @@ import {
     TextField,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useState } from "react";
 import {
     CreateRiskDto,
-    Risk,
     RiskEnumeration,
     RiskStatus,
 } from "../../../../api/models/risk";
 import { createRisk } from "../../../../api/services/risksService";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface CreateRiskDialogProps {
     open: boolean;
@@ -81,13 +81,14 @@ const CreateRiskDialog = ({
             status: RiskStatus.OPEN,
         };
         createRisk(risk)
-            .then((risk: Risk) => {
-                console.log(risk);
+            .then(() => {
                 handleCloseModal(true);
+                successToast("Risk created successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

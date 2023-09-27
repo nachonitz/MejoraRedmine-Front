@@ -1,11 +1,12 @@
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, Tab } from "@mui/material";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { ProjectMembers } from "../../../components/Pages/Settings/Members/ProjectMembers";
 import { ProjectInfo } from "../../../components/Pages/Settings/ProjectInfo";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { Box, Tab } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useState } from "react";
 
 const Settings = () => {
     const { projectId } = useParams();
@@ -19,7 +20,7 @@ const Settings = () => {
         <Sidebar>
             <Page>
                 <div className="flex gap-[15px] items-center">
-                    <PageTitle title="Settings" />
+                    <PageTitle title="Project Settings" />
                 </div>
                 <Box
                     sx={{
@@ -28,21 +29,30 @@ const Settings = () => {
                         marginTop: "20px",
                     }}
                 >
-                    <TabContext value={value}>
-                        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                            <TabList
-                                onChange={handleChange}
-                                aria-label="lab API tabs example"
+                    {projectId && (
+                        <TabContext value={value}>
+                            <Box
+                                sx={{ borderBottom: 1, borderColor: "divider" }}
                             >
-                                <Tab label="Project Information" value="1" />
-                                <Tab label="Members" value="2" />
-                            </TabList>
-                        </Box>
-                        <TabPanel value="1">
-                            <ProjectInfo projectId={projectId} />
-                        </TabPanel>
-                        <TabPanel value="2">Item Two</TabPanel>
-                    </TabContext>
+                                <TabList
+                                    onChange={handleChange}
+                                    aria-label="lab API tabs example"
+                                >
+                                    <Tab
+                                        label="Project Information"
+                                        value="1"
+                                    />
+                                    <Tab label="Members" value="2" />
+                                </TabList>
+                            </Box>
+                            <TabPanel value="1">
+                                <ProjectInfo projectId={projectId} />
+                            </TabPanel>
+                            <TabPanel value="2">
+                                <ProjectMembers projectId={+projectId} />
+                            </TabPanel>
+                        </TabContext>
+                    )}
                 </Box>
             </Page>
         </Sidebar>

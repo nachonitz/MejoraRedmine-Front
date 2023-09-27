@@ -1,16 +1,15 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
 import { Issue } from "../../../../../api/models/issue";
-import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
+import { deleteIssue } from "../../../../../api/services/issuesService";
 import {
     getIssueIcon,
     getIssuePriorityColor,
 } from "../../../../../utilities/utilities";
-import { useState } from "react";
-import CreateIssueDialog from "../../../Issues/CreateIssueDialog/CreateIssueDialog";
-import EditIssueDialog from "../../../Issues/EditIssueDialog/EditIssueDialog";
+import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../../Shared/DeleteDialog/DeleteDialog";
-import { deleteIssue } from "../../../../../api/services/issuesService";
+import EditIssueDialog from "../../../Issues/EditIssueDialog/EditIssueDialog";
 
 interface IssueCardProps {
     issue: Issue;

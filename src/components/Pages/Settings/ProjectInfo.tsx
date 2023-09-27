@@ -8,6 +8,7 @@ import {
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import CustomSwitch from "../../../components/Shared/CustomSwitch/CustomSwitch";
 import { LoadingIcon } from "../../Shared/Loading/LoadingIcon";
+import { errorToast, successToast } from "../../Shared/Toast";
 
 interface Props {
     projectId?: string;
@@ -73,9 +74,13 @@ export const ProjectInfo = ({ projectId }: Props) => {
             isPublic: !isPrivate,
         };
         editProject(+projectId, project)
-            .then(() => setLoading(false))
+            .then(() => {
+                setLoading(false);
+                successToast("Project edited successfully");
+            })
             .catch((error) => {
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 
@@ -86,8 +91,8 @@ export const ProjectInfo = ({ projectId }: Props) => {
     }, [projectId, handleGetProject]);
 
     return (
-        <div className="w-full mt-[30px] flex flex-col gap-5">
-            <div className="mt-[5px] flex flex-col gap-[20px]">
+        <div className="w-full mt-4 flex flex-col gap-5">
+            <div className="flex flex-col gap-[20px]">
                 <TextField
                     onChange={(e) => setName(e.target.value)}
                     error={errorName}

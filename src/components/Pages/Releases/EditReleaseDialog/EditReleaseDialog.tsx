@@ -15,6 +15,7 @@ import {
 } from "../../../../api/services/releasesService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface EditReleaseDialogProps {
     releaseId: number;
@@ -96,10 +97,12 @@ const EditReleaseDialog = ({
         editRelease(releaseId, release)
             .then(() => {
                 handleCloseModal(true);
+                successToast("Release edited successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

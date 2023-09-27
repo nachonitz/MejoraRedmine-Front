@@ -14,11 +14,12 @@ import {
     Enumeration,
     EnumerationType,
 } from "../../../../api/models/enumeration";
-import { CreateEpicDto, Epic } from "../../../../api/models/epic";
+import { CreateEpicDto } from "../../../../api/models/epic";
+import { getEnumerations } from "../../../../api/services/enumerationsService";
 import { createEpic } from "../../../../api/services/epicsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import { getEnumerations } from "../../../../api/services/enumerationsService";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface CreateEpicDialogProps {
     open: boolean;
@@ -84,13 +85,14 @@ const CreateEpicDialog = ({
             sprintId: sprintId ? +sprintId : undefined,
         };
         createEpic(epic)
-            .then((epic: Epic) => {
-                console.log(epic);
+            .then(() => {
                 handleCloseModal(true);
+                successToast("Epic created successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

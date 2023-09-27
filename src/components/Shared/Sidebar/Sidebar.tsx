@@ -1,6 +1,7 @@
-import { useNavigate, useParams } from "react-router-dom";
-import Item from "./Item/Item";
 import { ReactNode } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { hasAdminAccess } from "../../../lib/utils";
+import Item from "./Item/Item";
 
 interface Props {
     children: ReactNode;
@@ -49,13 +50,15 @@ const Sidebar = ({ children }: Props) => {
                             navigate(`/project/${projectId}/risks`);
                         }}
                     />
-                    <Item
-                        name="Settings"
-                        icon="settings-icon.png"
-                        onClick={() => {
-                            navigate(`/project/${projectId}/settings`);
-                        }}
-                    />
+                    {hasAdminAccess() && (
+                        <Item
+                            name="Settings"
+                            icon="settings-icon.png"
+                            onClick={() => {
+                                navigate(`/project/${projectId}/settings`);
+                            }}
+                        />
+                    )}
                 </div>
             </div>
             <div className="ml-56 w-full">{children}</div>

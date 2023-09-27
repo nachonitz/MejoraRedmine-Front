@@ -54,11 +54,16 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
                 <SlOptions />
             </button>
             {settingsOpened && (
-                <div className="flex flex-col z-10 absolute top-[60%] right-[0%] bg-white shadow-card text-[#444] w-[150px] rounded-[0px] items-start text-[18px]">
+                <div
+                    className="flex flex-col z-10 absolute top-[60%] right-[0%] 
+                  bg-white shadow-card text-[#444] w-[150px] rounded-[0px] 
+                  items-start text-[18px]"
+                >
                     {onEdit && (
                         <div
                             onClick={handleEdit}
-                            className="flex gap-[10px] px-4 py-[10px] items-center justify-start hover:bg-[#eee] w-full cursor-pointer"
+                            className="flex gap-[10px] px-4 py-[10px] items-center justify-start 
+                            hover:bg-[#eee] w-full cursor-pointer"
                         >
                             <div>
                                 <MdOutlineModeEditOutline className="text-[24px]" />
@@ -71,7 +76,8 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
                     {onDelete && (
                         <div
                             onClick={handleDelete}
-                            className="flex gap-[10px] px-4 py-[10px] items-center justify-start hover:bg-[#eee] w-full cursor-pointer"
+                            className="flex gap-[10px] px-4 py-[10px] items-center justify-start 
+                          hover:bg-[#eee] w-full cursor-pointer"
                         >
                             <div>
                                 <RiDeleteBin6Line className="text-[24px]" />

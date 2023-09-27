@@ -11,6 +11,7 @@ import { CreateSprintDto } from "../../../../api/models/sprint";
 import { createSprint } from "../../../../api/services/sprintsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface CreateSprintDialogProps {
     open: boolean;
@@ -73,10 +74,14 @@ const CreateSprintDialog = ({
             projectId,
         };
         createSprint(sprint)
-            .then(() => handleCloseModal(true))
+            .then(() => {
+                handleCloseModal(true);
+                successToast("Sprint created successfully");
+            })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 

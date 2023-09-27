@@ -11,17 +11,15 @@ import {
     TextField,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
-import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import { useContext, useState } from "react";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEpic } from "../../../../api/services/epicsService";
-import { Epic } from "../../../../api/models/epic";
-import { Enumeration } from "../../../../api/models/enumeration";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { Document } from "../../../../api/models/document";
+import { Enumeration } from "../../../../api/models/enumeration";
 import { uploadFile } from "../../../../api/services/documentsService";
 import { UserContext } from "../../../../context/UserContext";
-import { Document } from "../../../../api/models/document";
+import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface UploadDocumentDialogProps {
     open: boolean;
@@ -83,11 +81,11 @@ const UploadDocumentDialog: React.FC<UploadDocumentDialogProps> = ({
 
     const handleCreate = () => {
         clearErrors();
-        let errorFound = checkForFieldsErrors();
+        const errorFound = checkForFieldsErrors();
         if (errorFound) {
             return;
         }
-        let input = {
+        const input = {
             title: title,
             documentCategoryId: documentCategoryId,
             file: file,
@@ -96,13 +94,14 @@ const UploadDocumentDialog: React.FC<UploadDocumentDialogProps> = ({
             tags: [],
         };
         uploadFile(input)
-            .then((document: Document) => {
-                console.log(document);
+            .then(() => {
                 handleCloseModal(true);
+                successToast("Document uploaded successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Error uploading document");
             });
     };
 
