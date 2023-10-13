@@ -1,9 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { IoApps } from "react-icons/io5";
+import { IoApps, IoRefreshCircle } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/UserContext";
 import { menu } from "./menu";
 import { hasAdminAccess } from "../../../lib/utils";
+import { syncWithRedmine } from "../../../api/services/redmineService";
+import { infoToast, successToast } from "../Toast";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -46,6 +48,17 @@ const Header = () => {
 
     const toggleAppsMenu = () => {
         setAppsMenuOpened(!appsMenuOpened);
+    };
+
+    const sync = async () => {
+        try {
+            infoToast("Syncing with Redmine...");
+            await syncWithRedmine();
+            successToast("Synced with Redmine successfully");
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     useEffect(() => {
@@ -105,6 +118,15 @@ const Header = () => {
                         {!isLoggedIn && <Link to="/login">Login</Link>}
                         {isLoggedIn && (
                             <>
+                                {hasAdminAccess() && (
+                                    <button
+                                        className="flex justify-center items-center h-[35px] w-[35px] text-[32px] hover:opacity-75"
+                                        title="Sync with Redmine"
+                                        onClick={sync}
+                                    >
+                                        <IoRefreshCircle />
+                                    </button>
+                                )}
                                 <div ref={appsDropdownRef} className="relative">
                                     <button
                                         className="flex justify-center items-center rounded-[50%] h-[35px] w-[35px] hover:bg-[#005eb6] cursor-pointer text-[20px] text-white"
