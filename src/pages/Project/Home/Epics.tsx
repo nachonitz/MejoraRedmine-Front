@@ -13,6 +13,8 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+import { getMyPermissions } from "../../../api/services/membershipsService";
+import { hasAccess } from "../../../lib/utils";
 
 const defaultFilters: EpicFilter = {
     page: 1,
@@ -28,6 +30,7 @@ const ProjectEpics = () => {
     const [openEditEpic, setOpenEditEpic] = useState(false);
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [selectedEpic, setSelectedEpic] = useState<Epic>();
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const getSprint = useCallback(async () => {
         try {
@@ -40,6 +43,20 @@ const ProjectEpics = () => {
             throw new Error("Error. Please try again.");
         }
     }, [sprintId]);
+
+    const getUserPermissions = useCallback(async () => {
+        try {
+            if (projectId) {
+                const allPermissions = await getMyPermissions();
+                const projectPermissions = allPermissions.find(
+                    (permission) => permission.projectId === +projectId
+                );
+                setPermissions(projectPermissions?.roles ?? []);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    }, [projectId]);
 
     const getAllEpics = useCallback(async () => {
         try {
@@ -87,7 +104,8 @@ const ProjectEpics = () => {
     useEffect(() => {
         getSprint();
         getAllEpics();
-    }, [getSprint, getAllEpics]);
+        getUserPermissions();
+    }, [getSprint, getAllEpics, getUserPermissions]);
 
     return (
         <Sidebar>
@@ -97,7 +115,7 @@ const ProjectEpics = () => {
                     release={sprint?.release}
                     sprint={sprint}
                 />
-                {projectId && (
+                {projectId && hasAccess(permissions, ["add_issues"]) && (
                     <CreateEpicDialog
                         projectId={projectId}
                         releaseId={releaseId}
@@ -106,29 +124,35 @@ const ProjectEpics = () => {
                         handleClose={handleCloseCreateEpic}
                     />
                 )}
-                {selectedEpic && (
-                    <>
-                        <EditEpicDialog
-                            open={openEditEpic}
-                            epicId={selectedEpic?.id}
-                            handleClose={handleCloseEditEpic}
-                        />
-                        <DeleteDialog
-                            open={openDeleteEpic}
-                            id={selectedEpic?.id}
-                            handleClose={handleCloseDeleteEpic}
-                            deleteFunction={deleteEpic}
-                            name={selectedEpic?.name}
-                        />
-                    </>
-                )}
+                {selectedEpic &&
+                    hasAccess(permissions, [
+                        "edit_issues",
+                        "delete_issues",
+                    ]) && (
+                        <>
+                            <EditEpicDialog
+                                open={openEditEpic}
+                                epicId={selectedEpic?.id}
+                                handleClose={handleCloseEditEpic}
+                            />
+                            <DeleteDialog
+                                open={openDeleteEpic}
+                                id={selectedEpic?.id}
+                                handleClose={handleCloseDeleteEpic}
+                                deleteFunction={deleteEpic}
+                                name={selectedEpic?.name}
+                            />
+                        </>
+                    )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Epics" />
-                    <AddButton
-                        onClick={() => {
-                            setOpenCreateEpic(true);
-                        }}
-                    />
+                    {hasAccess(permissions, ["add_issues"]) && (
+                        <AddButton
+                            onClick={() => {
+                                setOpenCreateEpic(true);
+                            }}
+                        />
+                    )}
                 </div>
                 <div>
                     <table className="w-full mt-[30px]">
@@ -162,16 +186,21 @@ const ProjectEpics = () => {
                                     <td className="text-left">{"0%"}</td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
-                                            <SettingsButton
-                                                onEdit={() => {
-                                                    setSelectedEpic(epic);
-                                                    setOpenEditEpic(true);
-                                                }}
-                                                onDelete={() => {
-                                                    setSelectedEpic(epic);
-                                                    setOpenDeleteEpic(true);
-                                                }}
-                                            />
+                                            {hasAccess(permissions, [
+                                                "edit_issues",
+                                                "delete_issues",
+                                            ]) && (
+                                                <SettingsButton
+                                                    onEdit={() => {
+                                                        setSelectedEpic(epic);
+                                                        setOpenEditEpic(true);
+                                                    }}
+                                                    onDelete={() => {
+                                                        setSelectedEpic(epic);
+                                                        setOpenDeleteEpic(true);
+                                                    }}
+                                                />
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

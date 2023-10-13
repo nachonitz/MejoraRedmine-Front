@@ -13,7 +13,8 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate } from "../../../lib/utils";
+import { getFullDate, hasAccess } from "../../../lib/utils";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 
 const defaultFilters: SprintFilter = {
     page: 1,
@@ -29,6 +30,7 @@ const ProjectSprints = () => {
     const [openEditSprint, setOpenEditSprint] = useState(false);
     const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
     const [selectedSprint, setSelectedSprint] = useState<Sprint>();
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const getRelease = useCallback(async () => {
         try {
@@ -42,6 +44,20 @@ const ProjectSprints = () => {
             throw new Error("Error. Please try again.");
         }
     }, [releaseId]);
+
+    const getUserPermissions = useCallback(async () => {
+        try {
+            if (projectId) {
+                const allPermissions = await getMyPermissions();
+                const projectPermissions = allPermissions.find(
+                    (permission) => permission.projectId === +projectId
+                );
+                setPermissions(projectPermissions?.roles ?? []);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    }, [projectId]);
 
     const getAllSprints = useCallback(async () => {
         try {
@@ -88,7 +104,8 @@ const ProjectSprints = () => {
     useEffect(() => {
         getAllSprints();
         getRelease();
-    }, [getAllSprints, getRelease]);
+        getUserPermissions();
+    }, [getAllSprints, getRelease, getUserPermissions]);
 
     return (
         <Sidebar>
@@ -97,38 +114,46 @@ const ProjectSprints = () => {
                     project={release?.project}
                     release={release}
                 />
-                {releaseId && projectId && (
-                    <CreateSprintDialog
-                        projectId={+projectId}
-                        releaseId={+releaseId}
-                        open={openCreateSprint}
-                        handleClose={handleCloseCreateSprint}
-                    />
-                )}
-                {selectedSprint && (
-                    <>
-                        <EditSprintDialog
-                            open={openEditSprint}
-                            sprintId={selectedSprint.id}
-                            handleClose={handleCloseEditSprint}
+                {releaseId &&
+                    projectId &&
+                    hasAccess(permissions, ["add_issues"]) && (
+                        <CreateSprintDialog
+                            projectId={+projectId}
+                            releaseId={+releaseId}
+                            open={openCreateSprint}
+                            handleClose={handleCloseCreateSprint}
                         />
-                        <DeleteDialog
-                            open={openDeleteSprint}
-                            id={selectedSprint.id}
-                            handleClose={handleCloseDeleteSprint}
-                            deleteFunction={deleteSprint}
-                            name={selectedSprint.name}
-                        />
-                    </>
-                )}
+                    )}
+                {selectedSprint &&
+                    hasAccess(permissions, [
+                        "edit_issues",
+                        "delete_issues",
+                    ]) && (
+                        <>
+                            <EditSprintDialog
+                                open={openEditSprint}
+                                sprintId={selectedSprint.id}
+                                handleClose={handleCloseEditSprint}
+                            />
+                            <DeleteDialog
+                                open={openDeleteSprint}
+                                id={selectedSprint.id}
+                                handleClose={handleCloseDeleteSprint}
+                                deleteFunction={deleteSprint}
+                                name={selectedSprint.name}
+                            />
+                        </>
+                    )}
 
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Sprints" />
-                    <AddButton
-                        onClick={() => {
-                            setOpenCreateSprint(true);
-                        }}
-                    />
+                    {hasAccess(permissions, ["add_issues"]) && (
+                        <AddButton
+                            onClick={() => {
+                                setOpenCreateSprint(true);
+                            }}
+                        />
+                    )}
                 </div>
                 <div>
                     <table className="w-full mt-[30px]">
@@ -168,16 +193,27 @@ const ProjectSprints = () => {
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
-                                            <SettingsButton
-                                                onEdit={() => {
-                                                    setSelectedSprint(sprint);
-                                                    setOpenEditSprint(true);
-                                                }}
-                                                onDelete={() => {
-                                                    setSelectedSprint(sprint);
-                                                    setOpenDeleteSprint(true);
-                                                }}
-                                            />
+                                            {hasAccess(permissions, [
+                                                "edit_issues",
+                                                "delete_issues",
+                                            ]) && (
+                                                <SettingsButton
+                                                    onEdit={() => {
+                                                        setSelectedSprint(
+                                                            sprint
+                                                        );
+                                                        setOpenEditSprint(true);
+                                                    }}
+                                                    onDelete={() => {
+                                                        setSelectedSprint(
+                                                            sprint
+                                                        );
+                                                        setOpenDeleteSprint(
+                                                            true
+                                                        );
+                                                    }}
+                                                />
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

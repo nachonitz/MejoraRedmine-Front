@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { RISK_COLOR, Risk, RiskFilter } from "../../../api/models/risk";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 import { deleteRisk, getRisks } from "../../../api/services/risksService";
 import CreateRiskDialog from "../../../components/Pages/Risks/CreateRiskDialog/CreateRiskDialog";
 import EditRiskDialog from "../../../components/Pages/Risks/EditRiskDialog/EditRiskDialog";
@@ -10,7 +11,7 @@ import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate } from "../../../lib/utils";
+import { getFullDate, hasAccess } from "../../../lib/utils";
 
 const defaultFilters: RiskFilter = {
     page: 1,
@@ -24,6 +25,7 @@ const Risks = () => {
     const [openEditRisk, setOpenEditRisk] = useState(false);
     const [openDeleteRisk, setOpenDeleteRisk] = useState(false);
     const [selectedRisk, setSelectedRisk] = useState<Risk>();
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const getAllRisks = useCallback(async () => {
         try {
@@ -33,6 +35,20 @@ const Risks = () => {
                     projectId: +projectId,
                 });
                 setRisks(data.items);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    }, [projectId]);
+
+    const getUserPermissions = useCallback(async () => {
+        try {
+            if (projectId) {
+                const allPermissions = await getMyPermissions();
+                const projectPermissions = allPermissions.find(
+                    (permission) => permission.projectId === +projectId
+                );
+                setPermissions(projectPermissions?.roles ?? []);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -64,40 +80,48 @@ const Risks = () => {
 
     useEffect(() => {
         getAllRisks();
-    }, [getAllRisks]);
+        getUserPermissions();
+    }, [getAllRisks, getUserPermissions]);
+
     return (
         <Sidebar>
             <Page>
-                {projectId && (
-                    <CreateRiskDialog
-                        projectId={projectId}
-                        open={openCreateRisk}
-                        handleClose={handleCloseCreateRisk}
-                    />
-                )}
-                {selectedRisk && (
+                {hasAccess(permissions, ["add_documents"]) && (
                     <>
-                        <EditRiskDialog
-                            open={openEditRisk}
-                            riskId={selectedRisk.id}
-                            handleClose={handleCloseEditRisk}
-                        />
-                        <DeleteDialog
-                            open={openDeleteRisk}
-                            id={selectedRisk.id}
-                            handleClose={handleCloseDeleteRisk}
-                            deleteFunction={deleteRisk}
-                            name={selectedRisk.name}
-                        />
+                        {projectId && (
+                            <CreateRiskDialog
+                                projectId={projectId}
+                                open={openCreateRisk}
+                                handleClose={handleCloseCreateRisk}
+                            />
+                        )}
+                        {selectedRisk && (
+                            <>
+                                <EditRiskDialog
+                                    open={openEditRisk}
+                                    riskId={selectedRisk.id}
+                                    handleClose={handleCloseEditRisk}
+                                />
+                                <DeleteDialog
+                                    open={openDeleteRisk}
+                                    id={selectedRisk.id}
+                                    handleClose={handleCloseDeleteRisk}
+                                    deleteFunction={deleteRisk}
+                                    name={selectedRisk.name}
+                                />
+                            </>
+                        )}
                     </>
                 )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Risks" />
-                    <AddButton
-                        onClick={() => {
-                            setOpenCreateRisk(true);
-                        }}
-                    />
+                    {hasAccess(permissions, ["add_documents"]) && (
+                        <AddButton
+                            onClick={() => {
+                                setOpenCreateRisk(true);
+                            }}
+                        />
+                    )}
                 </div>
                 <div>
                     <table className="w-full mt-[30px] border-collapse">
@@ -159,18 +183,23 @@ const Risks = () => {
                                         {getFullDate(risk.updatedAt)}
                                     </td>
                                     <td className="text-right">
-                                        <div className="flex justify-end">
-                                            <SettingsButton
-                                                onEdit={() => {
-                                                    setSelectedRisk(risk);
-                                                    setOpenEditRisk(true);
-                                                }}
-                                                onDelete={() => {
-                                                    setSelectedRisk(risk);
-                                                    setOpenDeleteRisk(true);
-                                                }}
-                                            />
-                                        </div>
+                                        {hasAccess(permissions, [
+                                            "edit_documents",
+                                            "delete_documents",
+                                        ]) && (
+                                            <div className="flex justify-end">
+                                                <SettingsButton
+                                                    onEdit={() => {
+                                                        setSelectedRisk(risk);
+                                                        setOpenEditRisk(true);
+                                                    }}
+                                                    onDelete={() => {
+                                                        setSelectedRisk(risk);
+                                                        setOpenDeleteRisk(true);
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

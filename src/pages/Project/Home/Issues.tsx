@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Epic } from "../../../api/models/epic";
 import { Issue, IssueFilter } from "../../../api/models/issue";
@@ -9,7 +9,10 @@ import { getEpicById } from "../../../api/services/epicsService";
 import { deleteIssue, getIssues } from "../../../api/services/issuesService";
 import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
-import { getIssueIcon, getIssuePriorityColor } from "../../../utilities/utilities";
+import {
+    getIssueIcon,
+    getIssuePriorityColor,
+} from "../../../utilities/utilities";
 import AddButton from "../../../components/Shared/Buttons/AddButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
@@ -17,6 +20,8 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+import { getMyPermissions } from "../../../api/services/membershipsService";
+import { hasAccess } from "../../../lib/utils";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -34,6 +39,7 @@ const ProjectIssues = () => {
     const [openEditIssue, setOpenEditIssue] = useState(false);
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const getEpic = async () => {
         try {
@@ -45,6 +51,20 @@ const ProjectIssues = () => {
             throw new Error("Error. Please try again.");
         }
     };
+
+    const getUserPermissions = useCallback(async () => {
+        try {
+            if (projectId) {
+                const allPermissions = await getMyPermissions();
+                const projectPermissions = allPermissions.find(
+                    (permission) => permission.projectId === +projectId
+                );
+                setPermissions(projectPermissions?.roles ?? []);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    }, [projectId]);
 
     const getAllIssues = async () => {
         try {
@@ -91,7 +111,8 @@ const ProjectIssues = () => {
     useEffect(() => {
         getEpic();
         getAllIssues();
-    }, []);
+        getUserPermissions();
+    }, [getUserPermissions]);
 
     return (
         <Sidebar>
@@ -102,35 +123,45 @@ const ProjectIssues = () => {
                     sprint={epic?.sprint}
                     epic={epic}
                 />
-                {epicId && projectId && releaseId && sprintId && (
-                    <CreateIssueDialog
-                        projectId={projectId}
-                        releaseId={releaseId}
-                        sprintId={sprintId}
-                        epicId={epicId}
-                        open={openCreateIssue}
-                        handleClose={handleCloseCreateIssue}
-                    />
-                )}
-                {selectedIssue && (
-                    <>
-                        <EditIssueDialog
-                            open={openEditIssue}
-                            issueId={selectedIssue.id}
-                            handleClose={handleCloseEditIssue}
+                {epicId &&
+                    projectId &&
+                    releaseId &&
+                    sprintId &&
+                    hasAccess(permissions, ["add_issues"]) && (
+                        <CreateIssueDialog
+                            projectId={projectId}
+                            releaseId={releaseId}
+                            sprintId={sprintId}
+                            epicId={epicId}
+                            open={openCreateIssue}
+                            handleClose={handleCloseCreateIssue}
                         />
-                        <DeleteDialog
-                            open={openDeleteIssue}
-                            id={selectedIssue.id}
-                            handleClose={handleCloseDeleteIssue}
-                            deleteFunction={deleteIssue}
-                            name={selectedIssue.subject}
-                        />
-                    </>
-                )}
+                    )}
+                {selectedIssue &&
+                    hasAccess(permissions, [
+                        "edit_issues",
+                        "delete_issues",
+                    ]) && (
+                        <>
+                            <EditIssueDialog
+                                open={openEditIssue}
+                                issueId={selectedIssue.id}
+                                handleClose={handleCloseEditIssue}
+                            />
+                            <DeleteDialog
+                                open={openDeleteIssue}
+                                id={selectedIssue.id}
+                                handleClose={handleCloseDeleteIssue}
+                                deleteFunction={deleteIssue}
+                                name={selectedIssue.subject}
+                            />
+                        </>
+                    )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Issues" />
-                    <AddButton onClick={() => setOpenCreateIssue(true)} />
+                    {hasAccess(permissions, ["add_issues"]) && (
+                        <AddButton onClick={() => setOpenCreateIssue(true)} />
+                    )}
                 </div>
                 <div>
                     <table className="w-full mt-[30px]">
@@ -161,21 +192,35 @@ const ProjectIssues = () => {
                                     <td className="gap-[10px] text-left">
                                         {issue.subject}
                                     </td>
-                                    <td style={{color: getIssuePriorityColor(issue.priority["name"])}} className="text-left">
+                                    <td
+                                        style={{
+                                            color: getIssuePriorityColor(
+                                                issue.priority["name"]
+                                            ),
+                                        }}
+                                        className="text-left"
+                                    >
                                         {issue.priority["name"]}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
-                                            <SettingsButton
-                                                onEdit={() => {
-                                                    setSelectedIssue(issue);
-                                                    setOpenEditIssue(true);
-                                                }}
-                                                onDelete={() => {
-                                                    setSelectedIssue(issue);
-                                                    setOpenDeleteIssue(true);
-                                                }}
-                                            />
+                                            {hasAccess(permissions, [
+                                                "edit_issues",
+                                                "delete_issues",
+                                            ]) && (
+                                                <SettingsButton
+                                                    onEdit={() => {
+                                                        setSelectedIssue(issue);
+                                                        setOpenEditIssue(true);
+                                                    }}
+                                                    onDelete={() => {
+                                                        setSelectedIssue(issue);
+                                                        setOpenDeleteIssue(
+                                                            true
+                                                        );
+                                                    }}
+                                                />
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

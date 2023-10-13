@@ -16,7 +16,8 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate } from "../../../lib/utils";
+import { getFullDate, hasAccess } from "../../../lib/utils";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -32,12 +33,27 @@ const ProjectReleases = () => {
     const [openEditRelease, setOpenEditRelease] = useState(false);
     const [openDeleteRelease, setOpenDeleteRelease] = useState(false);
     const [selectedRelease, setSelectedRelease] = useState<Release>();
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const getProject = useCallback(async () => {
         try {
             if (projectId) {
                 const project = await getProjectById(+projectId);
                 setProject(project);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    }, [projectId]);
+
+    const getUserPermissions = useCallback(async () => {
+        try {
+            if (projectId) {
+                const allPermissions = await getMyPermissions();
+                const projectPermissions = allPermissions.find(
+                    (permission) => permission.projectId === +projectId
+                );
+                setPermissions(projectPermissions?.roles ?? []);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -88,7 +104,8 @@ const ProjectReleases = () => {
     useEffect(() => {
         getAllReleases();
         getProject();
-    }, [getAllReleases, getProject]);
+        getUserPermissions();
+    }, [getAllReleases, getProject, getUserPermissions]);
 
     return (
         <Sidebar>
@@ -96,36 +113,44 @@ const ProjectReleases = () => {
                 <ProjectBreadcrumbs project={project} />
                 {projectId && (
                     <>
-                        <CreateReleaseDialog
-                            projectId={+projectId}
-                            open={openCreateRelease}
-                            handleClose={handleCloseCreateRelease}
-                        />
-                        {selectedRelease && (
-                            <>
-                                <EditReleaseDialog
-                                    open={openEditRelease}
-                                    releaseId={selectedRelease?.id}
-                                    handleClose={handleCloseEditRelease}
-                                />
-                                <DeleteDialog
-                                    open={openDeleteRelease}
-                                    id={selectedRelease?.id}
-                                    handleClose={handleCloseDeleteRelease}
-                                    deleteFunction={deleteRelease}
-                                    name={selectedRelease?.name}
-                                />
-                            </>
+                        {hasAccess(permissions, ["add_issues"]) && (
+                            <CreateReleaseDialog
+                                projectId={+projectId}
+                                open={openCreateRelease}
+                                handleClose={handleCloseCreateRelease}
+                            />
                         )}
+                        {selectedRelease &&
+                            hasAccess(permissions, [
+                                "edit_issues",
+                                "delete_issues",
+                            ]) && (
+                                <>
+                                    <EditReleaseDialog
+                                        open={openEditRelease}
+                                        releaseId={selectedRelease?.id}
+                                        handleClose={handleCloseEditRelease}
+                                    />
+                                    <DeleteDialog
+                                        open={openDeleteRelease}
+                                        id={selectedRelease?.id}
+                                        handleClose={handleCloseDeleteRelease}
+                                        deleteFunction={deleteRelease}
+                                        name={selectedRelease?.name}
+                                    />
+                                </>
+                            )}
                     </>
                 )}
                 <div className="flex gap-[15px] items-center">
                     <PageTitle title="Releases" />
-                    <AddButton
-                        onClick={() => {
-                            setOpenCreateRelease(true);
-                        }}
-                    />
+                    {hasAccess(permissions, ["add_issues"]) && (
+                        <AddButton
+                            onClick={() => {
+                                setOpenCreateRelease(true);
+                            }}
+                        />
+                    )}
                 </div>
                 <div>
                     <table className="w-full mt-[30px]">
@@ -165,16 +190,29 @@ const ProjectReleases = () => {
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
-                                            <SettingsButton
-                                                onEdit={() => {
-                                                    setSelectedRelease(release);
-                                                    setOpenEditRelease(true);
-                                                }}
-                                                onDelete={() => {
-                                                    setSelectedRelease(release);
-                                                    setOpenDeleteRelease(true);
-                                                }}
-                                            />
+                                            {hasAccess(permissions, [
+                                                "edit_issues",
+                                                "delete_issues",
+                                            ]) && (
+                                                <SettingsButton
+                                                    onEdit={() => {
+                                                        setSelectedRelease(
+                                                            release
+                                                        );
+                                                        setOpenEditRelease(
+                                                            true
+                                                        );
+                                                    }}
+                                                    onDelete={() => {
+                                                        setSelectedRelease(
+                                                            release
+                                                        );
+                                                        setOpenDeleteRelease(
+                                                            true
+                                                        );
+                                                    }}
+                                                />
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
