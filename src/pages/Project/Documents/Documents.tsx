@@ -26,7 +26,6 @@ const Documents = () => {
         []
     );
     const [openCreateDocument, setOpenCreateDocument] = useState(false);
-    const [openEditDocument, setOpenEditDocument] = useState(false);
     const [openDeleteDocument, setOpenDeleteDocument] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState<Document>();
 
@@ -67,14 +66,6 @@ const Documents = () => {
         if (refresh) {
             getAllDocuments();
         }
-    };
-
-    const handleCloseEditDocument = (refresh?: boolean) => {
-        setOpenEditDocument(false);
-        if (refresh) {
-            getAllDocuments();
-        }
-        setSelectedDocument(undefined);
     };
 
     const handleCloseDeleteDocument = (refresh?: boolean) => {
@@ -191,7 +182,9 @@ const Documents = () => {
                                                     setSelectedDocument(
                                                         document
                                                     );
-                                                    setOpenEditDocument(true);
+                                                    navigate(
+                                                        `/project/${projectId}/document/${document.id}/edit`
+                                                    );
                                                 }}
                                                 onDelete={() => {
                                                     setSelectedDocument(

@@ -10,7 +10,10 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CreateDocumentDto } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
-import { createDocument } from "../../../api/services/documentsService";
+import {
+    createDocument,
+    getDocumentById,
+} from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
 import { uploadFile } from "../../../api/services/filesService";
 import { FilePicker } from "../../../components/Shared/Dropzone/FilePicker";
@@ -25,8 +28,8 @@ import {
 import { UserContext } from "../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
-const NewDocument = () => {
-    const { projectId } = useParams();
+const EditDocument = () => {
+    const { projectId, documentId } = useParams();
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
     const [documentCategories, setDocumentCategories] = useState<Enumeration[]>(
@@ -122,13 +125,27 @@ const NewDocument = () => {
         getCategories();
     }, []);
 
+    useEffect(() => {
+        const fetch = async () => {
+            if (documentId) {
+                const document = await getDocumentById(+documentId);
+                setTitle(document.title);
+                setDescription(document.description ?? "");
+                setDocumentCategoryId(document.categoryId);
+                setTagsString(document.tags?.join(","));
+            }
+        };
+        fetch();
+    }, [documentId]);
+
     return (
         <Sidebar>
             <Page>
-                <PageTitle title="New document" />
+                <PageTitle title="Edit document" />
                 <div className="mt-[24px] flex flex-col gap-[20px]">
                     <TextField
                         onChange={(e) => setTitle(e.target.value)}
+                        value={title}
                         error={errorTitle}
                         className="w-full"
                         id="title"
@@ -137,6 +154,7 @@ const NewDocument = () => {
                     />
                     <TextField
                         onChange={(e) => setDescription(e.target.value)}
+                        value={description}
                         className="w-full"
                         id="description"
                         label="Text"
@@ -178,8 +196,9 @@ const NewDocument = () => {
                         <TextField
                             onChange={(e) => setTagsString(e.target.value)}
                             error={errorTags}
+                            value={tagsString}
                             className="w-1/2"
-                            id="tags"
+                            id="tagsString"
                             label="Tags"
                             placeholder="Separate tags with commas... (Max 5)"
                             variant="outlined"
@@ -216,4 +235,4 @@ const NewDocument = () => {
     );
 };
 
-export default NewDocument;
+export default EditDocument;

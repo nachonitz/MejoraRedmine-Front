@@ -1,7 +1,7 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { CreateFileDto, File, FileFilter } from "../models/file";
+import { CreateFileDto, File as RedmineFile, FileFilter } from "../models/file";
 
 export const getFiles = async (filter: FileFilter) => {
     const { data } = await api.get<ListedResponse<Document>>(
@@ -10,25 +10,20 @@ export const getFiles = async (filter: FileFilter) => {
     return { data };
 };
 
-//TODO: revisar, falta algun tipo?
-export const uploadFile = async (input: any): Promise<File> => {
+export const uploadFile = async (
+    file: File,
+    dto: CreateFileDto
+): Promise<RedmineFile> => {
     const formData = new FormData();
-    formData.append("file", input.file);
-
-    const uploadedFile = await api.post("/files/upload", formData);
-    const createDocumentInput: CreateFileDto = {
-        title: input.title,
-        token: uploadedFile.data.upload.token,
-        projectId: input.projectId,
-        authorId: input.authorId,
-        tags: input.tags,
-    };
-
-    await createFile(createDocumentInput);
-    return uploadedFile.data;
+    formData.append("file", file);
+    const { data: uploadData } = await api.post("/files/upload", formData);
+    return await createFile({
+        ...dto,
+        token: uploadData.upload.token,
+    });
 };
 
-export const createFile = async (file: CreateFileDto): Promise<File> => {
+export const createFile = async (file: CreateFileDto): Promise<RedmineFile> => {
     const { data } = await api.post("/files", file);
     return data;
 };

@@ -23,7 +23,7 @@ export const getDocumentById = async (
 };
 
 export const createDocument = async (document: CreateDocumentDto) => {
-    const { data } = await api.post("/documents", document);
+    const { data } = await api.post<Document>("/documents", document);
     return data;
 };
 
