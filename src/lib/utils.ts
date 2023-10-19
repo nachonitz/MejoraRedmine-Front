@@ -1,5 +1,7 @@
+import { DocumentFilter } from "../api/models/document";
 import { EnumerationFilter } from "../api/models/enumeration";
 import { EpicFilter } from "../api/models/epic";
+import { FileFilter } from "../api/models/file";
 import { IssueFilter } from "../api/models/issue";
 import { ProjectMembershipFilter } from "../api/models/membership";
 import { ProjectFilter } from "../api/models/project";
@@ -18,7 +20,9 @@ type Filters =
     | UserFilter
     | EnumerationFilter
     | ProjectMembershipFilter
-    | IssueFilter;
+    | IssueFilter
+    | FileFilter
+    | DocumentFilter;
 
 export function filterToQueryParams(filter: Filters): string {
     const obj = {} as Record<keyof Filters, string>;

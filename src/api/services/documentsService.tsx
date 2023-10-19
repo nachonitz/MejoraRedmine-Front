@@ -1,81 +1,41 @@
+import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
-import { Document } from "../models/document";
+import { ListedResponse } from "../models/common";
+import {
+    CreateDocumentDto,
+    Document,
+    DocumentFilter,
+    UpdateDocumentDto,
+} from "../models/document";
 
+export const getDocuments = async (filter: DocumentFilter) => {
+    const { data } = await api.get<ListedResponse<Document>>(
+        `/documents?${filterToQueryParams(filter)}`
+    );
+    return { data };
+};
 
-export const getDocumentsByProjectId = async (projectId: number): Promise<Document[]> => {
-	const response = await api.get('/files', { params: { projectId } });
-	const documents: Document[] = response.data;
-	return documents;
-}
+export const getDocumentById = async (
+    id: Document["id"]
+): Promise<Document> => {
+    const { data } = await api.get<Document>(`/documents/${id}`);
+    return data;
+};
 
-function readFileDataAsBase64(file: any) {
+export const createDocument = async (document: CreateDocumentDto) => {
+    const { data } = await api.post("/documents", document);
+    return data;
+};
 
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+export const editDocument = async (
+    id: Document["id"],
+    document: UpdateDocumentDto
+) => {
+    const { data } = await api.patch(`/documents/${id}`, document);
+    return data;
+};
 
-        reader.onload = (event: any) => {
-            resolve(event.target.result);
-        };
-
-        reader.onerror = (err) => {
-            reject(err);
-        };
-
-        reader.readAsBinaryString(file);
-    });
-}
-
-
-export const uploadFile = async (input: any): Promise<Document> => {
-	console.log(input)
-
-	const formData = new FormData();
-	formData.append('file', input.file);
-
-	const uploadedFile = await api.post('/files/upload', formData);
-	console.log(uploadedFile.data.upload.token);
-	const createDocumentInput = {
-		title: input.title,
-		token: uploadedFile.data.upload.token,
-		projectId: input.projectId,
-		type: "BINARY",
-		authorId: input.authorId,
-		documentCategoryId: input.documentCategoryId,
-		tags: input.tags,
-	}
-
-	await createFile(createDocumentInput);
-
-	// const response = await api.post('/files', file);
-	// const newFile: Document = response.data;
-	return uploadedFile.data;
-}
-
-export const createFile = async (file: any): Promise<Document> => {
-	const response = await api.post('/files', file);
-	const newFile: Document = response.data;
-	return newFile;
-}
-
-// export const createRisk = async (risk: any): Promise<Risk> => {
-// 	const response = await api.post('/risks', risk);
-// 	const newRisk: Risk = response.data;
-// 	return newRisk;
-// }
-
-// export const getRiskById = async (riskId: number): Promise<Risk> => {
-// 	const response = await api.get(`/risks/${riskId}`);
-// 	const risk: Risk = response.data;
-// 	return risk;
-// }
-
-// export const editRisk = async (risk: any): Promise<Risk> => {
-// 	const response = await api.patch(`/risks/${risk.id}`, risk);
-// 	const editedRisk: Risk = response.data.risk;
-// 	return editedRisk;
-// }
-
-// export const deleteRisk = async (riskId: number): Promise<boolean> => {
-// 	const response = await api.delete(`/risks/${riskId}`);
-// 	return true;
-// }
+export const deleteDocument = async (id: Document["id"]): Promise<boolean> => {
+    const { data } = await api.delete(`/documents/${id}`);
+    return data;
+};

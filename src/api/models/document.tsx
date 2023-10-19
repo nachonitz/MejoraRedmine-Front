@@ -1,13 +1,36 @@
+import { Project } from "./project";
 import { User } from "./user";
 
-export interface Document {
-    id: number;
-    filesize: number;
-    filename: string;
-    type: string;
+interface BaseDocument {
     title: string;
-    content_url: string;
-    created_on: Date;
-    author: User;
-    tags: string[];
+    description?: string;
+    categoryId: number;
+    tags?: string[];
+}
+
+export interface Document extends BaseDocument {
+    id: number;
+    redmineId: number;
+    createdAt: Date;
+    project: Project;
+    author?: User;
+    attachments?: File[];
+}
+
+export interface CreateDocumentDto extends BaseDocument {
+    projectId: number;
+    authorId?: number;
+}
+export type UpdateDocumentDto = Partial<CreateDocumentDto>;
+
+type AscDesc = "asc" | "desc";
+type FilterOrder = `${keyof Document}:${AscDesc}`;
+
+export interface DocumentFilter {
+    title?: string;
+    projectId: number;
+    authorId?: number;
+    categoryId?: number;
+    tags?: string[];
+    order?: FilterOrder;
 }

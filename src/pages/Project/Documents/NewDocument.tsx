@@ -10,15 +10,16 @@ import MenuItem from "@mui/material/MenuItem";
 import { useContext, useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useParams } from "react-router-dom";
-import RichTextEditor from "react-rte";
-import { Document } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
-import { uploadFile } from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { UserContext } from "../../../context/UserContext";
+import { FilePicker } from "../../../components/Shared/Dropzone/FilePicker";
+import { CreateDocumentDto } from "../../../api/models/document";
+import { createDocument } from "../../../api/services/documentsService";
+import { errorToast, successToast } from "../../../components/Shared/Toast";
 
 const NewDocument = () => {
     const { projectId } = useParams();
@@ -36,6 +37,7 @@ const NewDocument = () => {
     const [errorDocumentCategory, setErrorDocumentCategory] = useState(false);
     const [errorFile, setErrorFile] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
     function handleChangeFile(event: any) {
         setFile(event.target.files[0]);
@@ -83,24 +85,22 @@ const NewDocument = () => {
     const handleCreate = () => {
         clearErrors();
         const errorFound = checkForFieldsErrors();
-        if (errorFound) {
-            return;
-        }
-        const input = {
+        if (errorFound || !projectId) return;
+        const document: CreateDocumentDto = {
             title: title,
-            documentCategoryId: documentCategoryId,
-            file: file,
-            projectId: projectId,
+            description: description,
+            categoryId: +documentCategoryId,
+            projectId: +projectId,
             authorId: user?.id,
-            tags: [],
         };
-        uploadFile(input)
-            .then((document: Document) => {
-                console.log(document);
+        createDocument(document)
+            .then(() => {
+                successToast("Document created successfully");
             })
             .catch((error) => {
                 console.log(error);
                 setServerErrors(error.messages);
+                errorToast("Something went wrong");
             });
     };
 
@@ -110,8 +110,8 @@ const NewDocument = () => {
     return (
         <Sidebar>
             <Page>
-                <PageTitle title="New Document" />
-                <div className="mt-[5px] flex flex-col gap-[20px]">
+                <PageTitle title="New document" />
+                <div className="mt-[24px] flex flex-col gap-[20px]">
                     <TextField
                         onChange={(e) => setTitle(e.target.value)}
                         error={errorTitle}
@@ -120,9 +120,14 @@ const NewDocument = () => {
                         label="Title"
                         variant="outlined"
                     />
-                    <RichTextEditor
-                        value={description}
-                        onChange={setDescription}
+                    <TextField
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="w-full"
+                        id="description"
+                        label="Text"
+                        variant="outlined"
+                        multiline
+                        rows={4}
                     />
                     <FormControl>
                         <InputLabel id="category" error={errorDocumentCategory}>
@@ -133,7 +138,7 @@ const NewDocument = () => {
                             value={documentCategoryId}
                             label="Document Category"
                             error={errorDocumentCategory}
-                            onChange={(e: any) =>
+                            onChange={(e) =>
                                 setDocumentCategoryId(e.target.value)
                             }
                         >
@@ -146,20 +151,25 @@ const NewDocument = () => {
                                 ))}
                         </Select>
                     </FormControl>
-                    {!file && (
-                        <Button variant="contained" component="label">
-                            Choose File
-                            <input
-                                hidden
-                                onChange={handleChangeFile}
-                                multiple
-                                type="file"
-                            />
+                    <FilePicker
+                        selectedFiles={selectedFiles}
+                        onFilesSelected={(files) => setSelectedFiles(files)}
+                        label="Attachments"
+                        helperText="Drag and drop files here or click to browse."
+                    />
+                    <div className="mb-24 mt-8 w-full">
+                        <Button
+                            onClick={handleCreate}
+                            className="w-full h-12"
+                            variant="contained"
+                            component="label"
+                        >
+                            Create document
                         </Button>
-                    )}
+                    </div>
                     {file && (
                         <div className="flex justify-between items-center">
-                            <div className="flex flex-col">
+                            <div className="flex flex-col mr-2">
                                 <span>
                                     {file.name.length > 40
                                         ? file.name.substring(0, 39) + "..."
@@ -169,7 +179,7 @@ const NewDocument = () => {
                                     {(file.size / 1024).toFixed(2)} kb
                                 </span>
                             </div>
-                            <div>
+                            <div className="ml-2">
                                 <IconButton
                                     onClick={() => setFile(undefined)}
                                     component="label"

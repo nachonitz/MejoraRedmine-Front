@@ -15,11 +15,11 @@ import { useContext, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { Document } from "../../../../api/models/document";
 import { Enumeration } from "../../../../api/models/enumeration";
-import { uploadFile } from "../../../../api/services/documentsService";
 import { UserContext } from "../../../../context/UserContext";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
+import { uploadFile } from "../../../../api/services/filesService";
 
 interface UploadDocumentDialogProps {
     open: boolean;

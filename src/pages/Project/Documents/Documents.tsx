@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { IoMdAttach } from "react-icons/io";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { MdAdd, MdUpload } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { Document } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
-import { Risk } from "../../../api/models/risk";
-import { getDocumentsByProjectId } from "../../../api/services/documentsService";
+import {
+    deleteDocument,
+    getDocuments,
+} from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
-import { deleteRisk } from "../../../api/services/risksService";
 import UploadDocumentDialog from "../../../components/Pages/Documents/UploadDocumentDialog/UploadDocumentDialog";
-import EditRiskDialog from "../../../components/Pages/Risks/EditRiskDialog/EditRiskDialog";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
@@ -27,19 +26,19 @@ const Documents = () => {
         []
     );
     const [openCreateDocument, setOpenCreateDocument] = useState(false);
-    const [openEditRisk, setOpenEditRisk] = useState(false);
-    const [openDeleteRisk, setOpenDeleteRisk] = useState(false);
-    const [selectedRisk, setSelectedRisk] = useState<Risk>();
+    const [openEditDocument, setOpenEditDocument] = useState(false);
+    const [openDeleteDocument, setOpenDeleteDocument] = useState(false);
+    const [selectedDocument, setSelectedDocument] = useState<Document>();
 
-    const getDocuments = async () => {
+    console.log({ documents });
+
+    const getAllDocuments = async () => {
         try {
             if (projectId) {
-                const documents = await getDocumentsByProjectId(
-                    parseInt(projectId)
-                );
-                setDocuments(documents);
-                console.log(documents);
-                return documents;
+                const { data } = await getDocuments({
+                    projectId: +projectId,
+                });
+                setDocuments(data.items);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -66,30 +65,31 @@ const Documents = () => {
     const handleCloseCreateDocument = (refresh?: boolean) => {
         setOpenCreateDocument(false);
         if (refresh) {
-            getDocuments();
+            getAllDocuments();
         }
     };
 
-    const handleCloseEditRisk = (refresh?: boolean) => {
-        setOpenEditRisk(false);
+    const handleCloseEditDocument = (refresh?: boolean) => {
+        setOpenEditDocument(false);
         if (refresh) {
-            getDocuments();
+            getAllDocuments();
         }
-        setSelectedRisk(undefined);
+        setSelectedDocument(undefined);
     };
 
-    const handleCloseDeleteRisk = (refresh?: boolean) => {
-        setOpenDeleteRisk(false);
+    const handleCloseDeleteDocument = (refresh?: boolean) => {
+        setOpenDeleteDocument(false);
         if (refresh) {
-            getDocuments();
+            getAllDocuments();
         }
-        setSelectedRisk(undefined);
+        setSelectedDocument(undefined);
     };
 
     useEffect(() => {
-        getDocuments();
+        getAllDocuments();
         getCategories();
     }, []);
+
     return (
         <Sidebar>
             <Page>
@@ -99,51 +99,45 @@ const Documents = () => {
                     open={openCreateDocument}
                     handleClose={handleCloseCreateDocument}
                 />
-                <EditRiskDialog
+                {/* <EditRiskDialog
                     open={openEditRisk}
-                    riskId={selectedRisk?.id}
+                    riskId={selectedDocument?.id}
                     handleClose={handleCloseEditRisk}
-                />
+                /> */}
                 <DeleteDialog
-                    open={openDeleteRisk}
-                    id={selectedRisk?.id}
-                    handleClose={handleCloseDeleteRisk}
-                    deleteFunction={deleteRisk}
-                    name={selectedRisk?.name}
+                    open={openDeleteDocument}
+                    id={selectedDocument?.id}
+                    handleClose={handleCloseDeleteDocument}
+                    deleteFunction={deleteDocument}
+                    name={selectedDocument?.title}
                 />
-                <div className="flex gap-[15px] items-center">
+                <div className="flex justify-between items-center">
                     <PageTitle title="Documents" />
-                    {/* <AddButton onClick={ () => { setOpenCreateDocument(true) } } /> */}
+                    <div className="flex gap-4">
+                        <PrimaryButton onClick={goToNewDocument}>
+                            <div className="flex w-full items-center gap-2">
+                                <MdAdd className="text-[24px]" />
+                                <span>New Document</span>
+                            </div>
+                        </PrimaryButton>
+                        <PrimaryButton
+                            onClick={() => setOpenCreateDocument(true)}
+                        >
+                            <div className="flex w-full items-center gap-2">
+                                <MdUpload className="text-[24px]" />
+                                <span>Upload File</span>
+                            </div>
+                        </PrimaryButton>
+                    </div>
                 </div>
-                <div className="mt-10 flex gap-4">
-                    <PrimaryButton
-                        onClick={() => {
-                            goToNewDocument();
-                        }}
-                    >
-                        <div className="flex w-full items-center gap-2">
-                            <MdAdd className="text-[24px]" />
-                            <span>New Document</span>
-                        </div>
-                    </PrimaryButton>
-                    <PrimaryButton
-                        onClick={() => {
-                            setOpenCreateDocument(true);
-                        }}
-                    >
-                        <div className="flex w-full items-center gap-2">
-                            <MdUpload className="text-[24px]" />
-                            <span>Upload File</span>
-                        </div>
-                    </PrimaryButton>
-                </div>
+
                 <div>
                     <table className="w-full mt-[30px] border-collapse">
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th className="w-[30px]"></th>
                                 <th className="text-left">Title</th>
-                                <th className="text-left">Size</th>
+                                <th className="text-left">Category</th>
                                 <th className="text-left">Created</th>
                                 <th className="text-left">Tags</th>
                             </tr>
@@ -158,38 +152,52 @@ const Documents = () => {
                                     className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50"
                                 >
                                     <td className="w-[30px]">
-                                        {document.type === "BINARY" ? (
-                                            <IoMdAttach className="w-[24px] h-[24px] text-primary" />
-                                        ) : (
-                                            <IoDocumentTextOutline className="w-[24px] h-[24px] text-primary" />
-                                        )}
-                                        {/* <img className="w-[24px] h-[24px]" src={'/src/assets/icons/user-story-icon.png'} /> */}
+                                        <IoDocumentTextOutline className="w-[24px] h-[24px] text-primary" />
                                     </td>
                                     <td className="gap-[10px] text-left">
-                                        {document.filename}
+                                        {document.title.length > 40
+                                            ? document.title.substring(0, 39) +
+                                              "..."
+                                            : document.title}
                                     </td>
                                     <td className="text-left">
-                                        {(document.filesize / 1024).toFixed(2)}{" "}
-                                        kb
+                                        {
+                                            documentCategories.find(
+                                                (category) =>
+                                                    category.id ===
+                                                    document.categoryId
+                                            )?.name
+                                        }
                                     </td>
                                     <td className="text-left">
-                                        {document.author.firstname}{" "}
-                                        {document.author.lastname} (
-                                        {getFullDate(document.created_on)})
+                                        {document.author &&
+                                            `${document.author.firstname} ${document.author.lastname} - `}
+                                        ({getFullDate(document.createdAt)})
                                     </td>
                                     <td className="text-left">
-                                        {document.tags}
+                                        {document.tags &&
+                                        document.tags.length > 0
+                                            ? document.tags.length > 3
+                                                ? document.tags
+                                                      .slice(0, 3)
+                                                      .join(", ") + "..."
+                                                : document.tags.join(", ")
+                                            : "-"}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
                                             <SettingsButton
                                                 onEdit={() => {
-                                                    setSelectedRisk(document);
-                                                    setOpenEditRisk(true);
+                                                    setSelectedDocument(
+                                                        document
+                                                    );
+                                                    setOpenEditDocument(true);
                                                 }}
                                                 onDelete={() => {
-                                                    setSelectedRisk(risk);
-                                                    setOpenDeleteRisk(true);
+                                                    setSelectedDocument(
+                                                        document
+                                                    );
+                                                    setOpenDeleteDocument(true);
                                                 }}
                                             />
                                         </div>
