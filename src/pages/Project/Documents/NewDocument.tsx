@@ -125,7 +125,10 @@ const NewDocument = () => {
     return (
         <Sidebar>
             <Page>
-                <PageTitle title="New document" />
+                <PageTitle
+                    title="New document"
+                    goBackTo={`/project/${projectId}/documents`}
+                />
                 <div className="mt-[24px] flex flex-col gap-[20px]">
                     <TextField
                         onChange={(e) => setTitle(e.target.value)}

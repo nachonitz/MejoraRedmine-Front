@@ -14,6 +14,7 @@ export interface File extends BaseFile {
     project: Project;
     author?: User;
     document?: Document;
+    filesize?: number;
 }
 
 export interface CreateFileDto extends BaseFile {

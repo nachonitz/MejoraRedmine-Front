@@ -30,7 +30,7 @@ export const createDocument = async (document: CreateDocumentDto) => {
 export const editDocument = async (
     id: Document["id"],
     document: UpdateDocumentDto
-) => {
+): Promise<Document> => {
     const { data } = await api.patch(`/documents/${id}`, document);
     return data;
 };

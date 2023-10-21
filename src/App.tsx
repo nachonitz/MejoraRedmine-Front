@@ -15,6 +15,7 @@ import Settings from "./pages/Project/Settings/Settings";
 import Projects from "./pages/Projects";
 import Register from "./pages/Register";
 import EditDocument from "./pages/Project/Documents/EditDocument";
+import SingleDocument from "./pages/Project/Documents/SingleDocument";
 
 function App() {
     const { isLoggedIn } = useContext(UserContext);
@@ -55,6 +56,11 @@ function App() {
                             <Route
                                 path="/project/:projectId/documents/new"
                                 element={<NewDocument />}
+                            />
+
+                            <Route
+                                path="/project/:projectId/document/:documentId"
+                                element={<SingleDocument />}
                             />
                             <Route
                                 path="/project/:projectId/document/:documentId/edit"

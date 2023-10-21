@@ -4,7 +4,7 @@ import { ListedResponse } from "../models/common";
 import { CreateFileDto, File as RedmineFile, FileFilter } from "../models/file";
 
 export const getFiles = async (filter: FileFilter) => {
-    const { data } = await api.get<ListedResponse<Document>>(
+    const { data } = await api.get<ListedResponse<RedmineFile>>(
         `/files?${filterToQueryParams(filter)}`
     );
     return { data };
@@ -19,6 +19,7 @@ export const uploadFile = async (
     const { data: uploadData } = await api.post("/files/upload", formData);
     return await createFile({
         ...dto,
+        title: file.name,
         token: uploadData.upload.token,
     });
 };

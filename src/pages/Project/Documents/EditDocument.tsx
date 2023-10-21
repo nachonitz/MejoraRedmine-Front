@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
     Button,
     FormControl,
+    IconButton,
     InputLabel,
     Select,
     TextField,
@@ -8,14 +10,18 @@ import {
 import MenuItem from "@mui/material/MenuItem";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CreateDocumentDto } from "../../../api/models/document";
+import {
+    CreateDocumentDto,
+    UpdateDocumentDto,
+} from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import {
     createDocument,
+    editDocument,
     getDocumentById,
 } from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
-import { uploadFile } from "../../../api/services/filesService";
+import { getFiles, uploadFile } from "../../../api/services/filesService";
 import { FilePicker } from "../../../components/Shared/Dropzone/FilePicker";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
@@ -27,6 +33,8 @@ import {
 } from "../../../components/Shared/Toast";
 import { UserContext } from "../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { File as RedmineFile } from "../../../api/models/file";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const EditDocument = () => {
     const { projectId, documentId } = useParams();
@@ -46,6 +54,7 @@ const EditDocument = () => {
     const [errorTags, setErrorTags] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [existingFiles, setExistingFiles] = useState<RedmineFile[]>([]);
 
     const clearErrors = () => {
         setErrorTitle(false);
@@ -91,7 +100,7 @@ const EditDocument = () => {
         const errorFound = checkForFieldsErrors();
         if (errorFound || !projectId) return;
 
-        const document: CreateDocumentDto = {
+        const document: UpdateDocumentDto = {
             title: title,
             description: description,
             categoryId: +documentCategoryId,
@@ -100,18 +109,20 @@ const EditDocument = () => {
             tags: tagsString?.split(",").map((tag) => tag.trim()),
         };
         try {
-            const res = await createDocument(document);
-            successToast("Document created successfully");
+            const res = await editDocument(+documentId!, document);
+            successToast("Document updated successfully");
             if (selectedFiles && selectedFiles.length > 0) {
-                infoToast("Uploading attachments...");
+                infoToast("Uploading new attachments...");
                 for (const file of selectedFiles) {
                     await uploadFile(file, {
                         ...document,
+                        projectId: document.projectId!,
+                        title: document.title!,
                         text: document.description,
                         documentId: res.id,
                     });
                 }
-                successToast("Attachments uploaded successfully");
+                successToast("New attachments uploaded successfully");
             }
             navigate(`/project/${projectId}/documents`);
         } catch (error: any) {
@@ -127,21 +138,29 @@ const EditDocument = () => {
 
     useEffect(() => {
         const fetch = async () => {
-            if (documentId) {
+            if (documentId && projectId) {
                 const document = await getDocumentById(+documentId);
+                const { data } = await getFiles({
+                    documentId: +documentId,
+                    projectId: +projectId,
+                });
                 setTitle(document.title);
                 setDescription(document.description ?? "");
                 setDocumentCategoryId(document.categoryId);
                 setTagsString(document.tags?.join(","));
+                setExistingFiles(data.items);
             }
         };
         fetch();
-    }, [documentId]);
+    }, [documentId, projectId]);
 
     return (
         <Sidebar>
             <Page>
-                <PageTitle title="Edit document" />
+                <PageTitle
+                    title="Edit document"
+                    goBackTo={`/project/${projectId}/documents`}
+                />
                 <div className="mt-[24px] flex flex-col gap-[20px]">
                     <TextField
                         onChange={(e) => setTitle(e.target.value)}
@@ -204,10 +223,60 @@ const EditDocument = () => {
                             variant="outlined"
                         />
                     </div>
+                    {existingFiles && existingFiles.length > 0 && (
+                        <div className="flex flex-col">
+                            <label className="text-gray-600">
+                                Existing attachments
+                            </label>
+                            <div className="flex gap-x-6">
+                                {existingFiles.map((file) => (
+                                    <div
+                                        key={file.title}
+                                        className="flex justify-between items-center"
+                                    >
+                                        <div className="flex flex-col">
+                                            <span>
+                                                {file.title.length > 40
+                                                    ? file.title.substring(
+                                                          0,
+                                                          39
+                                                      ) + "..."
+                                                    : file.title}
+                                            </span>
+                                            <span className="text-[#888] text-[14px]">
+                                                {(
+                                                    (file.filesize ?? 0) / 1024
+                                                ).toFixed(2)}{" "}
+                                                kb
+                                            </span>
+                                        </div>
+                                        <div className="ml-2">
+                                            <IconButton
+                                                onClick={() => {
+                                                    const newselectedFiles =
+                                                        existingFiles.filter(
+                                                            (m) =>
+                                                                m.title !==
+                                                                file.title
+                                                        );
+                                                    setExistingFiles(
+                                                        newselectedFiles
+                                                    );
+                                                }}
+                                                component="label"
+                                            >
+                                                <RiDeleteBin6Line />
+                                            </IconButton>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     <FilePicker
                         selectedFiles={selectedFiles}
                         onFilesSelected={(files) => setSelectedFiles(files)}
-                        label="Attachments"
+                        label="New attachments"
                         helperText="Drag and drop files here or click to browse."
                     />
                     <div className="mb-24 mt-8 w-full">
@@ -217,7 +286,7 @@ const EditDocument = () => {
                             variant="contained"
                             component="label"
                         >
-                            Create document
+                            Edit document
                         </Button>
                     </div>
                     {serverErrors && serverErrors.length > 0 && (
