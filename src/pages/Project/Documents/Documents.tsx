@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { MdAdd, MdUpload } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { Document } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
@@ -9,14 +9,14 @@ import {
     getDocuments,
 } from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
-import UploadDocumentDialog from "../../../components/Pages/Documents/UploadDocumentDialog/UploadDocumentDialog";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate } from "../../../lib/utils";
+import { getFullDate, hasAccess } from "../../../lib/utils";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 
 const Documents = () => {
     const navigate = useNavigate();
@@ -25,11 +25,9 @@ const Documents = () => {
     const [documentCategories, setDocumentCategories] = useState<Enumeration[]>(
         []
     );
-    const [openCreateDocument, setOpenCreateDocument] = useState(false);
     const [openDeleteDocument, setOpenDeleteDocument] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState<Document>();
-
-    console.log({ documents });
+    const [permissions, setPermissions] = useState<string[]>([]);
 
     const getAllDocuments = async () => {
         try {
@@ -57,15 +55,22 @@ const Documents = () => {
         }
     };
 
+    const getUserPermissions = useCallback(async () => {
+        try {
+            if (projectId) {
+                const allPermissions = await getMyPermissions();
+                const projectPermissions = allPermissions.find(
+                    (permission) => permission.projectId === +projectId
+                );
+                setPermissions(projectPermissions?.roles ?? []);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    }, [projectId]);
+
     const goToNewDocument = () => {
         navigate(`/project/${projectId}/documents/new`);
-    };
-
-    const handleCloseCreateDocument = (refresh?: boolean) => {
-        setOpenCreateDocument(false);
-        if (refresh) {
-            getAllDocuments();
-        }
     };
 
     const handleCloseDeleteDocument = (refresh?: boolean) => {
@@ -79,22 +84,12 @@ const Documents = () => {
     useEffect(() => {
         getAllDocuments();
         getCategories();
-    }, []);
+        getUserPermissions();
+    }, [getUserPermissions]);
 
     return (
         <Sidebar>
             <Page>
-                <UploadDocumentDialog
-                    projectId={projectId}
-                    categories={documentCategories}
-                    open={openCreateDocument}
-                    handleClose={handleCloseCreateDocument}
-                />
-                {/* <EditRiskDialog
-                    open={openEditRisk}
-                    riskId={selectedDocument?.id}
-                    handleClose={handleCloseEditRisk}
-                /> */}
                 <DeleteDialog
                     open={openDeleteDocument}
                     id={selectedDocument?.id}
@@ -105,20 +100,15 @@ const Documents = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Documents" />
                     <div className="flex gap-4">
-                        <PrimaryButton onClick={goToNewDocument}>
-                            <div className="flex w-full items-center gap-2">
-                                <MdAdd className="text-[24px]" />
-                                <span>New Document</span>
-                            </div>
-                        </PrimaryButton>
-                        <PrimaryButton
-                            onClick={() => setOpenCreateDocument(true)}
-                        >
-                            <div className="flex w-full items-center gap-2">
-                                <MdUpload className="text-[24px]" />
-                                <span>Upload File</span>
-                            </div>
-                        </PrimaryButton>
+                        {projectId &&
+                            hasAccess(permissions, ["add_documents"]) && (
+                                <PrimaryButton onClick={goToNewDocument}>
+                                    <div className="flex w-full items-center gap-2">
+                                        <MdAdd className="text-[24px]" />
+                                        <span>New Document</span>
+                                    </div>
+                                </PrimaryButton>
+                            )}
                     </div>
                 </div>
 
@@ -176,24 +166,31 @@ const Documents = () => {
                                             : "-"}
                                     </td>
                                     <td className="text-right">
-                                        <div className="flex justify-end">
-                                            <SettingsButton
-                                                onEdit={() => {
-                                                    setSelectedDocument(
-                                                        document
-                                                    );
-                                                    navigate(
-                                                        `/project/${projectId}/document/${document.id}/edit`
-                                                    );
-                                                }}
-                                                onDelete={() => {
-                                                    setSelectedDocument(
-                                                        document
-                                                    );
-                                                    setOpenDeleteDocument(true);
-                                                }}
-                                            />
-                                        </div>
+                                        {hasAccess(permissions, [
+                                            "edit_documents",
+                                            "delete_documents",
+                                        ]) && (
+                                            <div className="flex justify-end">
+                                                <SettingsButton
+                                                    onEdit={() => {
+                                                        setSelectedDocument(
+                                                            document
+                                                        );
+                                                        navigate(
+                                                            `/project/${projectId}/document/${document.id}/edit`
+                                                        );
+                                                    }}
+                                                    onDelete={() => {
+                                                        setSelectedDocument(
+                                                            document
+                                                        );
+                                                        setOpenDeleteDocument(
+                                                            true
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
