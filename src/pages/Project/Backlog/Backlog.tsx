@@ -34,7 +34,11 @@ const Backlog = () => {
     const [openEditIssue, setOpenEditIssue] = useState(false);
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
 
-    const [issuesAndEpics, setIssuesAndEpics] = useState<{}>({
+    const [issuesAndEpics, setIssuesAndEpics] = useState<{
+        allIssues: Issue[];
+        issuesWithoutEpic: Issue[];
+        epics: Epic[];
+    }>({
         allIssues: [],
         issuesWithoutEpic: [],
         epics: [],
