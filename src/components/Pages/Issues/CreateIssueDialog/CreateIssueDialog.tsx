@@ -260,7 +260,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                             <Select
                                 labelId="priority-label"
                                 value={estimation}
-                                label="Priority"
+                                label="Estimation"
                                 onChange={(e) => setEstimation(e.target.value)}
                             >
                                 {estimations &&

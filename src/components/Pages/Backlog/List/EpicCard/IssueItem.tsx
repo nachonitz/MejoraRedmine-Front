@@ -5,14 +5,16 @@ import {
     getIssuePriorityColor,
     getIssueStatusBackgroundColor,
 } from "../../../../../utilities/utilities";
-import { useState, useRef, useEffect } from "react";
+import { useContext } from "react";
+import { BacklogContext } from "../../../../../context/BacklogContext";
 
 interface IssueCardProps {
     issue: Issue;
-    getEpics: () => void;
 }
 
 const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
+    const { handleOpenEditIssue, handleOpenDeleteIssue } =
+        useContext(BacklogContext);
     return (
         <div className="w-full border-t border-primary border-solid px-[20px] py-[5px]">
             <div className="w-full flex items-center gap-[10px] justify-between">
@@ -64,7 +66,14 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
                     </div>
                 </div>
                 <div className="w-[30px] h-[30px] flex items-center justify-center">
-                    <SettingsButton />
+                    <SettingsButton
+                        onEdit={() => {
+                            handleOpenEditIssue(issue);
+                        }}
+                        onDelete={() => {
+                            handleOpenDeleteIssue(issue);
+                        }}
+                    />
                 </div>
             </div>
         </div>

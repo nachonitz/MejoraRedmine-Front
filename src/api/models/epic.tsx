@@ -1,5 +1,6 @@
 import { PaginationFilters } from "./common";
 import { Enumeration } from "./enumeration";
+import { Issue } from "./issue";
 import { Project } from "./project";
 import { Release } from "./release";
 import { Sprint } from "./sprint";
@@ -15,6 +16,7 @@ export interface Epic extends BaseEpic {
     release?: Release;
     project: Project;
     priority: Enumeration;
+    issues?: Issue[];
 }
 
 export interface CreateEpicDto extends BaseEpic {

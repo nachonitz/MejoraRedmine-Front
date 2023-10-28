@@ -11,10 +11,9 @@ type BoardSectionProps = {
     id: string;
     title: string;
     issues: Issue[];
-    getIssues: () => void;
 };
 
-const IssuesColumn = ({ id, title, issues, getIssues }: BoardSectionProps) => {
+const IssuesColumn = ({ id, title, issues }: BoardSectionProps) => {
     const { setNodeRef } = useDroppable({
         id,
     });
@@ -32,11 +31,7 @@ const IssuesColumn = ({ id, title, issues, getIssues }: BoardSectionProps) => {
                 <div className="flex flex-col gap-[6px]" ref={setNodeRef}>
                     {issues &&
                         issues.map((issue: Issue) => (
-                            <IssueCard
-                                key={issue.id}
-                                issue={issue}
-                                getIssues={getIssues}
-                            />
+                            <IssueCard key={issue.id} issue={issue} />
                         ))}
                 </div>
             </SortableContext>

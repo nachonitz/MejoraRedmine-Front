@@ -71,6 +71,7 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
                 issue.status.name = newIssue?.status?.name;
                 issue.status.is_closed = newIssue?.status?.is_closed;
                 console.log(issue);
+                getIssues();
             })
             .catch((error) => {
                 console.log(error);
@@ -202,32 +203,15 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
             sensors={sensors}
         >
             <div className="flex gap-7">
-                <IssuesColumn
-                    issues={columns.toDo}
-                    id="toDo"
-                    title="To Do"
-                    getIssues={getIssues}
-                />
+                <IssuesColumn issues={columns.toDo} id="toDo" title="To Do" />
                 <IssuesColumn
                     issues={columns.inProgress}
                     id="inProgress"
                     title="In Progress"
-                    getIssues={getIssues}
                 />
-                <IssuesColumn
-                    issues={columns.done}
-                    id="done"
-                    title="Done"
-                    getIssues={getIssues}
-                />
+                <IssuesColumn issues={columns.done} id="done" title="Done" />
                 <DragOverlay dropAnimation={dropAnimation}>
-                    {issue ? (
-                        <IssueCard
-                            key={issue.id}
-                            issue={issue}
-                            getIssues={getIssues}
-                        />
-                    ) : null}
+                    {issue ? <IssueCard key={issue.id} issue={issue} /> : null}
                 </DragOverlay>
             </div>
         </DndContext>

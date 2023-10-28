@@ -6,17 +6,16 @@ import EpicCard from "./EpicCard/EpicCard";
 interface ListProps {
     issues: Issue[];
     epics: Epic[];
-    getIssues: () => void;
 }
 
-const List: React.FC<ListProps> = ({ issues, epics, getIssues }) => {
+const List: React.FC<ListProps> = ({ issues, epics }) => {
     return (
         <div className="w-full flex flex-col gap-[10px]">
             {epics.map((epic) => (
-                <EpicCard key={epic.id} epic={epic} getEpics={getIssues} />
+                <EpicCard key={epic.id} epic={epic} />
             ))}
             {issues.map((issue) => (
-                <IssueCard key={issue.id} issue={issue} getIssues={getIssues} />
+                <IssueCard key={issue.id} issue={issue} />
             ))}
         </div>
     );
