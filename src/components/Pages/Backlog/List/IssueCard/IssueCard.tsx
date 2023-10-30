@@ -1,11 +1,8 @@
+import { useContext } from "react";
 import { Issue } from "../../../../../api/models/issue";
-import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
-import { getIssueIcon } from "../../../../../utilities/utilities";
-import { useState, useContext } from "react";
-import EditIssueDialog from "../../../Issues/EditIssueDialog/EditIssueDialog";
-import DeleteDialog from "../../../../Shared/DeleteDialog/DeleteDialog";
-import { deleteIssue } from "../../../../../api/services/issuesService";
 import { BacklogContext } from "../../../../../context/BacklogContext";
+import { getIssueIcon } from "../../../../../utilities/utilities";
+import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 
 interface IssueCardProps {
     issue: Issue;

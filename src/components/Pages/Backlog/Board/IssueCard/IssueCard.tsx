@@ -1,14 +1,13 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { Issue } from "../../../../../api/models/issue";
-import { deleteIssue } from "../../../../../api/services/issuesService";
+import { BacklogContext } from "../../../../../context/BacklogContext";
 import {
     getIssueIcon,
     getIssuePriorityColor,
 } from "../../../../../utilities/utilities";
 import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
-import { BacklogContext } from "../../../../../context/BacklogContext";
 
 interface IssueCardProps {
     issue: Issue;

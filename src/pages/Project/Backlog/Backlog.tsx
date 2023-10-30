@@ -1,22 +1,22 @@
+import { Tab, Tabs } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Page from "../../../components/Shared/Page/Page";
-import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
-import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { useEffect, useState, createContext } from "react";
+import { Epic } from "../../../api/models/epic";
 import { Issue, IssueStatus } from "../../../api/models/issue";
+import { deleteEpic, getEpics } from "../../../api/services/epicsService";
 import {
     deleteIssue,
     getIssues,
     getIssuesStatuses,
 } from "../../../api/services/issuesService";
-import { Tab, Tabs } from "@mui/material";
 import Board from "../../../components/Pages/Backlog/Board/Board";
 import List from "../../../components/Pages/Backlog/List/List";
-import { Epic } from "../../../api/models/epic";
-import { deleteEpic, getEpics } from "../../../api/services/epicsService";
 import EditEpicDialog from "../../../components/Pages/Epics/EditEpicDialog/EditEpicDialog";
-import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
+import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
+import Page from "../../../components/Shared/Page/Page";
+import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
 
 export type Column = {
@@ -65,7 +65,7 @@ const Backlog = () => {
                     projectId: parseInt(projectId),
                 });
 
-                let issuesInEpics: Issue[] = [];
+                const issuesInEpics: Issue[] = [];
 
                 issues.items.forEach((issue) => {
                     if (issue.epic) {
@@ -79,7 +79,7 @@ const Backlog = () => {
                     }
                 });
 
-                let issuesWithoutEpic = issues.items.filter(
+                const issuesWithoutEpic = issues.items.filter(
                     (issue) => !issuesInEpics.includes(issue)
                 );
 

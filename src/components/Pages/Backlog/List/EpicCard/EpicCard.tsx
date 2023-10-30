@@ -1,14 +1,10 @@
-import { Issue } from "../../../../../api/models/issue";
-import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
-import { getIssueIcon } from "../../../../../utilities/utilities";
-import { useState, useRef, useEffect, useContext } from "react";
-import EditIssueDialog from "../../../Issues/EditIssueDialog/EditIssueDialog";
-import DeleteDialog from "../../../../Shared/DeleteDialog/DeleteDialog";
-import { deleteIssue } from "../../../../../api/services/issuesService";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Epic } from "../../../../../api/models/epic";
+import { Issue } from "../../../../../api/models/issue";
 import { getIssues } from "../../../../../api/services/issuesService";
-import IssueItem from "./IssueItem";
 import { BacklogContext } from "../../../../../context/BacklogContext";
+import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
+import IssueItem from "./IssueItem";
 
 interface IssueCardProps {
     epic: Epic;
