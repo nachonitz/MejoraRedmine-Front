@@ -1,23 +1,23 @@
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { MdAdd } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import { Document } from "../../../api/models/document";
+import { Document, DocumentFilter } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import {
     deleteDocument,
     getDocuments,
 } from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
-import { getMyPermissions } from "../../../api/services/membershipsService";
-import { LinearProgress } from "@mui/material";
 
 const Documents = () => {
     const navigate = useNavigate();
@@ -29,7 +29,14 @@ const Documents = () => {
     const [openDeleteDocument, setOpenDeleteDocument] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState<Document>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+
+    const defaultFilters: DocumentFilter = {
+        page: 1,
+        limit: 10,
+        projectId: projectId ? +projectId : -1,
+    };
 
     const getAllDocuments = async () => {
         try {
@@ -41,6 +48,20 @@ const Documents = () => {
                 setIsLoading(false);
                 setDocuments(data.items);
             }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
+
+    const search = async () => {
+        try {
+            setIsLoading(true);
+            const { data } = await getDocuments({
+                ...defaultFilters,
+                title: searchText,
+            });
+            setIsLoading(false);
+            setDocuments(data.items);
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
@@ -103,14 +124,12 @@ const Documents = () => {
                 />
                 <div className="flex justify-between items-center">
                     <PageTitle title="Documents" />
-                    <div className="flex gap-4">
+                    <div className="flex gap-x-6">
+                        <Searchbar onChange={setSearchText} onSearch={search} />
                         {projectId &&
                             hasAccess(permissions, ["add_documents"]) && (
                                 <PrimaryButton onClick={goToNewDocument}>
-                                    <div className="flex w-full items-center gap-2">
-                                        <MdAdd className="text-[24px]" />
-                                        <span>New Document</span>
-                                    </div>
+                                    New Document
                                 </PrimaryButton>
                             )}
                     </div>

@@ -8,12 +8,13 @@ import { getReleaseById } from "../../../api/services/releasesService";
 import { deleteSprint, getSprints } from "../../../api/services/sprintsService";
 import CreateSprintDialog from "../../../components/Pages/Sprints/CreateSprintDialog/CreateSprintDialog";
 import EditSprintDialog from "../../../components/Pages/Sprints/EditSprintDialog/EditSprintDialog";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 
@@ -32,6 +33,7 @@ const ProjectSprints = () => {
     const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
     const [selectedSprint, setSelectedSprint] = useState<Sprint>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
 
     const getRelease = useCallback(async () => {
@@ -76,6 +78,23 @@ const ProjectSprints = () => {
             throw new Error("Error. Please try again.");
         }
     }, [releaseId]);
+
+    const search = async () => {
+        try {
+            if (releaseId) {
+                setIsLoading(true);
+                const { data } = await getSprints({
+                    ...defaultFilters,
+                    releaseId: +releaseId,
+                    name: searchText,
+                });
+                setIsLoading(false);
+                setSprints(data.items);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
 
     const goToSprint = (id: number) => {
         navigate(`/project/${projectId}/release/${releaseId}/sprint/${id}`);
@@ -149,18 +168,30 @@ const ProjectSprints = () => {
                         </>
                     )}
 
-                <div className="flex gap-[15px] items-center">
-                    <PageTitle title="Sprints" />
-                    {hasAccess(permissions, ["add_issues"]) && (
-                        <AddButton
-                            onClick={() => {
-                                setOpenCreateSprint(true);
-                            }}
-                        />
-                    )}
+                <div className="flex flex-col">
+                    <PageTitle title={release?.name ?? ""} />
+                    <div>release info here</div>
+                    <div className="flex justify-between items-center mb-2 mt-4">
+                        <h3 className="text-[22px] text-primary">Sprints</h3>
+                        <div className="flex gap-x-6">
+                            <Searchbar
+                                onChange={setSearchText}
+                                onSearch={search}
+                            />
+                            {hasAccess(permissions, ["add_issues"]) && (
+                                <PrimaryButton
+                                    onClick={() => {
+                                        setOpenCreateSprint(true);
+                                    }}
+                                >
+                                    New Sprint
+                                </PrimaryButton>
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <table className="w-full mt-[30px]">
+                    <table className="w-full mt-[10px]">
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>

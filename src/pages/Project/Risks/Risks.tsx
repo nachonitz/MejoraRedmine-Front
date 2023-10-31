@@ -1,3 +1,4 @@
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { RISK_COLOR, Risk, RiskFilter } from "../../../api/models/risk";
@@ -5,14 +6,14 @@ import { getMyPermissions } from "../../../api/services/membershipsService";
 import { deleteRisk, getRisks } from "../../../api/services/risksService";
 import CreateRiskDialog from "../../../components/Pages/Risks/CreateRiskDialog/CreateRiskDialog";
 import EditRiskDialog from "../../../components/Pages/Risks/EditRiskDialog/EditRiskDialog";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
-import { LinearProgress } from "@mui/material";
 
 const defaultFilters: RiskFilter = {
     page: 1,
@@ -27,6 +28,7 @@ const Risks = () => {
     const [openDeleteRisk, setOpenDeleteRisk] = useState(false);
     const [selectedRisk, setSelectedRisk] = useState<Risk>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
 
     const getAllRisks = useCallback(async () => {
@@ -43,6 +45,23 @@ const Risks = () => {
             throw new Error("Error. Please try again.");
         }
     }, [projectId]);
+
+    const search = async () => {
+        try {
+            if (projectId) {
+                setIsLoading(true);
+                const { data } = await getRisks({
+                    ...defaultFilters,
+                    name: searchText,
+                    projectId: +projectId,
+                });
+                setIsLoading(false);
+                setRisks(data.items);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
 
     const getUserPermissions = useCallback(async () => {
         try {
@@ -116,15 +135,20 @@ const Risks = () => {
                         )}
                     </>
                 )}
-                <div className="flex gap-[15px] items-center">
+                <div className="flex justify-between items-center mb-8">
                     <PageTitle title="Risks" />
-                    {hasAccess(permissions, ["add_documents"]) && (
-                        <AddButton
-                            onClick={() => {
-                                setOpenCreateRisk(true);
-                            }}
-                        />
-                    )}
+                    <div className="flex gap-x-6">
+                        <Searchbar onChange={setSearchText} onSearch={search} />
+                        {hasAccess(permissions, ["add_documents"]) && (
+                            <PrimaryButton
+                                onClick={() => {
+                                    setOpenCreateRisk(true);
+                                }}
+                            >
+                                New Risk
+                            </PrimaryButton>
+                        )}
+                    </div>
                 </div>
                 <div>
                     <table className="w-full mt-[30px] border-collapse">

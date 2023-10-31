@@ -23,6 +23,8 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getMyPermissions } from "../../../api/services/membershipsService";
 import { hasAccess } from "../../../lib/utils";
 import { LinearProgress } from "@mui/material";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -41,6 +43,7 @@ const ProjectIssues = () => {
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
 
     const getEpic = async () => {
@@ -75,6 +78,23 @@ const ProjectIssues = () => {
                 const { data } = await getIssues({
                     ...defaultFilters,
                     epicId: parseInt(epicId),
+                });
+                setIsLoading(false);
+                setIssues(data.items);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
+
+    const search = async () => {
+        try {
+            if (sprintId) {
+                setIsLoading(true);
+                const { data } = await getIssues({
+                    ...defaultFilters,
+                    sprintId: +sprintId,
+                    subject: searchText,
                 });
                 setIsLoading(false);
                 setIssues(data.items);
@@ -161,14 +181,30 @@ const ProjectIssues = () => {
                             />
                         </>
                     )}
-                <div className="flex gap-[15px] items-center">
-                    <PageTitle title="Issues" />
-                    {hasAccess(permissions, ["add_issues"]) && (
-                        <AddButton onClick={() => setOpenCreateIssue(true)} />
-                    )}
+                <div className="flex flex-col">
+                    <PageTitle title={epic?.name ?? ""} />
+                    <div>epic info here</div>
+                    <div className="flex justify-between items-center mb-2 mt-4">
+                        <h3 className="text-[22px] text-primary">Issues</h3>
+                        <div className="flex gap-x-6">
+                            <Searchbar
+                                onChange={setSearchText}
+                                onSearch={search}
+                            />
+                            {hasAccess(permissions, ["add_issues"]) && (
+                                <PrimaryButton
+                                    onClick={() => {
+                                        setOpenCreateIssue(true);
+                                    }}
+                                >
+                                    New Issue
+                                </PrimaryButton>
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <table className="w-full mt-[30px]">
+                    <table className="w-full mt-[10px]">
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>

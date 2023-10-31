@@ -1,3 +1,4 @@
+import { LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IoLockClosed } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -5,12 +6,12 @@ import { Project, ProjectFilter } from "../api/models/project";
 import { deleteProject, getProjects } from "../api/services/projectsService";
 import CreateProjectDialog from "../components/Pages/Projects/CreateProjectDialog/CreateProjectDialog";
 import EditProjectDialog from "../components/Pages/Projects/EditProjectDialog/EditProjectDialog";
-import AddButton from "../components/Shared/Buttons/AddButton";
+import PrimaryButton from "../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../components/Shared/Page/Page";
+import { Searchbar } from "../components/Shared/Searchbar/Searchbar";
 import { getFullDate, hasAdminAccess } from "../lib/utils";
-import { LinearProgress } from "@mui/material";
 
 const defaultFilters: ProjectFilter = {
     page: 1,
@@ -25,12 +26,27 @@ const Projects = () => {
     const [openEditProject, setOpenEditProject] = useState(false);
     const [openDeleteProject, setOpenDeleteProject] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project>();
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
 
     const getAllProjects = async () => {
         try {
             setIsLoading(true);
             const { data } = await getProjects(defaultFilters);
+            setIsLoading(false);
+            setProjects(data.items);
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
+
+    const search = async () => {
+        try {
+            setIsLoading(true);
+            const { data } = await getProjects({
+                ...defaultFilters,
+                name: searchText,
+            });
             setIsLoading(false);
             setProjects(data.items);
         } catch (error) {
@@ -91,18 +107,21 @@ const Projects = () => {
                     />
                 </>
             )}
-            <div className="text-[26px] text-primary flex gap-[15px] items-center">
-                <span>Projects</span>
-                {hasAdminAccess() && (
-                    <AddButton
-                        onClick={() => {
-                            setOpenCreateProject(true);
-                        }}
-                    />
-                )}
+            <div className="flex justify-between items-center mb-8">
+                <span className="text-[26px] text-primary">Projects</span>
+                <div className="flex gap-x-6">
+                    <Searchbar onChange={setSearchText} onSearch={search} />
+                    {hasAdminAccess() && (
+                        <PrimaryButton
+                            onClick={() => setOpenCreateProject(true)}
+                        >
+                            New Project
+                        </PrimaryButton>
+                    )}
+                </div>
             </div>
             <div>
-                <table className="w-full mt-[30px]">
+                <table className="w-full">
                     <thead>
                         <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                             <th></th>

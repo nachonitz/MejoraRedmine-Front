@@ -8,12 +8,13 @@ import { getMyPermissions } from "../../../api/services/membershipsService";
 import { getSprintById } from "../../../api/services/sprintsService";
 import CreateEpicDialog from "../../../components/Pages/Epics/CreateEpicDialog/CreateEpicDialog";
 import EditEpicDialog from "../../../components/Pages/Epics/EditEpicDialog/EditEpicDialog";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { hasAccess } from "../../../lib/utils";
 
@@ -32,6 +33,7 @@ const ProjectEpics = () => {
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [selectedEpic, setSelectedEpic] = useState<Epic>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
 
     const getSprint = useCallback(async () => {
@@ -75,6 +77,23 @@ const ProjectEpics = () => {
             throw new Error("Error. Please try again.");
         }
     }, [sprintId]);
+
+    const search = async () => {
+        try {
+            if (sprintId) {
+                setIsLoading(true);
+                const { data } = await getEpics({
+                    ...defaultFilters,
+                    sprintId: +sprintId,
+                    name: searchText,
+                });
+                setIsLoading(false);
+                setEpics(data.items);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
 
     const goToEpic = (id: number) => {
         navigate(
@@ -148,18 +167,30 @@ const ProjectEpics = () => {
                             />
                         </>
                     )}
-                <div className="flex gap-[15px] items-center">
-                    <PageTitle title="Epics" />
-                    {hasAccess(permissions, ["add_issues"]) && (
-                        <AddButton
-                            onClick={() => {
-                                setOpenCreateEpic(true);
-                            }}
-                        />
-                    )}
+                <div className="flex flex-col">
+                    <PageTitle title={sprint?.name ?? ""} />
+                    <div>sprint info here</div>
+                    <div className="flex justify-between items-center mb-2 mt-4">
+                        <h3 className="text-[22px] text-primary">Epics</h3>
+                        <div className="flex gap-x-6">
+                            <Searchbar
+                                onChange={setSearchText}
+                                onSearch={search}
+                            />
+                            {hasAccess(permissions, ["add_issues"]) && (
+                                <PrimaryButton
+                                    onClick={() => {
+                                        setOpenCreateEpic(true);
+                                    }}
+                                >
+                                    New Epic
+                                </PrimaryButton>
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <table className="w-full mt-[30px]">
+                    <table className="w-full mt-[10px]">
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>

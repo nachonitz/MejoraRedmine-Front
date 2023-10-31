@@ -23,7 +23,7 @@ export const Searchbar = ({ onChange, onSearch }: Props) => {
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
-                    className="absolute w-5 h-12 text-gray-400 right-3 top-0 
+                    className="absolute w-5 h-12 text-gray-400 right-3 top-[6px] 
                     hover:text-gray-500"
                 >
                     <path

@@ -11,12 +11,13 @@ import {
 } from "../../../api/services/releasesService";
 import CreateReleaseDialog from "../../../components/Pages/Releases/CreateReleaseDialog/CreateReleaseDialog";
 import EditReleaseDialog from "../../../components/Pages/Releases/EditReleaseDialog/EditReleaseDialog";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 
@@ -35,6 +36,7 @@ const ProjectReleases = () => {
     const [openDeleteRelease, setOpenDeleteRelease] = useState(false);
     const [selectedRelease, setSelectedRelease] = useState<Release>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
 
     const getProject = useCallback(async () => {
@@ -77,6 +79,23 @@ const ProjectReleases = () => {
             throw new Error("Error. Please try again.");
         }
     }, [projectId]);
+
+    const search = async () => {
+        try {
+            if (projectId) {
+                setIsLoading(true);
+                const { data } = await getReleases({
+                    ...defaultFilters,
+                    projectId: +projectId,
+                    name: searchText,
+                });
+                setIsLoading(false);
+                setReleases(data.items);
+            }
+        } catch (error) {
+            throw new Error("Error. Please try again.");
+        }
+    };
 
     const goToRelease = (releaseId: number) => {
         navigate(`/project/${projectId}/release/${releaseId}`);
@@ -146,18 +165,30 @@ const ProjectReleases = () => {
                             )}
                     </>
                 )}
-                <div className="flex gap-[15px] items-center">
-                    <PageTitle title="Releases" />
-                    {hasAccess(permissions, ["add_issues"]) && (
-                        <AddButton
-                            onClick={() => {
-                                setOpenCreateRelease(true);
-                            }}
-                        />
-                    )}
+                <div className="flex flex-col">
+                    <PageTitle title={project?.name ?? ""} />
+                    <div>project info here</div>
+                    <div className="flex justify-between items-center mb-2 mt-4">
+                        <h3 className="text-[22px] text-primary">Releases</h3>
+                        <div className="flex gap-x-6">
+                            <Searchbar
+                                onChange={setSearchText}
+                                onSearch={search}
+                            />
+                            {hasAccess(permissions, ["add_issues"]) && (
+                                <PrimaryButton
+                                    onClick={() => {
+                                        setOpenCreateRelease(true);
+                                    }}
+                                >
+                                    New Release
+                                </PrimaryButton>
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <table className="w-full mt-[30px]">
+                    <table className="w-full mt-[10px]">
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>

@@ -1,3 +1,4 @@
+import { PaginationFilters } from "./common";
 import { Project } from "./project";
 import { User } from "./user";
 
@@ -26,7 +27,7 @@ export type UpdateDocumentDto = Partial<CreateDocumentDto>;
 type AscDesc = "asc" | "desc";
 type FilterOrder = `${keyof Document}:${AscDesc}`;
 
-export interface DocumentFilter {
+export interface DocumentFilter extends PaginationFilters {
     title?: string;
     projectId: number;
     authorId?: number;
