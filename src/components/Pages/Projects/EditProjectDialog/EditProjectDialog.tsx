@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -34,6 +35,7 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
     const [errorName, setErrorName] = useState(false);
     const [errorIdentifier, setErrorIdentifier] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleGetProject = useCallback(() => {
         if (projectId) {
@@ -75,6 +77,7 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
         if (errorFound || !projectId) {
             return;
         }
+        setIsLoading(true);
         const project: UpdateProjectDto = {
             name: name,
             description: description,
@@ -90,6 +93,9 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -170,7 +176,16 @@ const EditProjectDialog: React.FC<EditProjectDialogProps> = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>Edit</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Edit"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

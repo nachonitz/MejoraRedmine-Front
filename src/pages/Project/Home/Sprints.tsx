@@ -1,7 +1,9 @@
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Release } from "../../../api/models/release";
 import { Sprint, SprintFilter } from "../../../api/models/sprint";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 import { getReleaseById } from "../../../api/services/releasesService";
 import { deleteSprint, getSprints } from "../../../api/services/sprintsService";
 import CreateSprintDialog from "../../../components/Pages/Sprints/CreateSprintDialog/CreateSprintDialog";
@@ -14,7 +16,6 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
-import { getMyPermissions } from "../../../api/services/membershipsService";
 
 const defaultFilters: SprintFilter = {
     page: 1,
@@ -31,6 +32,7 @@ const ProjectSprints = () => {
     const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
     const [selectedSprint, setSelectedSprint] = useState<Sprint>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getRelease = useCallback(async () => {
         try {
@@ -62,10 +64,12 @@ const ProjectSprints = () => {
     const getAllSprints = useCallback(async () => {
         try {
             if (releaseId) {
+                setIsLoading(true);
                 const { data } = await getSprints({
                     ...defaultFilters,
                     releaseId: +releaseId,
                 });
+                setIsLoading(false);
                 setSprints(data.items);
             }
         } catch (error) {
@@ -222,9 +226,13 @@ const ProjectSprints = () => {
                     </table>
                     {sprints.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                            <span className="text-center">
-                                There are no sprints yet
-                            </span>
+                            {isLoading ? (
+                                <LinearProgress />
+                            ) : (
+                                <span className="text-center">
+                                    There are no sprints yet.
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>

@@ -12,6 +12,7 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import { LinearProgress } from "@mui/material";
 
 const defaultFilters: RiskFilter = {
     page: 1,
@@ -26,6 +27,7 @@ const Risks = () => {
     const [openDeleteRisk, setOpenDeleteRisk] = useState(false);
     const [selectedRisk, setSelectedRisk] = useState<Risk>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getAllRisks = useCallback(async () => {
         try {
@@ -34,6 +36,7 @@ const Risks = () => {
                     ...defaultFilters,
                     projectId: +projectId,
                 });
+                setIsLoading(false);
                 setRisks(data.items);
             }
         } catch (error) {
@@ -207,9 +210,13 @@ const Risks = () => {
                     </table>
                     {risks.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                            <span className="text-center">
-                                There are no risks yet
-                            </span>
+                            {isLoading ? (
+                                <LinearProgress />
+                            ) : (
+                                <span className="text-center">
+                                    There are no risks yet.
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>

@@ -1,8 +1,10 @@
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Epic, EpicFilter } from "../../../api/models/epic";
 import { Sprint } from "../../../api/models/sprint";
 import { deleteEpic, getEpics } from "../../../api/services/epicsService";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 import { getSprintById } from "../../../api/services/sprintsService";
 import CreateEpicDialog from "../../../components/Pages/Epics/CreateEpicDialog/CreateEpicDialog";
 import EditEpicDialog from "../../../components/Pages/Epics/EditEpicDialog/EditEpicDialog";
@@ -13,7 +15,6 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getMyPermissions } from "../../../api/services/membershipsService";
 import { hasAccess } from "../../../lib/utils";
 
 const defaultFilters: EpicFilter = {
@@ -31,6 +32,7 @@ const ProjectEpics = () => {
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [selectedEpic, setSelectedEpic] = useState<Epic>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getSprint = useCallback(async () => {
         try {
@@ -61,10 +63,12 @@ const ProjectEpics = () => {
     const getAllEpics = useCallback(async () => {
         try {
             if (sprintId) {
+                setIsLoading(true);
                 const { data } = await getEpics({
                     ...defaultFilters,
                     sprintId: +sprintId,
                 });
+                setIsLoading(false);
                 setEpics(data.items);
             }
         } catch (error) {
@@ -209,9 +213,13 @@ const ProjectEpics = () => {
                     </table>
                     {epics.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                            <span className="text-center">
-                                There are no epics yet
-                            </span>
+                            {isLoading ? (
+                                <LinearProgress />
+                            ) : (
+                                <span className="text-center">
+                                    There are no epics yet.
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>

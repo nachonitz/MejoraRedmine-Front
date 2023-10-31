@@ -1,7 +1,9 @@
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../api/models/project";
 import { Release, ReleaseFilter } from "../../../api/models/release";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 import { getProjectById } from "../../../api/services/projectsService";
 import {
     deleteRelease,
@@ -17,7 +19,6 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
-import { getMyPermissions } from "../../../api/services/membershipsService";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -34,6 +35,7 @@ const ProjectReleases = () => {
     const [openDeleteRelease, setOpenDeleteRelease] = useState(false);
     const [selectedRelease, setSelectedRelease] = useState<Release>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getProject = useCallback(async () => {
         try {
@@ -63,10 +65,12 @@ const ProjectReleases = () => {
     const getAllReleases = useCallback(async () => {
         try {
             if (projectId) {
+                setIsLoading(true);
                 const { data } = await getReleases({
                     ...defaultFilters,
                     projectId: +projectId,
                 });
+                setIsLoading(false);
                 setReleases(data.items);
             }
         } catch (error) {
@@ -221,9 +225,13 @@ const ProjectReleases = () => {
                     </table>
                     {releases.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                            <span className="text-center">
-                                There are no releases yet
-                            </span>
+                            {isLoading ? (
+                                <LinearProgress />
+                            ) : (
+                                <span className="text-center">
+                                    There are no releases yet.
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>

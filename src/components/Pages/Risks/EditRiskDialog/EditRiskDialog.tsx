@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -46,9 +47,11 @@ const EditRiskDialog = ({
     const [errorImpact, setErrorImpact] = useState(false);
     const [errorStatus, setErrorStatus] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleGetRisk = useCallback(() => {
         if (riskId) {
+            setIsLoading(true);
             getRiskById(riskId)
                 .then((risk: Risk) => {
                     setName(risk.name);
@@ -59,6 +62,9 @@ const EditRiskDialog = ({
                 })
                 .catch((error) => {
                     console.log(error);
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         }
     }, [riskId]);
@@ -98,6 +104,7 @@ const EditRiskDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const risk: UpdateRiskDto = {
             name: name,
             description: description,
@@ -115,6 +122,9 @@ const EditRiskDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -142,7 +152,7 @@ const EditRiskDialog = ({
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[600px]">
-                <DialogTitle>Edit Epic</DialogTitle>
+                <DialogTitle>Edit Risk</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
                         <TextField
@@ -254,7 +264,16 @@ const EditRiskDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>Edit</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit} className="h-[50px]">
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Edit"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

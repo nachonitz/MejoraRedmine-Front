@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -36,6 +37,7 @@ const EditSprintDialog = ({
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleGetSprint = useCallback(() => {
         if (sprintId) {
@@ -82,6 +84,7 @@ const EditSprintDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const sprint: UpdateSprintDto = {
             name: name,
             description: description,
@@ -97,6 +100,9 @@ const EditSprintDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -174,7 +180,16 @@ const EditSprintDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>Edit</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Edit"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

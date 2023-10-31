@@ -1,4 +1,10 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+    FormControl,
+    InputLabel,
+    LinearProgress,
+    MenuItem,
+    Select,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { ProjectMembership } from "../../../../api/models/membership";
 import { ProjectRole } from "../../../../api/models/role";
@@ -31,13 +37,16 @@ export const ProjectMembers = ({ projectId }: Props) => {
     const [openEditMember, setOpenEditMember] = useState(false);
     const [openDeleteMember, setOpenDeleteMember] = useState(false);
     const [selectedMember, setSelectedMember] = useState<ProjectMembership>();
+    const [isLoading, setIsLoading] = useState(false);
 
     const search = async () => {
+        setIsLoading(true);
         const { data } = await getMemberships({
             projectId,
             roleId: selectedRole === ALL_ROLES_ID ? undefined : selectedRole,
             search: searchText,
         });
+        setIsLoading(false);
         setMemberships(data.items);
     };
 
@@ -48,14 +57,15 @@ export const ProjectMembers = ({ projectId }: Props) => {
 
     useEffect(() => {
         const fetchProjectRoles = async () => {
+            setIsLoading(true);
             const { data } = await getMemberships({
                 projectId,
                 roleId:
                     selectedRole === ALL_ROLES_ID ? undefined : selectedRole,
             });
+            setIsLoading(false);
             setMemberships(data.items);
-            const asd = await getMyPermissions();
-            console.log({ asd });
+            await getMyPermissions();
         };
         if (projectId) fetchProjectRoles();
     }, [projectId, selectedRole]);
@@ -98,12 +108,16 @@ export const ProjectMembers = ({ projectId }: Props) => {
                 </div>
                 <div className="flex flex-col mt-4 gap-4">
                     <h6>Members: {memberships.length}</h6>
-                    <ProjectMemberList
-                        items={memberships}
-                        onSelected={(member) => setSelectedMember(member)}
-                        onEdit={() => setOpenEditMember(true)}
-                        onDelete={() => setOpenDeleteMember(true)}
-                    />
+                    {isLoading ? (
+                        <LinearProgress />
+                    ) : (
+                        <ProjectMemberList
+                            items={memberships}
+                            onSelected={(member) => setSelectedMember(member)}
+                            onEdit={() => setOpenEditMember(true)}
+                            onDelete={() => setOpenDeleteMember(true)}
+                        />
+                    )}
                 </div>
             </div>
             {openCreateMember && (

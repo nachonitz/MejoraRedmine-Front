@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -33,6 +34,7 @@ const CreateReleaseDialog = ({
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
         setErrorName(false);
@@ -69,6 +71,7 @@ const CreateReleaseDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const release: CreateReleaseDto = {
             name: name,
             description: description,
@@ -85,6 +88,9 @@ const CreateReleaseDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -152,7 +158,16 @@ const CreateReleaseDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleCreate}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Create"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

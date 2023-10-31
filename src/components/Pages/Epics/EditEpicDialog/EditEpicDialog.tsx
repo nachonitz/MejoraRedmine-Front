@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -40,6 +41,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
     const [errorDescription, setErrorDescription] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const getAllIssuesPriorities = async () => {
         const { data } = await getEnumerations({
@@ -92,6 +94,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const epic: UpdateEpicDto = {
             name: name,
             description: description,
@@ -106,6 +109,9 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -199,7 +205,16 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>Edit</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Edit"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

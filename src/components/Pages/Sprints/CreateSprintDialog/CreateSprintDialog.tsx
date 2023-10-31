@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -34,6 +35,7 @@ const CreateSprintDialog = ({
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
         setErrorName(false);
@@ -65,6 +67,7 @@ const CreateSprintDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const sprint: CreateSprintDto = {
             name: name,
             description: description,
@@ -82,6 +85,9 @@ const CreateSprintDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -148,7 +154,16 @@ const CreateSprintDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleCreate}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Create"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

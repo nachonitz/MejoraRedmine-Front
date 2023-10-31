@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -43,6 +44,7 @@ const CreateEpicDialog = ({
     const [errorName, setErrorName] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const getAllIssuesPriorities = useCallback(async () => {
         const { data } = await getEnumerations({
@@ -76,6 +78,7 @@ const CreateEpicDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const epic: CreateEpicDto = {
             name: name,
             description: description,
@@ -93,6 +96,9 @@ const CreateEpicDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -177,7 +183,16 @@ const CreateEpicDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleCreate}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Create"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

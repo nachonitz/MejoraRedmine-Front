@@ -17,6 +17,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 import { getMyPermissions } from "../../../api/services/membershipsService";
+import { LinearProgress } from "@mui/material";
 
 const Documents = () => {
     const navigate = useNavigate();
@@ -28,13 +29,16 @@ const Documents = () => {
     const [openDeleteDocument, setOpenDeleteDocument] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState<Document>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getAllDocuments = async () => {
         try {
             if (projectId) {
+                setIsLoading(true);
                 const { data } = await getDocuments({
                     projectId: +projectId,
                 });
+                setIsLoading(false);
                 setDocuments(data.items);
             }
         } catch (error) {
@@ -198,9 +202,13 @@ const Documents = () => {
                     </table>
                     {documents.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                            <span className="text-center">
-                                There are no documents yet
-                            </span>
+                            {isLoading ? (
+                                <LinearProgress />
+                            ) : (
+                                <span className="text-center">
+                                    There are no documents yet.
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>

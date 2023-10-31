@@ -10,6 +10,7 @@ import SettingsButton from "../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../components/Shared/Page/Page";
 import { getFullDate, hasAdminAccess } from "../lib/utils";
+import { LinearProgress } from "@mui/material";
 
 const defaultFilters: ProjectFilter = {
     page: 1,
@@ -24,10 +25,13 @@ const Projects = () => {
     const [openEditProject, setOpenEditProject] = useState(false);
     const [openDeleteProject, setOpenDeleteProject] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project>();
+    const [isLoading, setIsLoading] = useState(true);
 
     const getAllProjects = async () => {
         try {
+            setIsLoading(true);
             const { data } = await getProjects(defaultFilters);
+            setIsLoading(false);
             setProjects(data.items);
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -162,9 +166,13 @@ const Projects = () => {
                 </table>
                 {projects.length === 0 && (
                     <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                        <span className="text-center">
-                            There are no projects yet
-                        </span>
+                        {isLoading ? (
+                            <LinearProgress />
+                        ) : (
+                            <span className="text-center">
+                                There are no projects yet.
+                            </span>
+                        )}
                     </div>
                 )}
             </div>

@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -41,6 +42,7 @@ const CreateRiskDialog = ({
     const [errorProbability, setErrorProbability] = useState(false);
     const [errorImpact, setErrorImpact] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
         setErrorName(false);
@@ -72,6 +74,7 @@ const CreateRiskDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const risk: CreateRiskDto = {
             name: name,
             description: description,
@@ -89,6 +92,9 @@ const CreateRiskDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -193,7 +199,16 @@ const CreateRiskDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleCreate} className="h-[50px]">
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Create"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

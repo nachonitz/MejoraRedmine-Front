@@ -1,4 +1,9 @@
-import { Dialog, DialogActions, DialogContent } from "@mui/material";
+import {
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from "@mui/material";
 import { useState } from "react";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -20,17 +25,20 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
     deleteFunction,
 }) => {
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
         setServerErrors([]);
     };
 
     const handleSubmit = () => {
+        setIsLoading(true);
         clearErrors();
         if (id) {
             deleteFunction(id)
                 .then(() => {
                     handleCloseModal(true);
+
                     successToast("Deleted successfully");
                 })
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +46,9 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
                     console.log(error);
                     setServerErrors(error.messages);
                     errorToast("Something went wrong");
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         }
     };
@@ -77,7 +88,16 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>Delete</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit} className="h-[50px]">
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Delete"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

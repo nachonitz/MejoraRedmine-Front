@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -66,6 +67,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     const [errorTrackerId, setErrorTrackerId] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetch = async () => {
@@ -139,6 +141,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const issue: CreateIssueDto = {
             subject: name,
             description: description,
@@ -161,6 +164,9 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -314,7 +320,16 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
+                    <PrimaryButton onClick={handleCreate}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Create"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>

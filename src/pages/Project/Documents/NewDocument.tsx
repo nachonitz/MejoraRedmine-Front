@@ -1,5 +1,6 @@
 import {
     Button,
+    CircularProgress,
     FormControl,
     InputLabel,
     Select,
@@ -7,7 +8,7 @@ import {
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CreateDocumentDto } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import { createDocument } from "../../../api/services/documentsService";
@@ -23,7 +24,6 @@ import {
     successToast,
 } from "../../../components/Shared/Toast";
 import { UserContext } from "../../../context/UserContext";
-import { useNavigate } from "react-router-dom";
 
 const NewDocument = () => {
     const { projectId } = useParams();
@@ -43,6 +43,7 @@ const NewDocument = () => {
     const [errorTags, setErrorTags] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
         setErrorTitle(false);
@@ -88,6 +89,7 @@ const NewDocument = () => {
         const errorFound = checkForFieldsErrors();
         if (errorFound || !projectId) return;
 
+        setIsLoading(true);
         const document: CreateDocumentDto = {
             title: title,
             description: description,
@@ -115,6 +117,8 @@ const NewDocument = () => {
             console.log(error);
             setServerErrors(error.messages);
             errorToast("Something went wrong");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -201,7 +205,14 @@ const NewDocument = () => {
                             variant="contained"
                             component="label"
                         >
-                            Create document
+                            {isLoading ? (
+                                <CircularProgress
+                                    sx={{ color: "white", padding: 0 }}
+                                    size={20}
+                                />
+                            ) : (
+                                "Create"
+                            )}
                         </Button>
                     </div>
                     {serverErrors && serverErrors.length > 0 && (

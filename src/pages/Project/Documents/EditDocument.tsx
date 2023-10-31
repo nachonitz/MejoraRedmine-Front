@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
     Button,
+    CircularProgress,
     FormControl,
     IconButton,
     InputLabel,
@@ -9,14 +10,12 @@ import {
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-    CreateDocumentDto,
-    UpdateDocumentDto,
-} from "../../../api/models/document";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { useNavigate, useParams } from "react-router-dom";
+import { UpdateDocumentDto } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
+import { File as RedmineFile } from "../../../api/models/file";
 import {
-    createDocument,
     editDocument,
     getDocumentById,
 } from "../../../api/services/documentsService";
@@ -32,9 +31,6 @@ import {
     successToast,
 } from "../../../components/Shared/Toast";
 import { UserContext } from "../../../context/UserContext";
-import { useNavigate } from "react-router-dom";
-import { File as RedmineFile } from "../../../api/models/file";
-import { RiDeleteBin6Line } from "react-icons/ri";
 
 const EditDocument = () => {
     const { projectId, documentId } = useParams();
@@ -55,6 +51,7 @@ const EditDocument = () => {
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [existingFiles, setExistingFiles] = useState<RedmineFile[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
         setErrorTitle(false);
@@ -95,11 +92,12 @@ const EditDocument = () => {
         }
     };
 
-    const handleCreate = async () => {
+    const handleEdit = async () => {
         clearErrors();
         const errorFound = checkForFieldsErrors();
         if (errorFound || !projectId) return;
 
+        setIsLoading(true);
         const document: UpdateDocumentDto = {
             title: title,
             description: description,
@@ -129,6 +127,8 @@ const EditDocument = () => {
             console.log(error);
             setServerErrors(error.messages);
             errorToast("Something went wrong");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -281,12 +281,19 @@ const EditDocument = () => {
                     />
                     <div className="mb-24 mt-8 w-full">
                         <Button
-                            onClick={handleCreate}
+                            onClick={handleEdit}
                             className="w-full h-12"
                             variant="contained"
                             component="label"
                         >
-                            Edit document
+                            {isLoading ? (
+                                <CircularProgress
+                                    sx={{ color: "white", padding: 0 }}
+                                    size={20}
+                                />
+                            ) : (
+                                "Edit"
+                            )}
                         </Button>
                     </div>
                     {serverErrors && serverErrors.length > 0 && (

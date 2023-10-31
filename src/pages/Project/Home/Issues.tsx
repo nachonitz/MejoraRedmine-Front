@@ -22,6 +22,7 @@ import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/Pr
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getMyPermissions } from "../../../api/services/membershipsService";
 import { hasAccess } from "../../../lib/utils";
+import { LinearProgress } from "@mui/material";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -40,6 +41,7 @@ const ProjectIssues = () => {
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getEpic = async () => {
         try {
@@ -69,10 +71,12 @@ const ProjectIssues = () => {
     const getAllIssues = async () => {
         try {
             if (epicId) {
+                setIsLoading(true);
                 const { data } = await getIssues({
                     ...defaultFilters,
                     epicId: parseInt(epicId),
                 });
+                setIsLoading(false);
                 setIssues(data.items);
             }
         } catch (error) {
@@ -229,9 +233,13 @@ const ProjectIssues = () => {
                     </table>
                     {issues.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
-                            <span className="text-center">
-                                There are no issues yet
-                            </span>
+                            {isLoading ? (
+                                <LinearProgress />
+                            ) : (
+                                <span className="text-center">
+                                    There are no issues yet.
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>

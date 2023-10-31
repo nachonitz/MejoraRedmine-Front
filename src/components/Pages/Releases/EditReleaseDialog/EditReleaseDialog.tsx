@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -37,6 +38,7 @@ const EditReleaseDialog = ({
     const [errorStartDate, setErrorStartDate] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleGetRelease = useCallback(() => {
         if (releaseId) {
@@ -88,6 +90,7 @@ const EditReleaseDialog = ({
         if (errorFound) {
             return;
         }
+        setIsLoading(true);
         const release: UpdateReleaseDto = {
             name: name,
             description: description,
@@ -103,6 +106,9 @@ const EditReleaseDialog = ({
                 console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -181,7 +187,16 @@ const EditReleaseDialog = ({
                     <SecondaryButton onClick={handleClose}>
                         Close
                     </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>Edit</PrimaryButton>
+                    <PrimaryButton onClick={handleSubmit}>
+                        {isLoading ? (
+                            <CircularProgress
+                                sx={{ color: "white", padding: 0 }}
+                                size={20}
+                            />
+                        ) : (
+                            "Edit"
+                        )}
+                    </PrimaryButton>
                 </DialogActions>
             </div>
         </Dialog>
