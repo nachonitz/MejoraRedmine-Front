@@ -18,7 +18,7 @@ import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
-import { SprintFiltersModal } from "../../../components/Pages/Sprints/ReleaseFiltersModal";
+import { SprintFiltersModal } from "../../../components/Pages/Sprints/SprintFiltersModal";
 
 const defaultFilters: SprintFilter = {
     page: 1,
