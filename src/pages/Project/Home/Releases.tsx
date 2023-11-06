@@ -20,6 +20,8 @@ import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/Pr
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import { ReleaseFiltersModal } from "../../../components/Pages/Releases/ReleaseFiltersModal";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -34,10 +36,13 @@ const ProjectReleases = () => {
     const [openCreateRelease, setOpenCreateRelease] = useState(false);
     const [openEditRelease, setOpenEditRelease] = useState(false);
     const [openDeleteRelease, setOpenDeleteRelease] = useState(false);
+    const [openReleaseFiltersModal, setOpenReleaseFiltersModal] =
+        useState(false);
     const [selectedRelease, setSelectedRelease] = useState<Release>();
     const [permissions, setPermissions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+    const [filters, setFilters] = useState<ReleaseFilter>(defaultFilters);
 
     const getProject = useCallback(async () => {
         try {
@@ -64,38 +69,24 @@ const ProjectReleases = () => {
         }
     }, [projectId]);
 
-    const getAllReleases = useCallback(async () => {
-        try {
-            if (projectId) {
-                setIsLoading(true);
-                const { data } = await getReleases({
-                    ...defaultFilters,
-                    projectId: +projectId,
-                });
-                setIsLoading(false);
-                setReleases(data.items);
+    const query = useCallback(
+        async (filters: ReleaseFilter) => {
+            try {
+                if (projectId) {
+                    setIsLoading(true);
+                    const { data } = await getReleases({
+                        ...filters,
+                        projectId: +projectId,
+                    });
+                    setIsLoading(false);
+                    setReleases(data.items);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    }, [projectId]);
-
-    const search = async () => {
-        try {
-            if (projectId) {
-                setIsLoading(true);
-                const { data } = await getReleases({
-                    ...defaultFilters,
-                    projectId: +projectId,
-                    name: searchText,
-                });
-                setIsLoading(false);
-                setReleases(data.items);
-            }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
+        },
+        [projectId]
+    );
 
     const goToRelease = (releaseId: number) => {
         navigate(`/project/${projectId}/release/${releaseId}`);
@@ -104,14 +95,14 @@ const ProjectReleases = () => {
     const handleCloseCreateRelease = (refresh?: boolean) => {
         setOpenCreateRelease(false);
         if (refresh) {
-            getAllReleases();
+            query(defaultFilters);
         }
     };
 
     const handleCloseEditRelease = (refresh?: boolean) => {
         setOpenEditRelease(false);
         if (refresh) {
-            getAllReleases();
+            query(defaultFilters);
         }
         setSelectedRelease(undefined);
     };
@@ -119,21 +110,34 @@ const ProjectReleases = () => {
     const handleCloseDeleteRelease = (refresh?: boolean) => {
         setOpenDeleteRelease(false);
         if (refresh) {
-            getAllReleases();
+            query(defaultFilters);
         }
         setSelectedRelease(undefined);
     };
 
     useEffect(() => {
-        getAllReleases();
+        query(defaultFilters);
         getProject();
         getUserPermissions();
-    }, [getAllReleases, getProject, getUserPermissions]);
+    }, [getProject, getUserPermissions, query]);
+
+    useEffect(() => {
+        query(filters);
+    }, [filters, query]);
 
     return (
         <Sidebar>
             <Page>
                 <ProjectBreadcrumbs project={project} />
+                {openReleaseFiltersModal && (
+                    <ReleaseFiltersModal
+                        open={openReleaseFiltersModal}
+                        onClose={() => setOpenReleaseFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 {projectId && (
                     <>
                         {hasAccess(permissions, ["add_issues"]) && (
@@ -171,9 +175,19 @@ const ProjectReleases = () => {
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Releases</h3>
                         <div className="flex gap-x-6">
+                            <SecondaryButton
+                                onClick={() => setOpenReleaseFiltersModal(true)}
+                            >
+                                Filters
+                            </SecondaryButton>
                             <Searchbar
                                 onChange={setSearchText}
-                                onSearch={search}
+                                onSearch={() =>
+                                    query({
+                                        ...filters,
+                                        name: searchText,
+                                    })
+                                }
                             />
                             {hasAccess(permissions, ["add_issues"]) && (
                                 <PrimaryButton

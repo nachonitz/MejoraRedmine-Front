@@ -17,6 +17,8 @@ import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/Pr
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import { SprintFiltersModal } from "../../../components/Pages/Sprints/ReleaseFiltersModal";
 
 const defaultFilters: SprintFilter = {
     page: 1,
@@ -31,10 +33,12 @@ const ProjectSprints = () => {
     const [openCreateSprint, setOpenCreateSprint] = useState(false);
     const [openEditSprint, setOpenEditSprint] = useState(false);
     const [openDeleteSprint, setOpenDeleteSprint] = useState(false);
+    const [openSprintFiltersModal, setOpenSprintFiltersModal] = useState(false);
     const [selectedSprint, setSelectedSprint] = useState<Sprint>();
     const [permissions, setPermissions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+    const [filters, setFilters] = useState<SprintFilter>(defaultFilters);
 
     const getRelease = useCallback(async () => {
         try {
@@ -63,38 +67,24 @@ const ProjectSprints = () => {
         }
     }, [projectId]);
 
-    const getAllSprints = useCallback(async () => {
-        try {
-            if (releaseId) {
-                setIsLoading(true);
-                const { data } = await getSprints({
-                    ...defaultFilters,
-                    releaseId: +releaseId,
-                });
-                setIsLoading(false);
-                setSprints(data.items);
+    const query = useCallback(
+        async (filters: SprintFilter) => {
+            try {
+                if (releaseId) {
+                    setIsLoading(true);
+                    const { data } = await getSprints({
+                        ...filters,
+                        releaseId: +releaseId,
+                    });
+                    setIsLoading(false);
+                    setSprints(data.items);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    }, [releaseId]);
-
-    const search = async () => {
-        try {
-            if (releaseId) {
-                setIsLoading(true);
-                const { data } = await getSprints({
-                    ...defaultFilters,
-                    releaseId: +releaseId,
-                    name: searchText,
-                });
-                setIsLoading(false);
-                setSprints(data.items);
-            }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
+        },
+        [releaseId]
+    );
 
     const goToSprint = (id: number) => {
         navigate(`/project/${projectId}/release/${releaseId}/sprint/${id}`);
@@ -104,14 +94,14 @@ const ProjectSprints = () => {
     const handleCloseCreateSprint = (refresh?: boolean) => {
         setOpenCreateSprint(false);
         if (refresh) {
-            getAllSprints();
+            query(defaultFilters);
         }
     };
 
     const handleCloseEditSprint = (refresh?: boolean) => {
         setOpenEditSprint(false);
         if (refresh) {
-            getAllSprints();
+            query(defaultFilters);
         }
         setSelectedSprint(undefined);
     };
@@ -119,16 +109,20 @@ const ProjectSprints = () => {
     const handleCloseDeleteSprint = (refresh?: boolean) => {
         setOpenDeleteSprint(false);
         if (refresh) {
-            getAllSprints();
+            query(defaultFilters);
         }
         setSelectedSprint(undefined);
     };
 
     useEffect(() => {
-        getAllSprints();
+        query(filters);
+    }, [query, filters]);
+
+    useEffect(() => {
+        query(defaultFilters);
         getRelease();
         getUserPermissions();
-    }, [getAllSprints, getRelease, getUserPermissions]);
+    }, [query, getRelease, getUserPermissions]);
 
     return (
         <Sidebar>
@@ -137,6 +131,15 @@ const ProjectSprints = () => {
                     project={release?.project}
                     release={release}
                 />
+                {openSprintFiltersModal && (
+                    <SprintFiltersModal
+                        open={openSprintFiltersModal}
+                        onClose={() => setOpenSprintFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 {releaseId &&
                     projectId &&
                     hasAccess(permissions, ["add_issues"]) && (
@@ -174,9 +177,19 @@ const ProjectSprints = () => {
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Sprints</h3>
                         <div className="flex gap-x-6">
+                            <SecondaryButton
+                                onClick={() => setOpenSprintFiltersModal(true)}
+                            >
+                                Filters
+                            </SecondaryButton>
                             <Searchbar
                                 onChange={setSearchText}
-                                onSearch={search}
+                                onSearch={() =>
+                                    query({
+                                        ...filters,
+                                        name: searchText,
+                                    })
+                                }
                             />
                             {hasAccess(permissions, ["add_issues"]) && (
                                 <PrimaryButton

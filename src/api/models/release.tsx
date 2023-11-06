@@ -25,7 +25,7 @@ type FilterOrder = `${keyof Release}:${AscDesc}`;
 export interface ReleaseFilter extends PaginationFilters {
     name?: string;
     projectId?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: Date | string;
+    endDate?: Date | string;
     order?: FilterOrder;
 }
