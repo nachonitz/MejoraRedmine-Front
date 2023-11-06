@@ -217,7 +217,6 @@ const EditDocument = () => {
                             error={errorTags}
                             value={tagsString}
                             className="w-1/2"
-                            id="tagsString"
                             label="Tags"
                             placeholder="Separate tags with commas... (Max 5)"
                             variant="outlined"

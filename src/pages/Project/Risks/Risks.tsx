@@ -14,6 +14,8 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import { RiskFiltersModal } from "../../../components/Pages/Risks/RiskFiltersModal";
 
 const defaultFilters: RiskFilter = {
     page: 1,
@@ -26,42 +28,31 @@ const Risks = () => {
     const [openCreateRisk, setOpenCreateRisk] = useState(false);
     const [openEditRisk, setOpenEditRisk] = useState(false);
     const [openDeleteRisk, setOpenDeleteRisk] = useState(false);
+    const [openRiskFiltersModal, setOpenRiskFiltersModal] = useState(false);
     const [selectedRisk, setSelectedRisk] = useState<Risk>();
     const [permissions, setPermissions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState<string>("");
+    const [filters, setFilters] = useState<RiskFilter>(defaultFilters);
     const [isLoading, setIsLoading] = useState(true);
 
-    const getAllRisks = useCallback(async () => {
-        try {
-            if (projectId) {
-                const { data } = await getRisks({
-                    ...defaultFilters,
-                    projectId: +projectId,
-                });
-                setIsLoading(false);
-                setRisks(data.items);
+    const query = useCallback(
+        async (filters: RiskFilter) => {
+            try {
+                if (projectId) {
+                    setIsLoading(true);
+                    const { data } = await getRisks({
+                        ...filters,
+                        projectId: +projectId,
+                    });
+                    setIsLoading(false);
+                    setRisks(data.items);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    }, [projectId]);
-
-    const search = async () => {
-        try {
-            if (projectId) {
-                setIsLoading(true);
-                const { data } = await getRisks({
-                    ...defaultFilters,
-                    name: searchText,
-                    projectId: +projectId,
-                });
-                setIsLoading(false);
-                setRisks(data.items);
-            }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
+        },
+        [projectId]
+    );
 
     const getUserPermissions = useCallback(async () => {
         try {
@@ -80,14 +71,14 @@ const Risks = () => {
     const handleCloseCreateRisk = (refresh?: boolean) => {
         setOpenCreateRisk(false);
         if (refresh) {
-            getAllRisks();
+            query(filters);
         }
     };
 
     const handleCloseEditRisk = (refresh?: boolean) => {
         setOpenEditRisk(false);
         if (refresh) {
-            getAllRisks();
+            query(filters);
         }
         setSelectedRisk(undefined);
     };
@@ -95,19 +86,32 @@ const Risks = () => {
     const handleCloseDeleteRisk = (refresh?: boolean) => {
         setOpenDeleteRisk(false);
         if (refresh) {
-            getAllRisks();
+            query(filters);
         }
         setSelectedRisk(undefined);
     };
 
     useEffect(() => {
-        getAllRisks();
+        query(defaultFilters);
         getUserPermissions();
-    }, [getAllRisks, getUserPermissions]);
+    }, [query, getUserPermissions]);
+
+    useEffect(() => {
+        query(filters);
+    }, [filters, query]);
 
     return (
         <Sidebar>
             <Page>
+                {openRiskFiltersModal && (
+                    <RiskFiltersModal
+                        open={openRiskFiltersModal}
+                        onClose={() => setOpenRiskFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 {hasAccess(permissions, ["add_documents"]) && (
                     <>
                         {projectId && (
@@ -138,12 +142,23 @@ const Risks = () => {
                 <div className="flex justify-between items-center mb-8">
                     <PageTitle title="Risks" />
                     <div className="flex gap-x-6">
-                        <Searchbar onChange={setSearchText} onSearch={search} />
+                        <SecondaryButton
+                            onClick={() => setOpenRiskFiltersModal(true)}
+                        >
+                            Filters
+                        </SecondaryButton>
+                        <Searchbar
+                            onChange={setSearchText}
+                            onSearch={() =>
+                                query({
+                                    ...filters,
+                                    name: searchText,
+                                })
+                            }
+                        />
                         {hasAccess(permissions, ["add_documents"]) && (
                             <PrimaryButton
-                                onClick={() => {
-                                    setOpenCreateRisk(true);
-                                }}
+                                onClick={() => setOpenCreateRisk(true)}
                             >
                                 New Risk
                             </PrimaryButton>
