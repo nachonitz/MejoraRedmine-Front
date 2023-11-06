@@ -25,6 +25,8 @@ import { hasAccess } from "../../../lib/utils";
 import { LinearProgress } from "@mui/material";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
+import { IssueFiltersModal } from "../../../components/Pages/Issues/IssueFiltersModal";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -41,10 +43,12 @@ const ProjectIssues = () => {
     const [openCreateIssue, setOpenCreateIssue] = useState(false);
     const [openEditIssue, setOpenEditIssue] = useState(false);
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
+    const [openIssueFiltersModal, setOpenIssueFiltersModal] = useState(false);
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
     const [permissions, setPermissions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+    const [filters, setFilters] = useState<IssueFilter>(defaultFilters);
 
     const getEpic = async () => {
         try {
@@ -71,38 +75,24 @@ const ProjectIssues = () => {
         }
     }, [projectId]);
 
-    const getAllIssues = async () => {
-        try {
-            if (epicId) {
-                setIsLoading(true);
-                const { data } = await getIssues({
-                    ...defaultFilters,
-                    epicId: parseInt(epicId),
-                });
-                setIsLoading(false);
-                setIssues(data.items);
+    const query = useCallback(
+        async (filters: IssueFilter) => {
+            try {
+                if (sprintId) {
+                    setIsLoading(true);
+                    const { data } = await getIssues({
+                        ...filters,
+                        sprintId: +sprintId,
+                    });
+                    setIsLoading(false);
+                    setIssues(data.items);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
-
-    const search = async () => {
-        try {
-            if (sprintId) {
-                setIsLoading(true);
-                const { data } = await getIssues({
-                    ...defaultFilters,
-                    sprintId: +sprintId,
-                    subject: searchText,
-                });
-                setIsLoading(false);
-                setIssues(data.items);
-            }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
+        },
+        [sprintId]
+    );
 
     const goToIssue = (id: number) => {
         // navigate(`/project/${id}`);
@@ -112,14 +102,14 @@ const ProjectIssues = () => {
     const handleCloseCreateIssue = (refresh?: boolean) => {
         setOpenCreateIssue(false);
         if (refresh) {
-            getAllIssues();
+            query(defaultFilters);
         }
     };
 
     const handleCloseEditIssue = (refresh?: boolean) => {
         setOpenEditIssue(false);
         if (refresh) {
-            getAllIssues();
+            query(defaultFilters);
         }
         setSelectedIssue(undefined);
     };
@@ -127,16 +117,20 @@ const ProjectIssues = () => {
     const handleCloseDeleteIssue = (refresh?: boolean) => {
         setOpenDeleteIssue(false);
         if (refresh) {
-            getAllIssues();
+            query(defaultFilters);
         }
         setSelectedIssue(undefined);
     };
 
     useEffect(() => {
+        query(filters);
+    }, [filters, query]);
+
+    useEffect(() => {
         getEpic();
-        getAllIssues();
+        query(defaultFilters);
         getUserPermissions();
-    }, [getUserPermissions]);
+    }, [getUserPermissions, defaultFilters, query]);
 
     return (
         <Sidebar>
@@ -147,6 +141,15 @@ const ProjectIssues = () => {
                     sprint={epic?.sprint}
                     epic={epic}
                 />
+                {openIssueFiltersModal && (
+                    <IssueFiltersModal
+                        open={openIssueFiltersModal}
+                        onClose={() => setOpenIssueFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 {epicId &&
                     projectId &&
                     releaseId &&
@@ -187,9 +190,19 @@ const ProjectIssues = () => {
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Issues</h3>
                         <div className="flex gap-x-6">
+                            <SecondaryButton
+                                onClick={() => setOpenIssueFiltersModal(true)}
+                            >
+                                Filters
+                            </SecondaryButton>
                             <Searchbar
                                 onChange={setSearchText}
-                                onSearch={search}
+                                onSearch={() =>
+                                    query({
+                                        ...filters,
+                                        subject: searchText,
+                                    })
+                                }
                             />
                             {hasAccess(permissions, ["add_issues"]) && (
                                 <PrimaryButton
