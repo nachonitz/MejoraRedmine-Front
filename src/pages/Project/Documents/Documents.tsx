@@ -18,6 +18,14 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import { DocumentFiltersModal } from "../../../components/Pages/Documents/DocumentFiltersModal";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+
+const defaultFilters: DocumentFilter = {
+    page: 1,
+    limit: 10,
+    projectId: -1,
+};
 
 const Documents = () => {
     const navigate = useNavigate();
@@ -27,41 +35,22 @@ const Documents = () => {
         []
     );
     const [openDeleteDocument, setOpenDeleteDocument] = useState(false);
+    const [openDocumentFiltersModal, setOpenDocumentFiltersModal] =
+        useState(false);
     const [selectedDocument, setSelectedDocument] = useState<Document>();
     const [permissions, setPermissions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+    const [filters, setFilters] = useState<DocumentFilter>(defaultFilters);
 
-    const defaultFilters: DocumentFilter = {
-        page: 1,
-        limit: 10,
-        projectId: projectId ? +projectId : -1,
-    };
-
-    const getAllDocuments = async () => {
+    const query = async (filters: DocumentFilter) => {
         try {
-            if (projectId) {
+            if (filters.projectId) {
                 setIsLoading(true);
-                const { data } = await getDocuments({
-                    projectId: +projectId,
-                });
+                const { data } = await getDocuments(filters);
                 setIsLoading(false);
                 setDocuments(data.items);
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
-
-    const search = async () => {
-        try {
-            setIsLoading(true);
-            const { data } = await getDocuments({
-                ...defaultFilters,
-                title: searchText,
-            });
-            setIsLoading(false);
-            setDocuments(data.items);
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
@@ -101,20 +90,42 @@ const Documents = () => {
     const handleCloseDeleteDocument = (refresh?: boolean) => {
         setOpenDeleteDocument(false);
         if (refresh) {
-            getAllDocuments();
+            query(defaultFilters);
         }
         setSelectedDocument(undefined);
     };
 
     useEffect(() => {
-        getAllDocuments();
+        query(filters);
+    }, [filters]);
+
+    useEffect(() => {
+        if (projectId && filters.projectId !== +projectId) {
+            setFilters({
+                ...filters,
+                projectId: +projectId,
+            });
+        }
+    }, [projectId, filters]);
+
+    useEffect(() => {
+        query(defaultFilters);
         getCategories();
         getUserPermissions();
-    }, [getUserPermissions]);
+    }, [getUserPermissions, defaultFilters]);
 
     return (
         <Sidebar>
             <Page>
+                {openDocumentFiltersModal && (
+                    <DocumentFiltersModal
+                        open={openDocumentFiltersModal}
+                        onClose={() => setOpenDocumentFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 <DeleteDialog
                     open={openDeleteDocument}
                     id={selectedDocument?.id}
@@ -125,7 +136,20 @@ const Documents = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Documents" />
                     <div className="flex gap-x-6">
-                        <Searchbar onChange={setSearchText} onSearch={search} />
+                        <SecondaryButton
+                            onClick={() => setOpenDocumentFiltersModal(true)}
+                        >
+                            Filters
+                        </SecondaryButton>
+                        <Searchbar
+                            onChange={setSearchText}
+                            onSearch={() =>
+                                query({
+                                    ...filters,
+                                    title: searchText,
+                                })
+                            }
+                        />
                         {projectId &&
                             hasAccess(permissions, ["add_documents"]) && (
                                 <PrimaryButton onClick={goToNewDocument}>

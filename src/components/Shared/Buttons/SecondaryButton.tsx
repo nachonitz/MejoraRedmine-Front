@@ -18,7 +18,7 @@ const SecondaryButton = ({
                     : undefined
             }
             className="font-normal text-[16px] bg-white text-primary p-[12px] 
-            px-[35px] border border-primary rounded-[4px] active:shadow-card duration-150"
+            px-[35px] border border-primary hover:bg-primary/10 rounded-[4px] active:shadow-card duration-150"
         >
             {children}
         </button>

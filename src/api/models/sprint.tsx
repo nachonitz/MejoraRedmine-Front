@@ -30,7 +30,7 @@ export interface SprintFilter extends PaginationFilters {
     name?: string;
     projectId?: number;
     releaseId?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: Date | string;
+    endDate?: Date | string;
     order?: FilterOrder;
 }
