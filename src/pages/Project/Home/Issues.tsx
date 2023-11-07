@@ -21,7 +21,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getMyPermissions } from "../../../api/services/membershipsService";
-import { hasAccess } from "../../../lib/utils";
+import { getFullDate, hasAccess } from "../../../lib/utils";
 import { LinearProgress } from "@mui/material";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
@@ -35,9 +35,6 @@ const defaultFilters: IssueFilter = {
 
 const ProjectIssues = () => {
     const { projectId, releaseId, sprintId, epicId } = useParams();
-    const [project, setProject] = useState<Project>();
-    const [release, setRelease] = useState<Release>();
-    const [sprint, setSprint] = useState<Sprint>();
     const [epic, setEpic] = useState<Epic>();
     const [issues, setIssues] = useState<Issue[]>([]);
     const [openCreateIssue, setOpenCreateIssue] = useState(false);
@@ -185,8 +182,27 @@ const ProjectIssues = () => {
                         </>
                     )}
                 <div className="flex flex-col">
-                    <PageTitle title={epic?.name ?? ""} />
-                    <div>epic info here</div>
+                    {epic && (
+                        <PageTitle
+                            dialogInfo={{
+                                name: epic?.name,
+                                properties: [
+                                    {
+                                        name: "Description",
+                                        value: epic?.description,
+                                    },
+                                    {
+                                        name: "Priority",
+                                        value: epic?.priority.name,
+                                    },
+                                ],
+                            }}
+                            title={epic?.name ?? ""}
+                        />
+                    )}
+                    <div>
+                        <span>Description: {epic?.description}</span>
+                    </div>
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Issues</h3>
                         <div className="flex gap-x-6">
