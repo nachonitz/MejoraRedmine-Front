@@ -189,7 +189,7 @@ const ProjectReleases = () => {
                                     },
                                 ],
                             }}
-                            title={project?.name}
+                            title={project?.name ?? ""}
                         />
                     )}
                     <div>

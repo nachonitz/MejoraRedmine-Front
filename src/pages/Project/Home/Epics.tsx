@@ -16,7 +16,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { hasAccess } from "../../../lib/utils";
+import { getFullDate, hasAccess } from "../../../lib/utils";
 
 const defaultFilters: EpicFilter = {
     page: 1,
@@ -168,8 +168,27 @@ const ProjectEpics = () => {
                         </>
                     )}
                 <div className="flex flex-col">
-                    <PageTitle title={sprint?.name ?? ""} />
-                    <div>sprint info here</div>
+                    {sprint && (
+                        <PageTitle
+                            dialogInfo={{
+                                name: sprint?.name,
+                                properties: [
+                                    {
+                                        name: "Description",
+                                        value: sprint?.description,
+                                    },
+                                    {
+                                        name: "Start Date",
+                                        value: getFullDate(sprint?.startDate),
+                                    },
+                                ],
+                            }}
+                            title={sprint?.name ?? ""}
+                        />
+                    )}
+                    <div>
+                        <span>Description: {sprint?.description}</span>
+                    </div>
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Epics</h3>
                         <div className="flex gap-x-6">
