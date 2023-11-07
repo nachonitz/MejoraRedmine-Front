@@ -27,6 +27,7 @@ import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import { IssueFiltersModal } from "../../../components/Pages/Issues/IssueFiltersModal";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -37,6 +38,7 @@ const ProjectIssues = () => {
     const { projectId, releaseId, sprintId, epicId } = useParams();
     const [epic, setEpic] = useState<Epic>();
     const [issues, setIssues] = useState<Issue[]>([]);
+    const [openInfoIssue, setOpenInfoIssue] = useState(false);
     const [openCreateIssue, setOpenCreateIssue] = useState(false);
     const [openEditIssue, setOpenEditIssue] = useState(false);
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
@@ -91,9 +93,14 @@ const ProjectIssues = () => {
         [sprintId]
     );
 
-    const goToIssue = (id: number) => {
-        // navigate(`/project/${id}`);
-        console.log(id);
+    const goToIssue = (issue: Issue) => {
+        setSelectedIssue(issue);
+        setOpenInfoIssue(true);
+    };
+
+    const handleCloseInfoIssue = () => {
+        setOpenInfoIssue(false);
+        setSelectedIssue(undefined);
     };
 
     const handleCloseCreateIssue = (refresh?: boolean) => {
@@ -161,6 +168,43 @@ const ProjectIssues = () => {
                             handleClose={handleCloseCreateIssue}
                         />
                     )}
+                {selectedIssue && openInfoIssue && (
+                    <InfoDialog
+                        name={selectedIssue?.subject}
+                        properties={[
+                            {
+                                name: "Description",
+                                value: selectedIssue?.description,
+                            },
+                            {
+                                name: "Priority",
+                                value: selectedIssue?.priority?.name,
+                            },
+                            {
+                                name: "Status",
+                                value: selectedIssue?.status?.name,
+                            },
+                            {
+                                name: "Tracker",
+                                value: selectedIssue?.tracker?.name,
+                            },
+                            {
+                                name: "Assignee",
+                                value: `${selectedIssue?.assignee?.firstname} ${selectedIssue?.assignee?.lastname}`,
+                            },
+                            {
+                                name: "Estimation",
+                                value: selectedIssue?.estimation,
+                            },
+                            {
+                                name: "Created",
+                                value: getFullDate(selectedIssue?.createdAt),
+                            },
+                        ]}
+                        open={openInfoIssue}
+                        handleClose={handleCloseInfoIssue}
+                    />
+                )}
                 {selectedIssue &&
                     hasAccess(permissions, [
                         "edit_issues",
@@ -246,7 +290,7 @@ const ProjectIssues = () => {
                                 <tr
                                     key={issue.id}
                                     onClick={() => {
-                                        goToIssue(issue.id);
+                                        goToIssue(issue);
                                     }}
                                     className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50"
                                 >

@@ -23,7 +23,7 @@ export interface Issue extends BaseIssue {
     project: Project;
     status: IssueStatus;
     tracker: Tracker;
-    createdAt: string;
+    createdAt: Date;
     assignee?: User;
 }
 
