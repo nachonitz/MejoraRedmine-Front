@@ -172,8 +172,27 @@ const ProjectSprints = () => {
                     )}
 
                 <div className="flex flex-col">
-                    <PageTitle title={release?.name ?? ""} />
-                    <div>release info here</div>
+                    {release && (
+                        <PageTitle
+                            dialogInfo={{
+                                name: release?.name,
+                                properties: [
+                                    {
+                                        name: "Description",
+                                        value: release?.description,
+                                    },
+                                    {
+                                        name: "Start Date",
+                                        value: getFullDate(release?.startDate),
+                                    },
+                                ],
+                            }}
+                            title={release?.name ?? ""}
+                        />
+                    )}
+                    <div>
+                        <span>Description: {release?.description}</span>
+                    </div>
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Sprints</h3>
                         <div className="flex gap-x-6">
