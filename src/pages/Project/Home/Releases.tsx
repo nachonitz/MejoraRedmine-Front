@@ -20,6 +20,7 @@ import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/Pr
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -166,8 +167,31 @@ const ProjectReleases = () => {
                     </>
                 )}
                 <div className="flex flex-col">
-                    <PageTitle title={project?.name ?? ""} />
-                    <div>project info here</div>
+                    {project && (
+                        <PageTitle
+                            dialogInfo={{
+                                name: project?.name,
+                                properties: [
+                                    {
+                                        name: "Description",
+                                        value: project?.description,
+                                    },
+                                    {
+                                        name: "Identifier",
+                                        value: project?.identifier,
+                                    },
+                                    project?.createdAt && {
+                                        name: "Created",
+                                        value: getFullDate(project?.createdAt),
+                                    },
+                                ],
+                            }}
+                            title={project?.name}
+                        />
+                    )}
+                    <div>
+                        <span>Description: {project?.description}</span>
+                    </div>
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Releases</h3>
                         <div className="flex gap-x-6">
