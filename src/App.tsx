@@ -16,6 +16,8 @@ import Projects from "./pages/Projects";
 import Register from "./pages/Register";
 import EditDocument from "./pages/Project/Documents/EditDocument";
 import SingleDocument from "./pages/Project/Documents/SingleDocument";
+import { hasAdminAccess } from "./lib/utils";
+import Information from "./pages/Admin/Information";
 
 function App() {
     const { isLoggedIn } = useContext(UserContext);
@@ -74,6 +76,20 @@ function App() {
                                 path="/project/:projectId/backlog"
                                 element={<Backlog />}
                             />
+                            {hasAdminAccess() && (
+                                <>
+                                    <Route
+                                        path="/admin/information"
+                                        element={<Information />}
+                                    />
+                                    <Route
+                                        path="/admin"
+                                        element={
+                                            <Navigate to="/admin/information" />
+                                        }
+                                    />
+                                </>
+                            )}
                             <Route path="*" element={<Navigate to="/" />} />
                         </>
                     ) : (
