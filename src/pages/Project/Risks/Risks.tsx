@@ -16,6 +16,9 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import { RiskFiltersModal } from "../../../components/Pages/Risks/RiskFiltersModal";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
+import { ListedResponseMetadata } from "../../../api/models/common";
+import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
 
 const defaultFilters: RiskFilter = {
     page: 1,
@@ -34,6 +37,8 @@ const Risks = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [filters, setFilters] = useState<RiskFilter>(defaultFilters);
     const [isLoading, setIsLoading] = useState(true);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
     const query = useCallback(
         async (filters: RiskFilter) => {
@@ -46,6 +51,7 @@ const Risks = () => {
                     });
                     setIsLoading(false);
                     setRisks(data.items);
+                    setPaginationData(data.meta);
                 }
             } catch (error) {
                 throw new Error("Error. Please try again.");
@@ -247,6 +253,14 @@ const Risks = () => {
                             ))}
                         </tbody>
                     </table>
+                    <Paginator
+                        show={paginationData.totalPages > 1 && risks.length > 0}
+                        page={filters.page ?? 1}
+                        totalPages={paginationData.totalPages}
+                        onPageChange={(page: number) =>
+                            setFilters({ ...filters, page })
+                        }
+                    />
                     {risks.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
                             {isLoading ? (

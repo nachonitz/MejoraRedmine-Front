@@ -22,6 +22,9 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 import { ReleaseFiltersModal } from "../../../components/Pages/Releases/ReleaseFiltersModal";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
+import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
+import { ListedResponseMetadata } from "../../../api/models/common";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -43,6 +46,8 @@ const ProjectReleases = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<ReleaseFilter>(defaultFilters);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
     const getProject = useCallback(async () => {
         try {
@@ -80,6 +85,7 @@ const ProjectReleases = () => {
                     });
                     setIsLoading(false);
                     setReleases(data.items);
+                    setPaginationData(data.meta);
                 }
             } catch (error) {
                 throw new Error("Error. Please try again.");
@@ -291,6 +297,16 @@ const ProjectReleases = () => {
                             ))}
                         </tbody>
                     </table>
+                    <Paginator
+                        show={
+                            paginationData.totalPages > 1 && releases.length > 0
+                        }
+                        page={filters.page ?? 1}
+                        totalPages={paginationData.totalPages}
+                        onPageChange={(page: number) =>
+                            setFilters({ ...filters, page })
+                        }
+                    />
                     {releases.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
                             {isLoading ? (

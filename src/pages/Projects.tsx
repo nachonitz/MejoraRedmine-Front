@@ -1,5 +1,5 @@
 import { LinearProgress } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoLockClosed } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { Project, ProjectFilter } from "../api/models/project";
@@ -12,6 +12,9 @@ import DeleteDialog from "../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../components/Shared/Page/Page";
 import { Searchbar } from "../components/Shared/Searchbar/Searchbar";
 import { getFullDate, hasAdminAccess } from "../lib/utils";
+import { Paginator } from "../components/Shared/Paginator/Paginator";
+import { DEFAULT_PAGINATION_DATA } from "../utilities/constants";
+import { ListedResponseMetadata } from "../api/models/common";
 
 const defaultFilters: ProjectFilter = {
     page: 1,
@@ -27,32 +30,22 @@ const Projects = () => {
     const [openDeleteProject, setOpenDeleteProject] = useState(false);
     const [selectedProject, setSelectedProject] = useState<Project>();
     const [searchText, setSearchText] = useState<string>("");
+    const [filters, setFilters] = useState<ProjectFilter>(defaultFilters);
     const [isLoading, setIsLoading] = useState(true);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
-    const getAllProjects = async () => {
+    const query = useCallback(async (filters: ProjectFilter) => {
         try {
             setIsLoading(true);
-            const { data } = await getProjects(defaultFilters);
+            const { data } = await getProjects(filters);
             setIsLoading(false);
             setProjects(data.items);
+            setPaginationData(data.meta);
         } catch (error) {
             throw new Error("Error. Please try again.");
         }
-    };
-
-    const search = async () => {
-        try {
-            setIsLoading(true);
-            const { data } = await getProjects({
-                ...defaultFilters,
-                name: searchText,
-            });
-            setIsLoading(false);
-            setProjects(data.items);
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
+    }, []);
 
     const goToProject = (id: number) => {
         navigate(`/project/${id}`);
@@ -61,7 +54,7 @@ const Projects = () => {
     const handleCloseEditProject = (refresh?: boolean) => {
         setOpenEditProject(false);
         if (refresh) {
-            getAllProjects();
+            query(defaultFilters);
         }
         setSelectedProject(undefined);
     };
@@ -69,7 +62,7 @@ const Projects = () => {
     const handleCloseDeleteProject = (refresh?: boolean) => {
         setOpenDeleteProject(false);
         if (refresh) {
-            getAllProjects();
+            query(defaultFilters);
         }
         setSelectedProject(undefined);
     };
@@ -77,13 +70,13 @@ const Projects = () => {
     const handleCloseCreateProject = (refresh?: boolean) => {
         setOpenCreateProject(false);
         if (refresh) {
-            getAllProjects();
+            query(defaultFilters);
         }
     };
 
     useEffect(() => {
-        getAllProjects();
-    }, []);
+        query(filters);
+    }, [query, filters]);
 
     return (
         <Page>
@@ -110,7 +103,15 @@ const Projects = () => {
             <div className="flex justify-between items-center mb-8">
                 <span className="text-[26px] text-primary">Projects</span>
                 <div className="flex gap-x-6">
-                    <Searchbar onChange={setSearchText} onSearch={search} />
+                    <Searchbar
+                        onChange={setSearchText}
+                        onSearch={() =>
+                            query({
+                                ...filters,
+                                name: searchText,
+                            })
+                        }
+                    />
                     {hasAdminAccess() && (
                         <PrimaryButton
                             onClick={() => setOpenCreateProject(true)}
@@ -183,6 +184,14 @@ const Projects = () => {
                         ))}
                     </tbody>
                 </table>
+                <Paginator
+                    show={paginationData.totalPages > 1 && projects.length > 0}
+                    page={filters.page ?? 1}
+                    totalPages={paginationData.totalPages}
+                    onPageChange={(page: number) =>
+                        setFilters({ ...filters, page })
+                    }
+                />
                 {projects.length === 0 && (
                     <div className="text-[18px] h-[40px] w-full text-center mt-2">
                         {isLoading ? (
