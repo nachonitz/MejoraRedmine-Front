@@ -26,10 +26,11 @@ export type Column = {
 interface BoardProps {
     issues: Issue[];
     statuses: IssueStatus[];
-    getIssues: () => void;
+    refresh: () => void;
+    loading: boolean;
 }
 
-const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
+const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
     const [columns, setColumns] = useState<Column>({
         toDo: [],
@@ -66,15 +67,13 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
     const changeStatus = (issue: Issue, statusId: number) => {
         changeIssueStatus(issue.id, statusId)
             .then((newIssue: Issue) => {
-                console.log(newIssue);
                 issue.status.id = newIssue?.status.id;
                 issue.status.name = newIssue?.status?.name;
                 issue.status.is_closed = newIssue?.status?.is_closed;
-                console.log(issue);
-                getIssues();
+                refresh();
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
             });
     };
 
@@ -203,13 +202,24 @@ const Board: React.FC<BoardProps> = ({ issues, statuses, getIssues }) => {
             sensors={sensors}
         >
             <div className="flex gap-7">
-                <IssuesColumn issues={columns.toDo} id="toDo" title="To Do" />
+                <IssuesColumn
+                    issues={columns.toDo}
+                    id="toDo"
+                    title="To Do"
+                    loading={loading}
+                />
                 <IssuesColumn
                     issues={columns.inProgress}
                     id="inProgress"
                     title="In Progress"
+                    loading={loading}
                 />
-                <IssuesColumn issues={columns.done} id="done" title="Done" />
+                <IssuesColumn
+                    issues={columns.done}
+                    id="done"
+                    title="Done"
+                    loading={loading}
+                />
                 <DragOverlay dropAnimation={dropAnimation}>
                     {issue ? <IssueCard key={issue.id} issue={issue} /> : null}
                 </DragOverlay>

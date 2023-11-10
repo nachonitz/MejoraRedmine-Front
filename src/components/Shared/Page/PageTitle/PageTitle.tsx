@@ -48,10 +48,12 @@ const PageTitle = ({ title, goBackTo, dialogInfo }: Props) => {
             <div className="flex items-center gap-[10px]">
                 <span className="text-[26px] text-primary">{title}</span>
                 {dialogInfo && (
-                    <AiFillInfoCircle
-                        onClick={() => setOpenInfo(true)}
-                        className="text-primary text-[20px] cursor-pointer"
-                    />
+                    <div title="See more information">
+                        <AiFillInfoCircle
+                            onClick={() => setOpenInfo(true)}
+                            className="text-primary text-[20px] cursor-pointer"
+                        />
+                    </div>
                 )}
             </div>
         </div>
