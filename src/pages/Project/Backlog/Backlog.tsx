@@ -20,6 +20,7 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import { BacklogFiltersModal } from "../../../components/Pages/Backlog/BacklogFiltersModal";
 
 export type Column = {
     [name: string]: Issue[];
@@ -40,6 +41,8 @@ const Backlog = () => {
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [openEditIssue, setOpenEditIssue] = useState(false);
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
+    const [openBacklogFiltersModal, setOpenBacklogFiltersModal] =
+        useState(false);
 
     const [searchText, setSearchText] = useState<string>("");
     const [filters, setFilters] = useState<IssueFilter & EpicFilter>({
@@ -156,9 +159,23 @@ const Backlog = () => {
         query(defaultFilters);
     }, [query]);
 
+    useEffect(() => {
+        query(filters);
+    }, [filters, query]);
+
     return (
         <Sidebar>
             <Page>
+                {openBacklogFiltersModal && projectId && (
+                    <BacklogFiltersModal
+                        projectId={+projectId}
+                        open={openBacklogFiltersModal}
+                        onClose={() => setOpenBacklogFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 {selectedEpic && (
                     <>
                         <EditEpicDialog
@@ -194,7 +211,9 @@ const Backlog = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Backlog" />
                     <div className="flex gap-x-6">
-                        <SecondaryButton onClick={() => console.log("asd")}>
+                        <SecondaryButton
+                            onClick={() => setOpenBacklogFiltersModal(true)}
+                        >
                             Filters
                         </SecondaryButton>
                         <Searchbar
