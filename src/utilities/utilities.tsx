@@ -1,3 +1,6 @@
+import { Issue } from "../api/models/issue";
+import { getFullDate } from "../lib/utils";
+
 export const getIssueIcon = (issueType: string) => {
     switch (issueType) {
         case "Bug":
@@ -39,4 +42,37 @@ export const getIssueStatusBackgroundColor = (issueStatus: string) => {
         case "Rejected":
             return "#FF0000";
     }
+};
+
+export const getIssueProperties = (issue: Issue) => {
+    return [
+        {
+            name: "Description",
+            value: issue?.description,
+        },
+        {
+            name: "Priority",
+            value: issue?.priority?.name,
+        },
+        {
+            name: "Status",
+            value: issue?.status?.name,
+        },
+        {
+            name: "Tracker",
+            value: issue?.tracker?.name,
+        },
+        {
+            name: "Assignee",
+            value: `${issue?.assignee?.firstname} ${issue?.assignee?.lastname}`,
+        },
+        {
+            name: "Estimation",
+            value: issue?.estimation,
+        },
+        {
+            name: "Created",
+            value: getFullDate(issue?.createdAt),
+        },
+    ];
 };

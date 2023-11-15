@@ -66,6 +66,7 @@ const Information = () => {
                                     defaultValue={protocol}
                                 >
                                     <MenuItem value={"HTTP"}>HTTP</MenuItem>
+                                    <MenuItem value={"HTTP"}>HTTPS</MenuItem>
                                 </Select>
                             </FormControl>
                         </div>

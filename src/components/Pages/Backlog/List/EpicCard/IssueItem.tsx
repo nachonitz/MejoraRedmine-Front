@@ -13,10 +13,13 @@ interface IssueCardProps {
 }
 
 const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
-    const { handleOpenEditIssue, handleOpenDeleteIssue } =
+    const { handleOpenInfoIssue, handleOpenEditIssue, handleOpenDeleteIssue } =
         useContext(BacklogContext);
     return (
-        <div className="w-full border-t border-primary border-solid px-[20px] py-[5px]">
+        <div
+            onClick={() => handleOpenInfoIssue(issue)}
+            className="w-full border-t border-primary border-solid px-[20px] py-[5px] cursor-pointer"
+        >
             <div className="w-full flex items-center gap-[10px] justify-between">
                 <div className="flex gap-[10px] items-center w-full">
                     <div className="flex gap-[2px] items-center w-[25%]">

@@ -23,7 +23,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
         isDragging,
     } = useSortable({ id: issue.id });
 
-    const { handleOpenEditIssue, handleOpenDeleteIssue } =
+    const { handleOpenInfoIssue, handleOpenEditIssue, handleOpenDeleteIssue } =
         useContext(BacklogContext);
 
     const style = {
@@ -33,7 +33,13 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
     };
 
     return (
-        <div style={style} ref={setNodeRef} {...attributes} {...listeners}>
+        <div
+            onClick={() => handleOpenInfoIssue(issue)}
+            style={style}
+            ref={setNodeRef}
+            {...attributes}
+            {...listeners}
+        >
             <div className="bg-white w-[346px] shadow-userStory p-[4px] box-border flex flex-col gap-[3px] select-none">
                 <div className="flex items-center justify-between">
                     <div className="flex gap-[2px] items-center">

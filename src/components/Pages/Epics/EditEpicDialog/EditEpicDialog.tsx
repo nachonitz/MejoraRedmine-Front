@@ -36,7 +36,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState<string | undefined>("");
-    const [priorityId, setPriorityId] = useState<number>();
+    const [priorityId, setPriorityId] = useState<string>("");
     const [errorName, setErrorName] = useState(false);
     const [errorDescription, setErrorDescription] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
@@ -56,7 +56,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                 .then((epic: Epic) => {
                     setName(epic.name);
                     setDescription(epic.description);
-                    setPriorityId(epic.priority.id);
+                    setPriorityId(epic.priority.id.toString());
                 })
                 .catch((error) => {
                     console.log(error);
@@ -98,7 +98,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
         const epic: UpdateEpicDto = {
             name: name,
             description: description,
-            priorityId: priorityId,
+            priorityId: +priorityId,
         };
         editEpic(epicId, epic)
             .then(() => {
@@ -118,7 +118,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
     const resetState = useCallback(() => {
         setName("");
         setDescription("");
-        setPriorityId(undefined);
+        setPriorityId("");
         clearErrors();
     }, []);
 
@@ -177,7 +177,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                                 value={priorityId}
                                 label="Priority"
                                 error={errorPriorityId}
-                                onChange={(e) => setPriorityId(+e.target.value)}
+                                onChange={(e) => setPriorityId(e.target.value)}
                             >
                                 {priorities &&
                                     priorities.map((priority: Enumeration) => (

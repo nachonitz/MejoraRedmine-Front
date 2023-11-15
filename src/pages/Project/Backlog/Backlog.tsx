@@ -18,6 +18,9 @@ import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
+import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
+import { getFullDate } from "../../../lib/utils";
+import { getIssueProperties } from "../../../utilities/utilities";
 
 export type Column = {
     [name: string]: Issue[];
@@ -29,6 +32,7 @@ const Backlog = () => {
     const [selectedEpic, setSelectedEpic] = useState<Epic>();
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
 
+    const [openInfoIssue, setOpenInfoIssue] = useState(false);
     const [openEditEpic, setOpenEditEpic] = useState(false);
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [openEditIssue, setOpenEditIssue] = useState(false);
@@ -114,6 +118,11 @@ const Backlog = () => {
         setOpenDeleteEpic(true);
     };
 
+    const handleOpenInfoIssue = (issue: Issue) => {
+        setSelectedIssue(issue);
+        setOpenInfoIssue(true);
+    };
+
     const handleOpenEditIssue = (issue: Issue) => {
         setSelectedIssue(issue);
         setOpenEditIssue(true);
@@ -125,6 +134,7 @@ const Backlog = () => {
     };
 
     const handleCloseDialog = (refresh?: boolean) => {
+        setOpenInfoIssue(false);
         setOpenEditEpic(false);
         setOpenDeleteEpic(false);
         setOpenEditIssue(false);
@@ -157,6 +167,12 @@ const Backlog = () => {
                 )}
                 {selectedIssue && (
                     <>
+                        <InfoDialog
+                            name={selectedIssue?.subject}
+                            properties={getIssueProperties(selectedIssue)}
+                            open={openInfoIssue}
+                            handleClose={handleCloseDialog}
+                        />
                         <EditIssueDialog
                             open={openEditIssue}
                             issueId={selectedIssue?.id}
@@ -186,6 +202,7 @@ const Backlog = () => {
                 </div>
                 <BacklogContext.Provider
                     value={{
+                        handleOpenInfoIssue,
                         handleOpenEditIssue,
                         handleOpenDeleteIssue,
                         handleOpenEditEpic,
