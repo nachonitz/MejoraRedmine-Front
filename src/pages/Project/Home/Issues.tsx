@@ -1,33 +1,32 @@
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { ListedResponseMetadata } from "../../../api/models/common";
 import { Epic } from "../../../api/models/epic";
 import { Issue, IssueFilter } from "../../../api/models/issue";
-import { Project } from "../../../api/models/project";
-import { Release } from "../../../api/models/release";
-import { Sprint } from "../../../api/models/sprint";
 import { getEpicById } from "../../../api/services/epicsService";
 import { deleteIssue, getIssues } from "../../../api/services/issuesService";
+import { getMyPermissions } from "../../../api/services/membershipsService";
 import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
+import { IssueFiltersModal } from "../../../components/Pages/Issues/IssueFiltersModal";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
+import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
+import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
+import Page from "../../../components/Shared/Page/Page";
+import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
+import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
+import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+import { getFullDate, hasAccess } from "../../../lib/utils";
+import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
 import {
     getIssueIcon,
     getIssuePriorityColor,
 } from "../../../utilities/utilities";
-import AddButton from "../../../components/Shared/Buttons/AddButton";
-import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
-import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
-import Page from "../../../components/Shared/Page/Page";
-import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
-import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
-import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getMyPermissions } from "../../../api/services/membershipsService";
-import { getFullDate, hasAccess } from "../../../lib/utils";
-import { LinearProgress } from "@mui/material";
-import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
-import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
-import { IssueFiltersModal } from "../../../components/Pages/Issues/IssueFiltersModal";
-import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
-import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -48,6 +47,8 @@ const ProjectIssues = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<IssueFilter>(defaultFilters);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
     const getEpic = async () => {
         try {
@@ -85,6 +86,7 @@ const ProjectIssues = () => {
                     });
                     setIsLoading(false);
                     setIssues(data.items);
+                    setPaginationData(data.meta);
                 }
             } catch (error) {
                 throw new Error("Error. Please try again.");
@@ -340,6 +342,16 @@ const ProjectIssues = () => {
                             ))}
                         </tbody>
                     </table>
+                    <Paginator
+                        show={
+                            paginationData.totalPages > 1 && issues.length > 0
+                        }
+                        page={filters.page ?? 1}
+                        totalPages={paginationData.totalPages}
+                        onPageChange={(page: number) =>
+                            setFilters({ ...filters, page })
+                        }
+                    />
                     {issues.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
                             {isLoading ? (

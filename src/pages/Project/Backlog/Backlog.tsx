@@ -1,8 +1,8 @@
 import { Tab, Tabs } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Epic } from "../../../api/models/epic";
-import { Issue, IssueStatus } from "../../../api/models/issue";
+import { Epic, EpicFilter } from "../../../api/models/epic";
+import { Issue, IssueFilter, IssueStatus } from "../../../api/models/issue";
 import { deleteEpic, getEpics } from "../../../api/services/epicsService";
 import {
     deleteIssue,
@@ -21,9 +21,17 @@ import { BacklogContext } from "../../../context/BacklogContext";
 import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
 import { getFullDate } from "../../../lib/utils";
 import { getIssueProperties } from "../../../utilities/utilities";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import { BacklogFiltersModal } from "../../../components/Pages/Backlog/BacklogFiltersModal";
 
 export type Column = {
     [name: string]: Issue[];
+};
+
+const defaultFilters: IssueFilter & EpicFilter = {
+    page: 1,
+    limit: 500,
 };
 
 const Backlog = () => {
@@ -37,6 +45,14 @@ const Backlog = () => {
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [openEditIssue, setOpenEditIssue] = useState(false);
     const [openDeleteIssue, setOpenDeleteIssue] = useState(false);
+    const [openBacklogFiltersModal, setOpenBacklogFiltersModal] =
+        useState(false);
+
+    const [searchText, setSearchText] = useState<string>("");
+    const [filters, setFilters] = useState<IssueFilter & EpicFilter>({
+        ...defaultFilters,
+    });
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [issuesAndEpics, setIssuesAndEpics] = useState<{
         allIssues: Issue[];
@@ -50,53 +66,53 @@ const Backlog = () => {
 
     const [tab, setTab] = useState<string>("kanban");
 
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
     };
 
-    useEffect(() => {
-        getAllIssuesStatuses();
-        getIssuesAndEpics();
-    }, []);
-
-    const getIssuesAndEpics = async () => {
-        try {
-            if (projectId) {
-                const { data: issues } = await getIssues({
-                    projectId: parseInt(projectId),
-                });
-                const { data: epics } = await getEpics({
-                    projectId: parseInt(projectId),
-                });
-
-                const issuesInEpics: Issue[] = [];
-
-                issues.items.forEach((issue) => {
-                    if (issue.epic) {
-                        const epic = epics.items.find(
-                            (epic) => epic.id === issue.epic?.id
-                        );
-                        if (epic) {
-                            epic.issues?.push(issue);
-                            issuesInEpics.push(issue);
-                        }
-                    }
-                });
-
-                const issuesWithoutEpic = issues.items.filter(
-                    (issue) => !issuesInEpics.includes(issue)
-                );
-
-                setIssuesAndEpics({
-                    allIssues: issues.items,
-                    issuesWithoutEpic: issuesWithoutEpic,
-                    epics: epics.items,
-                });
+    const setIssuesAndEpicsState = (issues: Issue[], epics: Epic[]) => {
+        const issuesInEpics: Issue[] = [];
+        issues.forEach((issue) => {
+            if (issue.epic) {
+                const epic = epics.find((epic) => epic.id === issue.epic?.id);
+                if (epic) {
+                    epic.issues?.push(issue);
+                    issuesInEpics.push(issue);
+                }
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
+        });
+        const issuesWithoutEpic = issues.filter(
+            (issue) => !issuesInEpics.includes(issue)
+        );
+        setIssuesAndEpics({
+            allIssues: issues,
+            issuesWithoutEpic: issuesWithoutEpic,
+            epics: epics,
+        });
     };
+
+    const query = useCallback(
+        async (filters: IssueFilter & EpicFilter) => {
+            try {
+                if (projectId) {
+                    setIsLoading(true);
+                    const { data: issues } = await getIssues({
+                        ...(filters as IssueFilter),
+                        projectId: parseInt(projectId),
+                    });
+                    const { data: epics } = await getEpics({
+                        ...(filters as EpicFilter),
+                        projectId: parseInt(projectId),
+                    });
+                    setIssuesAndEpicsState(issues.items, epics.items);
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
+            }
+        },
+        [projectId]
+    );
 
     const getAllIssuesStatuses = () => {
         getIssuesStatuses()
@@ -140,15 +156,36 @@ const Backlog = () => {
         setOpenEditIssue(false);
         setOpenDeleteIssue(false);
         if (refresh) {
-            getIssuesAndEpics();
+            query(defaultFilters);
         }
         setSelectedEpic(undefined);
         setSelectedIssue(undefined);
     };
 
+    const refresh = () => query(defaultFilters);
+
+    useEffect(() => {
+        getAllIssuesStatuses();
+        query(defaultFilters);
+    }, [query]);
+
+    useEffect(() => {
+        query(filters);
+    }, [filters, query]);
+
     return (
         <Sidebar>
             <Page>
+                {openBacklogFiltersModal && projectId && (
+                    <BacklogFiltersModal
+                        projectId={+projectId}
+                        open={openBacklogFiltersModal}
+                        onClose={() => setOpenBacklogFiltersModal(false)}
+                        filters={filters}
+                        setFilters={setFilters}
+                        onClearFilters={() => setFilters(defaultFilters)}
+                    />
+                )}
                 {selectedEpic && (
                     <>
                         <EditEpicDialog
@@ -187,7 +224,26 @@ const Backlog = () => {
                         />
                     </>
                 )}
-                <PageTitle title="Backlog" />
+                <div className="flex justify-between items-center">
+                    <PageTitle title="Backlog" />
+                    <div className="flex gap-x-6">
+                        <SecondaryButton
+                            onClick={() => setOpenBacklogFiltersModal(true)}
+                        >
+                            Filters
+                        </SecondaryButton>
+                        <Searchbar
+                            onChange={setSearchText}
+                            onSearch={() =>
+                                query({
+                                    ...filters,
+                                    subject: searchText,
+                                    name: searchText,
+                                })
+                            }
+                        />
+                    </div>
+                </div>
                 <div className="mt-[30px]">
                     <Tabs
                         value={tab}
@@ -214,13 +270,15 @@ const Backlog = () => {
                             <Board
                                 issues={issuesAndEpics.allIssues}
                                 statuses={statuses}
-                                getIssues={getIssuesAndEpics}
+                                refresh={refresh}
+                                loading={isLoading}
                             />
                         </div>
                         <div hidden={tab !== "list"}>
                             <List
                                 issues={issuesAndEpics.issuesWithoutEpic}
                                 epics={issuesAndEpics.epics}
+                                loading={isLoading}
                             />
                         </div>
                     </div>

@@ -17,6 +17,9 @@ import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/Pr
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
+import { ListedResponseMetadata } from "../../../api/models/common";
+import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
 
 const defaultFilters: EpicFilter = {
     page: 1,
@@ -35,6 +38,9 @@ const ProjectEpics = () => {
     const [permissions, setPermissions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+    const [filters, setFilters] = useState<EpicFilter>(defaultFilters);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
     const getSprint = useCallback(async () => {
         try {
@@ -62,38 +68,25 @@ const ProjectEpics = () => {
         }
     }, [projectId]);
 
-    const getAllEpics = useCallback(async () => {
-        try {
-            if (sprintId) {
-                setIsLoading(true);
-                const { data } = await getEpics({
-                    ...defaultFilters,
-                    sprintId: +sprintId,
-                });
-                setIsLoading(false);
-                setEpics(data.items);
+    const query = useCallback(
+        async (filters: EpicFilter) => {
+            try {
+                if (sprintId) {
+                    setIsLoading(true);
+                    const { data } = await getEpics({
+                        ...filters,
+                        sprintId: +sprintId,
+                    });
+                    setIsLoading(false);
+                    setEpics(data.items);
+                    setPaginationData(data.meta);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
             }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    }, [sprintId]);
-
-    const search = async () => {
-        try {
-            if (sprintId) {
-                setIsLoading(true);
-                const { data } = await getEpics({
-                    ...defaultFilters,
-                    sprintId: +sprintId,
-                    name: searchText,
-                });
-                setIsLoading(false);
-                setEpics(data.items);
-            }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
+        },
+        [sprintId]
+    );
 
     const goToEpic = (id: number) => {
         navigate(
@@ -104,14 +97,14 @@ const ProjectEpics = () => {
     const handleCloseCreateEpic = (refresh?: boolean) => {
         setOpenCreateEpic(false);
         if (refresh) {
-            getAllEpics();
+            query(defaultFilters);
         }
     };
 
     const handleCloseEditEpic = (refresh?: boolean) => {
         setOpenEditEpic(false);
         if (refresh) {
-            getAllEpics();
+            query(defaultFilters);
         }
         setSelectedEpic(undefined);
     };
@@ -119,16 +112,16 @@ const ProjectEpics = () => {
     const handleCloseDeleteEpic = (refresh?: boolean) => {
         setOpenDeleteEpic(false);
         if (refresh) {
-            getAllEpics();
+            query(defaultFilters);
         }
         setSelectedEpic(undefined);
     };
 
     useEffect(() => {
         getSprint();
-        getAllEpics();
+        query(defaultFilters);
         getUserPermissions();
-    }, [getSprint, getAllEpics, getUserPermissions]);
+    }, [getSprint, getUserPermissions, query]);
 
     return (
         <Sidebar>
@@ -194,7 +187,9 @@ const ProjectEpics = () => {
                         <div className="flex gap-x-6">
                             <Searchbar
                                 onChange={setSearchText}
-                                onSearch={search}
+                                onSearch={() =>
+                                    query({ ...filters, name: searchText })
+                                }
                             />
                             {hasAccess(permissions, ["add_issues"]) && (
                                 <PrimaryButton
@@ -261,6 +256,14 @@ const ProjectEpics = () => {
                             ))}
                         </tbody>
                     </table>
+                    <Paginator
+                        show={paginationData.totalPages > 1 && epics.length > 0}
+                        page={filters.page ?? 1}
+                        totalPages={paginationData.totalPages}
+                        onPageChange={(page: number) =>
+                            setFilters({ ...filters, page })
+                        }
+                    />
                     {epics.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
                             {isLoading ? (

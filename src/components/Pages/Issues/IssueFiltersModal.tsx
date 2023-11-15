@@ -35,7 +35,6 @@ export const IssueFiltersModal = ({
     setFilters,
     onClearFilters,
 }: Props) => {
-    console.log({ filters });
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
@@ -109,7 +108,7 @@ export const IssueFiltersModal = ({
     return (
         <Dialog open={open} onClose={onClose}>
             <div className="w-[600px]">
-                <DialogTitle>Filter releases</DialogTitle>
+                <DialogTitle>Filter issues</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
                         <FormControl>

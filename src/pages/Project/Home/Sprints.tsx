@@ -19,6 +19,9 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import { SprintFiltersModal } from "../../../components/Pages/Sprints/SprintFiltersModal";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
+import { ListedResponseMetadata } from "../../../api/models/common";
+import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
 
 const defaultFilters: SprintFilter = {
     page: 1,
@@ -39,13 +42,14 @@ const ProjectSprints = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<SprintFilter>(defaultFilters);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
     const getRelease = useCallback(async () => {
         try {
             if (releaseId) {
                 const release = await getReleaseById(parseInt(releaseId));
                 setRelease(release);
-                console.log(release);
                 return release;
             }
         } catch (error) {
@@ -78,6 +82,7 @@ const ProjectSprints = () => {
                     });
                     setIsLoading(false);
                     setSprints(data.items);
+                    setPaginationData(data.meta);
                 }
             } catch (error) {
                 throw new Error("Error. Please try again.");
@@ -287,6 +292,16 @@ const ProjectSprints = () => {
                             ))}
                         </tbody>
                     </table>
+                    <Paginator
+                        show={
+                            paginationData.totalPages > 1 && sprints.length > 0
+                        }
+                        page={filters.page ?? 1}
+                        totalPages={paginationData.totalPages}
+                        onPageChange={(page: number) =>
+                            setFilters({ ...filters, page })
+                        }
+                    />
                     {sprints.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
                             {isLoading ? (

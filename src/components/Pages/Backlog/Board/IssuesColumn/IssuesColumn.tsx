@@ -5,14 +5,16 @@ import {
 } from "@dnd-kit/sortable";
 import { Issue } from "../../../../../api/models/issue";
 import IssueCard from "../IssueCard/IssueCard";
+import { LinearProgress } from "@mui/material";
 
 type BoardSectionProps = {
     id: string;
     title: string;
     issues: Issue[];
+    loading: boolean;
 };
 
-const IssuesColumn = ({ id, title, issues }: BoardSectionProps) => {
+const IssuesColumn = ({ id, title, issues, loading }: BoardSectionProps) => {
     const { setNodeRef } = useDroppable({
         id,
     });
@@ -22,18 +24,22 @@ const IssuesColumn = ({ id, title, issues }: BoardSectionProps) => {
             <div>
                 <span className="text-[16px] text-[#004A8E]">{title}</span>
             </div>
-            <SortableContext
-                id={id}
-                items={issues}
-                strategy={verticalListSortingStrategy}
-            >
-                <div className="flex flex-col gap-[6px]" ref={setNodeRef}>
-                    {issues &&
-                        issues.map((issue: Issue) => (
-                            <IssueCard key={issue.id} issue={issue} />
-                        ))}
-                </div>
-            </SortableContext>
+            {loading ? (
+                <LinearProgress />
+            ) : (
+                <SortableContext
+                    id={id}
+                    items={issues}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <div className="flex flex-col gap-[6px]" ref={setNodeRef}>
+                        {issues &&
+                            issues.map((issue: Issue) => (
+                                <IssueCard key={issue.id} issue={issue} />
+                            ))}
+                    </div>
+                </SortableContext>
+            )}
         </div>
     );
 };

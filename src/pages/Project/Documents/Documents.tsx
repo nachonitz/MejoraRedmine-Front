@@ -1,4 +1,4 @@
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, Pagination } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,6 +20,9 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getFullDate, hasAccess } from "../../../lib/utils";
 import { DocumentFiltersModal } from "../../../components/Pages/Documents/DocumentFiltersModal";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
+import { ListedResponseMetadata } from "../../../api/models/common";
+import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 
 const defaultFilters: DocumentFilter = {
     page: 1,
@@ -42,6 +45,8 @@ const Documents = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [filters, setFilters] = useState<DocumentFilter>(defaultFilters);
+    const [paginationData, setPaginationData] =
+        useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
 
     const query = async (filters: DocumentFilter) => {
         try {
@@ -50,6 +55,7 @@ const Documents = () => {
                 const { data } = await getDocuments(filters);
                 setIsLoading(false);
                 setDocuments(data.items);
+                setPaginationData(data.meta);
             }
         } catch (error) {
             throw new Error("Error. Please try again.");
@@ -243,6 +249,17 @@ const Documents = () => {
                             ))}
                         </tbody>
                     </table>
+                    <Paginator
+                        show={
+                            paginationData.totalPages > 1 &&
+                            documents.length > 0
+                        }
+                        page={filters.page ?? 1}
+                        totalPages={paginationData.totalPages}
+                        onPageChange={(page: number) =>
+                            setFilters({ ...filters, page })
+                        }
+                    />
                     {documents.length === 0 && (
                         <div className="text-[18px] h-[40px] w-full text-center mt-2">
                             {isLoading ? (
