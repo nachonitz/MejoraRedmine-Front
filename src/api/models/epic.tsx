@@ -16,6 +16,7 @@ export interface Epic extends BaseEpic {
     release?: Release;
     project: Project;
     priority: Enumeration;
+    progress: number;
     issues?: Issue[];
 }
 

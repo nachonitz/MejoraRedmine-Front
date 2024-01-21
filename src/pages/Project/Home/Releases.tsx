@@ -19,7 +19,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate, hasAccess } from "../../../lib/utils";
+import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
 import { ReleaseFiltersModal } from "../../../components/Pages/Releases/ReleaseFiltersModal";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import { Paginator } from "../../../components/Shared/Paginator/Paginator";
@@ -238,6 +238,7 @@ const ProjectReleases = () => {
                                 <th className="text-left">Name</th>
                                 <th className="text-left">Start date</th>
                                 <th className="text-left">End date</th>
+                                <th className="text-left">Progress</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -265,6 +266,9 @@ const ProjectReleases = () => {
                                     </td>
                                     <td className="text-left">
                                         {getFullDate(release.endDate)}
+                                    </td>
+                                    <td className="text-left">
+                                        {formatPercentage(release.progress)}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">

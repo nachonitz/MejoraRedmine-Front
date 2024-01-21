@@ -21,12 +21,13 @@ import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate, hasAccess } from "../../../lib/utils";
+import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
 import {
     getIssueIcon,
     getIssuePriorityColor,
 } from "../../../utilities/utilities";
+import AssignedCircle from "../../../components/Shared/AssignedCircle/AssignedCircle";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -241,6 +242,10 @@ const ProjectIssues = () => {
                                         name: "Priority",
                                         value: epic?.priority.name,
                                     },
+                                    {
+                                        name: "Progress",
+                                        value: formatPercentage(epic?.progress),
+                                    },
                                 ],
                             }}
                             title={epic?.name ?? ""}
@@ -284,7 +289,9 @@ const ProjectIssues = () => {
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>
                                 <th className="text-left">Name</th>
+                                <th className="text-left">Status</th>
                                 <th className="text-left">Priority</th>
+                                <th className="text-left">Assigned to</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -307,6 +314,7 @@ const ProjectIssues = () => {
                                     <td className="gap-[10px] text-left">
                                         {issue.subject}
                                     </td>
+                                    <td>{issue.status.name}</td>
                                     <td
                                         style={{
                                             color: getIssuePriorityColor(
@@ -316,6 +324,18 @@ const ProjectIssues = () => {
                                         className="text-left"
                                     >
                                         {issue.priority["name"]}
+                                    </td>
+                                    <td>
+                                        {issue.assignee && (
+                                            <AssignedCircle
+                                                firstname={
+                                                    issue.assignee?.firstname
+                                                }
+                                                lastname={
+                                                    issue.assignee?.lastname
+                                                }
+                                            />
+                                        )}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">

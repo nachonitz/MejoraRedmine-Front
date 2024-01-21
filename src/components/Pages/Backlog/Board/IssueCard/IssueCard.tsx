@@ -8,6 +8,7 @@ import {
     getIssuePriorityColor,
 } from "../../../../../utilities/utilities";
 import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
+import AssignedCircle from "../../../../Shared/AssignedCircle/AssignedCircle";
 
 interface IssueCardProps {
     issue: Issue;
@@ -40,7 +41,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
             {...attributes}
             {...listeners}
         >
-            <div className="bg-white w-[346px] shadow-userStory p-[4px] box-border flex flex-col gap-[3px] select-none">
+            <div className="bg-white shadow-userStory p-[4px] box-border flex flex-col gap-[3px] select-none">
                 <div className="flex items-center justify-between">
                     <div className="flex gap-[2px] items-center">
                         <img
@@ -76,12 +77,12 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                         </span>
                     </div>
                     <div>
-                        <div className="flex justify-center items-center rounded-[50%] h-[28px] w-[28px] bg-[#d9d9d9] cursor-pointer text-[14px] text-primary">
-                            <span>
-                                {issue.assignee?.firstname[0]}
-                                {issue.assignee?.lastname[0]}
-                            </span>
-                        </div>
+                        {issue.assignee && (
+                            <AssignedCircle
+                                firstname={issue.assignee?.firstname}
+                                lastname={issue.assignee?.lastname}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

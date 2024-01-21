@@ -244,7 +244,7 @@ const Backlog = () => {
                         />
                     </div>
                 </div>
-                <div className="mt-[30px]">
+                <div className="mt-[30px] w-full">
                     <Tabs
                         value={tab}
                         onChange={handleChange}
@@ -271,14 +271,14 @@ const Backlog = () => {
                                 issues={issuesAndEpics.allIssues}
                                 statuses={statuses}
                                 refresh={refresh}
-                                loading={isLoading}
+                                loading={false}
                             />
                         </div>
                         <div hidden={tab !== "list"}>
                             <List
                                 issues={issuesAndEpics.issuesWithoutEpic}
                                 epics={issuesAndEpics.epics}
-                                loading={isLoading}
+                                loading={false}
                             />
                         </div>
                     </div>

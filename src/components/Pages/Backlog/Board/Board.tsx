@@ -19,9 +19,10 @@ import { useEffect, useState } from "react";
 import { changeIssueStatus } from "../../../../api/services/issuesService";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
-export type Column = {
-    [name: string]: Issue[];
-};
+export interface Column {
+    name: string;
+    issues: Issue[];
+}
 
 interface BoardProps {
     issues: Issue[];
@@ -32,11 +33,7 @@ interface BoardProps {
 
 const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
-    const [columns, setColumns] = useState<Column>({
-        toDo: [],
-        inProgress: [],
-        done: [],
-    });
+    const [columns, setColumns] = useState<Column[]>([]);
     const columnsStatuses = {
         toDo: "New",
         inProgress: "In Progress",
@@ -51,17 +48,14 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     );
 
     useEffect(() => {
-        setColumns({
-            toDo: issues.filter(
-                (issue) => issue.status.name === columnsStatuses.toDo
-            ),
-            inProgress: issues.filter(
-                (issue) => issue.status.name === columnsStatuses.inProgress
-            ),
-            done: issues.filter(
-                (issue) => issue.status.name === columnsStatuses.done
-            ),
-        });
+        setColumns(
+            statuses.map((status) => ({
+                name: status.name,
+                issues: issues.filter(
+                    (issue) => issue.status.name === status.name
+                ),
+            }))
+        );
     }, [issues]);
 
     const changeStatus = (issue: Issue, statusId: number) => {
@@ -78,15 +72,16 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     };
 
     const getColumn = (id: string) => {
-        if (id in columns) {
+        if (columns.find((column) => column.name === id)) {
             return id;
         }
 
         let column = "";
 
-        column = Object.keys(columns).find((key) =>
-            columns[key].find((issue) => issue.id.toString() === id)
-        ) as string;
+        column = columns.find((column) =>
+            column.issues.find((issue) => issue.id.toString() === id)
+        )?.name as string;
+
         return column;
     };
 
@@ -108,44 +103,47 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
             return;
         }
 
-        const activeItems = columns[activeColumnName];
-        const overItems = columns[overColumnName];
+        const activeColumnIndex = columns.findIndex(
+            (column) => column.name === activeColumnName
+        );
+        const overColumnIndex = columns.findIndex(
+            (column) => column.name === overColumnName
+        );
+        const activeColumn = columns[activeColumnIndex] as Column;
+        const overColumn = columns[overColumnIndex] as Column;
 
-        const activeIndex = activeItems.findIndex(
+        const activeIndex = activeColumn.issues.findIndex(
             (issue: Issue) => issue.id === active.id
         );
-        const activeIssue = activeItems.find(
-            (issue: Issue) => issue.id === active.id
-        );
 
-        const overIndex = overItems.findIndex(
+        const overIndex = overColumn.issues.findIndex(
             (issue: Issue) => issue.id !== over?.id
         );
 
-        const newActiveColumn = columns[activeColumnName].filter(
-            (issue) => issue.id !== active.id
-        );
-        const newOverColumn = columns[overColumnName]
+        const activeIssue = activeColumn.issues[activeIndex];
+
+        const newActiveIssues = columns
+            .find((column) => column.name === activeColumnName)
+            ?.issues.filter((issue) => issue.id !== active.id) as Issue[];
+
+        const newOverIssues: Issue[] = overColumn.issues
             .slice(0, overIndex)
-            .concat(columns[activeColumnName][activeIndex])
+            .concat([activeColumn.issues[activeIndex]])
             .concat(
-                columns[overColumnName].slice(
-                    overIndex,
-                    columns[overColumnName].length
-                )
+                overColumn.issues.slice(overIndex, overColumn.issues.length)
             );
-        setColumns((column) => ({
-            ...column,
-            [activeColumnName]: newActiveColumn,
-            [overColumnName]: newOverColumn,
-        }));
+
+        let newColumns = columns;
+        newColumns[activeColumnIndex].issues = newActiveIssues;
+        newColumns[overColumnIndex].issues = newOverIssues;
+
+        setColumns(newColumns);
 
         if (activeIssue) {
             changeStatus(
                 activeIssue,
-                statuses.find(
-                    (status) => status.name === columnsStatuses[overColumnName]
-                )?.id as number
+                statuses.find((status) => status.name === overColumnName)
+                    ?.id as number
             );
         }
     };
@@ -162,23 +160,34 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
             return;
         }
 
-        const activeIndex = columns[activeColumnName].findIndex(
+        const activeColumnIndex = columns.findIndex(
+            (column) => column.name === activeColumnName
+        );
+        const overColumnIndex = columns.findIndex(
+            (column) => column.name === overColumnName
+        );
+
+        const activeColumn = columns[activeColumnIndex] as Column;
+        const overColumn = columns[overColumnIndex] as Column;
+
+        const activeIndex = activeColumn.issues.findIndex(
             (issue) => issue.id === active.id
         );
-        const overIndex = columns[overColumnName].findIndex(
+        const overIndex = overColumn.issues.findIndex(
             (issue) => issue.id === over?.id
         );
 
-        if (activeIndex !== overIndex) {
-            setColumns((column) => ({
-                ...column,
-                [overColumnName]: arrayMove(
-                    column[overColumnName],
-                    activeIndex,
-                    overIndex
-                ),
-            }));
-        }
+        const newColumns = columns;
+        newColumns[overColumnIndex] = {
+            ...newColumns[overColumnIndex],
+            issues: arrayMove(
+                newColumns[overColumnIndex].issues,
+                activeIndex,
+                overIndex
+            ),
+        };
+
+        setColumns(newColumns);
 
         setActiveIssueId(null);
     };
@@ -194,37 +203,34 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     const issue = activeIssueId ? getIssueById(activeIssueId) : null;
 
     return (
-        <DndContext
-            collisionDetection={closestCorners}
-            onDragEnd={handleDragEnd}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            sensors={sensors}
-        >
-            <div className="flex gap-7">
-                <IssuesColumn
-                    issues={columns.toDo}
-                    id="toDo"
-                    title="To Do"
-                    loading={loading}
-                />
-                <IssuesColumn
-                    issues={columns.inProgress}
-                    id="inProgress"
-                    title="In Progress"
-                    loading={loading}
-                />
-                <IssuesColumn
-                    issues={columns.done}
-                    id="done"
-                    title="Done"
-                    loading={loading}
-                />
-                <DragOverlay dropAnimation={dropAnimation}>
-                    {issue ? <IssueCard key={issue.id} issue={issue} /> : null}
-                </DragOverlay>
-            </div>
-        </DndContext>
+        <div className="flex w-full">
+            <DndContext
+                collisionDetection={closestCorners}
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                sensors={sensors}
+            >
+                <div className="w-full flex gap-4">
+                    {columns &&
+                        columns.map((column) => {
+                            return (
+                                <IssuesColumn
+                                    issues={column.issues}
+                                    id={column.name}
+                                    title={column.name}
+                                    loading={loading}
+                                />
+                            );
+                        })}
+                    <DragOverlay dropAnimation={dropAnimation}>
+                        {issue ? (
+                            <IssueCard key={issue.id} issue={issue} />
+                        ) : null}
+                    </DragOverlay>
+                </div>
+            </DndContext>
+        </div>
     );
 };
 

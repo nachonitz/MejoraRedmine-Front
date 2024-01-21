@@ -7,6 +7,7 @@ import {
 } from "../../../../../utilities/utilities";
 import { useContext } from "react";
 import { BacklogContext } from "../../../../../context/BacklogContext";
+import AssignedCircle from "../../../../Shared/AssignedCircle/AssignedCircle";
 
 interface IssueCardProps {
     issue: Issue;
@@ -60,12 +61,12 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
                         </div>
                     </div>
                     <div className="w-[25%]">
-                        <div className="flex justify-center items-center rounded-[50%] h-[28px] w-[28px] bg-[#d9d9d9] cursor-pointer text-[14px] text-primary">
-                            <span>
-                                {issue.assignee?.firstname[0]}
-                                {issue.assignee?.lastname[0]}
-                            </span>
-                        </div>
+                        {issue.assignee && (
+                            <AssignedCircle
+                                firstname={issue.assignee.firstname}
+                                lastname={issue.assignee.lastname}
+                            />
+                        )}
                     </div>
                 </div>
                 <div className="w-[30px] h-[30px] flex items-center justify-center">

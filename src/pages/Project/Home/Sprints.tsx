@@ -16,7 +16,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate, hasAccess } from "../../../lib/utils";
+import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import { SprintFiltersModal } from "../../../components/Pages/Sprints/SprintFiltersModal";
 import { Paginator } from "../../../components/Shared/Paginator/Paginator";
@@ -190,6 +190,12 @@ const ProjectSprints = () => {
                                         name: "Start Date",
                                         value: getFullDate(release?.startDate),
                                     },
+                                    {
+                                        name: "Progress",
+                                        value: formatPercentage(
+                                            release?.progress
+                                        ),
+                                    },
                                 ],
                             }}
                             title={release?.name ?? ""}
@@ -235,6 +241,7 @@ const ProjectSprints = () => {
                                 <th className="text-left">Name</th>
                                 <th className="text-left">Start date</th>
                                 <th className="text-left">End date</th>
+                                <th className="text-left">Progress</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -262,6 +269,9 @@ const ProjectSprints = () => {
                                     </td>
                                     <td className="text-left">
                                         {getFullDate(sprint.endDate)}
+                                    </td>
+                                    <td className="text-left">
+                                        {formatPercentage(sprint.progress)}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">

@@ -16,7 +16,7 @@ import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getFullDate, hasAccess } from "../../../lib/utils";
+import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
 import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import { ListedResponseMetadata } from "../../../api/models/common";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
@@ -174,6 +174,12 @@ const ProjectEpics = () => {
                                         name: "Start Date",
                                         value: getFullDate(sprint?.startDate),
                                     },
+                                    {
+                                        name: "Progress",
+                                        value: formatPercentage(
+                                            sprint?.progress
+                                        ),
+                                    },
                                 ],
                             }}
                             title={sprint?.name ?? ""}
@@ -232,7 +238,9 @@ const ProjectEpics = () => {
                                     <td className="gap-[10px] text-left">
                                         {epic.name}
                                     </td>
-                                    <td className="text-left">{"0%"}</td>
+                                    <td className="text-left">
+                                        {formatPercentage(epic.progress)}
+                                    </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
                                             {hasAccess(permissions, [

@@ -65,3 +65,10 @@ export const hasAdminAccess = () => {
     if (!currentUser) return false;
     return currentUser.admin;
 };
+
+export function formatPercentage(percentage: number) {
+    return `${percentage.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1,
+    })}%`;
+}
