@@ -32,19 +32,24 @@ import { UserContext } from "../../../../context/UserContext";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
+import { getMemberships } from "../../../../api/services/membershipsService";
+import { ProjectMembership } from "../../../../api/models/membership";
 
 interface EditIssueDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
     issueId: number;
+    projectId: number;
 }
 
 const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     open,
     handleClose,
     issueId,
+    projectId,
 }) => {
     const { user } = useContext(UserContext);
+    const [memberships, setMemberships] = useState<ProjectMembership[]>([]);
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
@@ -60,11 +65,13 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [priorityId, setPriorityId] = useState<string>("");
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
+    const [assigneeId, setAssigneeId] = useState<string>("");
     const [estimation, setEstimation] = useState<string | undefined>("");
     const [errorName, setErrorName] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [errorTrackerId, setErrorTrackerId] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
+    const [errorAssigneeId, setErrorAssigneeId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -77,15 +84,17 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             if (open && issueId) {
                 handleGetIssue();
             }
+            getAllMemberships();
         };
         fetch();
-    }, [open, issueId]);
+    }, [open, issueId, projectId]);
 
     const clearErrors = () => {
         setErrorName(false);
         setErrorPriorityId(false);
         setErrorTrackerId(false);
         setErrorStatusId(false);
+        setErrorAssigneeId(false);
         setServerErrors([]);
     };
 
@@ -100,11 +109,17 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                     setEstimation(issue.estimation);
                     setStatusId(issue.status.id.toString());
                     setTrackerId(issue.tracker.id.toString());
+                    setAssigneeId(issue.assignee?.id.toString() ?? "");
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         }
+    };
+
+    const getAllMemberships = async () => {
+        const { data } = await getMemberships({ projectId });
+        setMemberships(data.items);
     };
 
     const getAllIssuesStatuses = () => {
@@ -152,6 +167,10 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             setErrorStatusId(true);
             errorFound = true;
         }
+        if (!assigneeId || assigneeId === "") {
+            setErrorAssigneeId(true);
+            errorFound = true;
+        }
         return errorFound;
     };
 
@@ -169,6 +188,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             trackerId: +trackerId,
             estimation: estimation,
             statusId: +statusId,
+            assigneeId: +assigneeId,
         };
         editIssue(issueId, issue)
             .then(() => {
@@ -192,6 +212,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         setTrackerId("");
         setEstimation("");
         setStatusId("");
+        setAssigneeId("");
         clearErrors();
     };
 
@@ -320,6 +341,35 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                                             {status.name}
                                         </MenuItem>
                                     ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl>
+                            <InputLabel
+                                id="priority-label"
+                                error={errorAssigneeId}
+                            >
+                                Assignee
+                            </InputLabel>
+                            <Select
+                                labelId="priority-label"
+                                value={assigneeId}
+                                label="Assignee"
+                                error={errorAssigneeId}
+                                onChange={(e) => setAssigneeId(e.target.value)}
+                            >
+                                {memberships &&
+                                    memberships.map(
+                                        (user: ProjectMembership) => (
+                                            <MenuItem
+                                                key={user.id}
+                                                value={user.id}
+                                            >
+                                                {user.user.firstname +
+                                                    " " +
+                                                    user.user.lastname}
+                                            </MenuItem>
+                                        )
+                                    )}
                             </Select>
                         </FormControl>
                         {serverErrors && serverErrors.length > 0 && (

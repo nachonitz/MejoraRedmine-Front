@@ -27,6 +27,8 @@ import { UserContext } from "../../../../context/UserContext";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
+import { ProjectMembership } from "../../../../api/models/membership";
+import { getMemberships } from "../../../../api/services/membershipsService";
 
 interface CreateIssueDialogProps {
     open: boolean;
@@ -46,6 +48,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     epicId,
 }) => {
     const { user } = useContext(UserContext);
+    const [memberships, setMemberships] = useState<ProjectMembership[]>([]);
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
@@ -61,11 +64,13 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     const [priorityId, setPriorityId] = useState<string>("");
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
+    const [assigneeId, setAssigneeId] = useState<string>("");
     const [estimation, setEstimation] = useState<string | undefined>("");
     const [errorName, setErrorName] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [errorTrackerId, setErrorTrackerId] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
+    const [errorAssigneeId, setErrorAssigneeId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -75,6 +80,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             await getAllIssuesPriorities();
             getAllTrackers();
             getAllIssuesStatuses();
+            getAllMemberships();
         };
         fetch();
     }, []);
@@ -84,7 +90,15 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         setErrorPriorityId(false);
         setErrorTrackerId(false);
         setErrorStatusId(false);
+        setErrorAssigneeId(false);
         setServerErrors([]);
+    };
+
+    const getAllMemberships = async () => {
+        const { data } = await getMemberships({
+            projectId: parseInt(projectId),
+        });
+        setMemberships(data.items);
     };
 
     const getAllIssuesStatuses = () => {
@@ -132,6 +146,10 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             setErrorStatusId(true);
             errorFound = true;
         }
+        if (!assigneeId || assigneeId === "") {
+            setErrorAssigneeId(true);
+            errorFound = true;
+        }
         return errorFound;
     };
 
@@ -152,7 +170,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             releaseId: +releaseId,
             sprintId: +sprintId,
             epicId: +epicId,
-            assigneeId: user?.id,
+            assigneeId: +assigneeId,
             estimation: estimation,
         };
         createIssue(issue)
@@ -177,6 +195,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         setTrackerId("");
         setEstimation("");
         setStatusId("");
+        setAssigneeId("");
         clearErrors();
     };
 
@@ -303,6 +322,35 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                             {status.name}
                                         </MenuItem>
                                     ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl>
+                            <InputLabel
+                                id="priority-label"
+                                error={errorAssigneeId}
+                            >
+                                Assignee
+                            </InputLabel>
+                            <Select
+                                labelId="priority-label"
+                                value={assigneeId}
+                                label="Assignee"
+                                error={errorAssigneeId}
+                                onChange={(e) => setAssigneeId(e.target.value)}
+                            >
+                                {memberships &&
+                                    memberships.map(
+                                        (user: ProjectMembership) => (
+                                            <MenuItem
+                                                key={user.id}
+                                                value={user.id}
+                                            >
+                                                {user.user.firstname +
+                                                    " " +
+                                                    user.user.lastname}
+                                            </MenuItem>
+                                        )
+                                    )}
                             </Select>
                         </FormControl>
                         {serverErrors && serverErrors.length > 0 && (

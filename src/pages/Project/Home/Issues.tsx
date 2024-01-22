@@ -217,6 +217,7 @@ const ProjectIssues = () => {
                             <EditIssueDialog
                                 open={openEditIssue}
                                 issueId={selectedIssue.id}
+                                projectId={selectedIssue.project.id}
                                 handleClose={handleCloseEditIssue}
                             />
                             <DeleteDialog

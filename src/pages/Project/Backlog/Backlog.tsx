@@ -213,6 +213,7 @@ const Backlog = () => {
                         <EditIssueDialog
                             open={openEditIssue}
                             issueId={selectedIssue?.id}
+                            projectId={selectedIssue?.project.id}
                             handleClose={handleCloseDialog}
                         />
                         <DeleteDialog
