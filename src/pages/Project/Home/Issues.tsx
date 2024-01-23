@@ -79,11 +79,11 @@ const ProjectIssues = () => {
     const query = useCallback(
         async (filters: IssueFilter) => {
             try {
-                if (sprintId) {
+                if (epicId) {
                     setIsLoading(true);
                     const { data } = await getIssues({
                         ...filters,
-                        sprintId: +sprintId,
+                        epicId: +epicId,
                     });
                     setIsLoading(false);
                     setIssues(data.items);
@@ -245,7 +245,9 @@ const ProjectIssues = () => {
                                     },
                                     {
                                         name: "Progress",
-                                        value: formatPercentage(epic?.progress),
+                                        value: epic?.progress
+                                            ? formatPercentage(epic?.progress)
+                                            : "0%",
                                     },
                                 ],
                             }}

@@ -141,6 +141,7 @@ const ProjectEpics = () => {
                     />
                 )}
                 {selectedEpic &&
+                    projectId &&
                     hasAccess(permissions, [
                         "edit_issues",
                         "delete_issues",
@@ -150,6 +151,7 @@ const ProjectEpics = () => {
                                 open={openEditEpic}
                                 epicId={selectedEpic?.id}
                                 handleClose={handleCloseEditEpic}
+                                projectId={parseInt(projectId)}
                             />
                             <DeleteDialog
                                 open={openDeleteEpic}
@@ -239,7 +241,9 @@ const ProjectEpics = () => {
                                         {epic.name}
                                     </td>
                                     <td className="text-left">
-                                        {formatPercentage(epic.progress)}
+                                        {epic.progress
+                                            ? formatPercentage(epic.progress)
+                                            : "0%"}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">

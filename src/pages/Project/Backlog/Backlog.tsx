@@ -186,12 +186,13 @@ const Backlog = () => {
                         onClearFilters={() => setFilters(defaultFilters)}
                     />
                 )}
-                {selectedEpic && (
+                {selectedEpic && projectId && (
                     <>
                         <EditEpicDialog
                             open={openEditEpic}
                             epicId={selectedEpic.id}
                             handleClose={handleCloseDialog}
+                            projectId={parseInt(projectId)}
                         />
                         <DeleteDialog
                             open={openDeleteEpic}

@@ -29,6 +29,12 @@ import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
 import { ProjectMembership } from "../../../../api/models/membership";
 import { getMemberships } from "../../../../api/services/membershipsService";
+import { Release } from "../../../../api/models/release";
+import { Sprint } from "../../../../api/models/sprint";
+import { Epic } from "../../../../api/models/epic";
+import { getSprints } from "../../../../api/services/sprintsService";
+import { getEpics } from "../../../../api/services/epicsService";
+import { getReleases } from "../../../../api/services/releasesService";
 
 interface CreateIssueDialogProps {
     open: boolean;
@@ -48,6 +54,9 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     epicId,
 }) => {
     const { user } = useContext(UserContext);
+    const [releases, setReleases] = useState<Release[]>([]);
+    const [sprints, setSprints] = useState<Sprint[]>([]);
+    const [epics, setEpics] = useState<Epic[]>([]);
     const [memberships, setMemberships] = useState<ProjectMembership[]>([]);
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
@@ -66,13 +75,53 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     const [statusId, setStatusId] = useState<string>("");
     const [assigneeId, setAssigneeId] = useState<string>("");
     const [estimation, setEstimation] = useState<string | undefined>("");
+    const [selectedReleaseId, setSelectedReleaseId] = useState<
+        string | undefined
+    >(releaseId);
+    const [selectedSprintId, setSelectedSprintId] = useState<
+        string | undefined
+    >(sprintId);
+    const [selectedEpicId, setSelectedEpicId] = useState<string | undefined>(
+        epicId
+    );
     const [errorName, setErrorName] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [errorTrackerId, setErrorTrackerId] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
     const [errorAssigneeId, setErrorAssigneeId] = useState(false);
+    const [errorSelectedReleaseId, setErrorSelectedReleaseId] = useState(false);
+    const [errorSelectedSprintId, setSelectedErrorSprintId] = useState(false);
+    const [errorSelectedEpicId, setSelectedErrorEpicId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const getProjectReleases = () => {
+        getReleases({
+            projectId: +projectId,
+        }).then(({ data }) => {
+            setReleases(data.items);
+        });
+    };
+
+    useEffect(() => {
+        if (selectedReleaseId) {
+            getSprints({
+                releaseId: +selectedReleaseId,
+            }).then(({ data }) => {
+                setSprints(data.items);
+            });
+        }
+    }, [selectedReleaseId]);
+
+    useEffect(() => {
+        if (selectedSprintId) {
+            getEpics({
+                sprintId: +selectedSprintId,
+            }).then(({ data }) => {
+                setEpics(data.items);
+            });
+        }
+    }, [selectedSprintId]);
 
     useEffect(() => {
         const fetch = async () => {
@@ -81,6 +130,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             getAllTrackers();
             getAllIssuesStatuses();
             getAllMemberships();
+            getProjectReleases();
         };
         fetch();
     }, []);
@@ -167,9 +217,9 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             trackerId: +trackerId,
             statusId: +statusId,
             projectId: +projectId,
-            releaseId: +releaseId,
-            sprintId: +sprintId,
-            epicId: +epicId,
+            releaseId: selectedReleaseId ? +selectedReleaseId : undefined,
+            sprintId: selectedSprintId ? +selectedSprintId : undefined,
+            epicId: selectedEpicId ? +selectedEpicId : undefined,
             assigneeId: +assigneeId,
             estimation: estimation,
         };
@@ -207,7 +257,99 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     return (
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[600px]">
-                <DialogTitle>Create Issue</DialogTitle>
+                <div className="flex items-center justify-between mt-5 pr-6">
+                    <DialogTitle>Edit Issue</DialogTitle>
+                    <div className="flex gap-2">
+                        <FormControl className="w-32">
+                            <InputLabel
+                                id="release-label"
+                                error={errorSelectedReleaseId}
+                            >
+                                Release
+                            </InputLabel>
+                            <Select
+                                labelId="release-label"
+                                value={selectedReleaseId}
+                                label="Release"
+                                error={errorSelectedReleaseId}
+                                onChange={(e) => {
+                                    setSelectedReleaseId(e.target.value);
+                                    setSelectedSprintId(undefined);
+                                    setSelectedEpicId(undefined);
+                                }}
+                            >
+                                {releases &&
+                                    releases.map((release: Release) => (
+                                        <MenuItem
+                                            key={release.id}
+                                            value={release.id}
+                                        >
+                                            {release.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+                        {selectedReleaseId && (
+                            <FormControl className="w-32">
+                                <InputLabel
+                                    id="sprint-label"
+                                    error={errorSelectedSprintId}
+                                >
+                                    Sprint
+                                </InputLabel>
+                                <Select
+                                    labelId="sprint-label"
+                                    value={selectedSprintId}
+                                    label="Sprint"
+                                    error={errorSelectedSprintId}
+                                    onChange={(e) => {
+                                        setSelectedSprintId(e.target.value);
+                                        setSelectedEpicId(undefined);
+                                    }}
+                                >
+                                    {sprints &&
+                                        sprints.map((sprint: Sprint) => (
+                                            <MenuItem
+                                                key={sprint.id}
+                                                value={sprint.id}
+                                            >
+                                                {sprint.name}
+                                            </MenuItem>
+                                        ))}
+                                </Select>
+                            </FormControl>
+                        )}
+                        {selectedSprintId && (
+                            <FormControl className="w-32">
+                                <InputLabel
+                                    id="epic-label"
+                                    error={errorSelectedEpicId}
+                                >
+                                    Epic
+                                </InputLabel>
+                                <Select
+                                    labelId="epic-label"
+                                    value={selectedEpicId}
+                                    label="Epic"
+                                    error={errorSelectedEpicId}
+                                    onChange={(e) =>
+                                        setSelectedEpicId(e.target.value)
+                                    }
+                                >
+                                    {epics &&
+                                        epics.map((epic: Epic) => (
+                                            <MenuItem
+                                                key={epic.id}
+                                                value={epic.id}
+                                            >
+                                                {epic.name}
+                                            </MenuItem>
+                                        ))}
+                                </Select>
+                            </FormControl>
+                        )}
+                    </div>
+                </div>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
                         <TextField

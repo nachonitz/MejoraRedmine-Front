@@ -271,7 +271,9 @@ const ProjectSprints = () => {
                                         {getFullDate(sprint.endDate)}
                                     </td>
                                     <td className="text-left">
-                                        {formatPercentage(sprint.progress)}
+                                        {sprint.progress
+                                            ? formatPercentage(sprint.progress)
+                                            : "0%"}
                                     </td>
                                     <td className="text-right">
                                         <div className="flex justify-end">
