@@ -1,7 +1,7 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { User, UserFilter } from "../models/user";
+import { UpdateUserDto, User, UserFilter } from "../models/user";
 
 export const getUsers = async (filter: UserFilter) => {
     const { data } = await api.get<ListedResponse<User>>(
@@ -20,7 +20,10 @@ export const createUser = async (user: User): Promise<User> => {
     return data;
 };
 
-export const editUser = async (id: User["id"], user: User): Promise<User> => {
+export const editUser = async (
+    id: User["id"],
+    user: UpdateUserDto
+): Promise<User> => {
     const { data } = await api.patch(`/users/${id}`, user);
     return data;
 };

@@ -19,6 +19,7 @@ import SingleDocument from "./pages/Project/Documents/SingleDocument";
 import { hasAdminAccess } from "./lib/utils";
 import Information from "./pages/Admin/Information";
 import Users from "./pages/Admin/Users";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
     const { isLoggedIn } = useContext(UserContext);
@@ -32,6 +33,7 @@ function App() {
                         <>
                             <Route path="/" element={<Projects />} />
                             <Route path="/projects" element={<Projects />} />
+                            <Route path="/profile" element={<Profile />} />
                             <Route
                                 path="/project/:projectId"
                                 element={<ProjectReleases />}
