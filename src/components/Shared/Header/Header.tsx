@@ -135,8 +135,9 @@ const Header = () => {
                                         <IoApps />
                                     </button>
                                     {appsMenuOpened && (
-                                        <div className="flex flex-col absolute top-[110%] right-[0] bg-white shadow-card text-[#444] py-[8px] w-[200px] h-[150px] rounded-[10px] items-center text-[18px]">
+                                        <div className="flex flex-col absolute top-[130%] right-[0] bg-white shadow-card text-[#444] py-[8px] w-[200px] h-[150px] rounded-[0.25rem] items-center text-[18px]">
                                             <span>Applications</span>
+                                            <div className="absolute top-[-6px] right-[6%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
                                         </div>
                                     )}
                                 </div>
@@ -155,7 +156,7 @@ const Header = () => {
                                     </button>
 
                                     {profileMenuOpened && (
-                                        <div className="flex flex-col absolute top-[110%] right-0 bg-white shadow-card text-[#444] py-[8px] w-[200px] rounded-[10px] items-center text-[18px]">
+                                        <div className="flex flex-col absolute top-[130%] right-0 bg-white shadow-card text-[#444] py-[8px] w-[200px] rounded-[0.25rem] items-center text-[18px]">
                                             <a
                                                 className="w-full text-left hover:bg-[#efefef] px-[20px] py-[5px]"
                                                 href=""
@@ -170,6 +171,7 @@ const Header = () => {
                                             >
                                                 Logout
                                             </a>
+                                            <div className="absolute top-[-6px] right-[6%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
                                         </div>
                                     )}
                                 </div>
