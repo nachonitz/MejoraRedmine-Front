@@ -6,6 +6,8 @@ import { menu } from "./menu";
 import { hasAdminAccess } from "../../../lib/utils";
 import { syncWithRedmine } from "../../../api/services/redmineService";
 import { infoToast, successToast } from "../Toast";
+import { CgProfile } from "react-icons/cg";
+import { IoMdLogOut } from "react-icons/io";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -118,6 +120,11 @@ const Header = () => {
                         {!isLoggedIn && <Link to="/login">Login</Link>}
                         {isLoggedIn && (
                             <>
+                                <div>
+                                    <span className="uppercase pointer-events-none text-[14px]">
+                                        {`${user?.lastname} ${user?.firstname}`}
+                                    </span>
+                                </div>
                                 {hasAdminAccess() && (
                                     <button
                                         className="flex justify-center items-center h-[35px] w-[35px] text-[32px] hover:opacity-75"
@@ -156,21 +163,17 @@ const Header = () => {
                                     </button>
 
                                     {profileMenuOpened && (
-                                        <div className="flex flex-col absolute top-[130%] right-0 bg-white shadow-card text-[#444] py-[8px] w-[200px] rounded-[0.25rem] items-center text-[18px]">
-                                            <a
-                                                className="w-full text-left hover:bg-[#efefef] px-[20px] py-[5px]"
-                                                href=""
-                                                onClick={() => goToProfile()}
-                                            >
-                                                Profile
-                                            </a>
-                                            <a
-                                                className="w-full text-left hover:bg-[#efefef] px-[20px] py-[5px]"
-                                                href=""
-                                                onClick={() => handleLogout()}
-                                            >
-                                                Logout
-                                            </a>
+                                        <div className="flex flex-col absolute top-[130%] right-0 bg-white shadow-card py-[8px] w-[200px] rounded-[0.25rem] items-center text-[16px] text-primary">
+                                            <ProfileMenuItem
+                                                icon={<CgProfile />}
+                                                onClick={goToProfile}
+                                                text="Profile"
+                                            />
+                                            <ProfileMenuItem
+                                                icon={<IoMdLogOut />}
+                                                onClick={handleLogout}
+                                                text="Logout"
+                                            />
                                             <div className="absolute top-[-6px] right-[6%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
                                         </div>
                                     )}
@@ -186,3 +189,24 @@ const Header = () => {
 };
 
 export default Header;
+
+const ProfileMenuItem = ({
+    icon,
+    text,
+    onClick,
+}: {
+    icon: JSX.Element;
+    text: string;
+    onClick: () => void;
+}) => {
+    return (
+        <a
+            className="flex items-center gap-2 w-full text-left hover:bg-[#efefef] px-[16px] py-[5px]"
+            href=""
+            onClick={onClick}
+        >
+            <div className="text-[18px]">{icon}</div>
+            <span>{text}</span>
+        </a>
+    );
+};
