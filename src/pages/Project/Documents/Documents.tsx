@@ -50,7 +50,7 @@ const Documents = () => {
 
     const query = async (filters: DocumentFilter) => {
         try {
-            if (filters.projectId) {
+            if (filters.projectId !== -1) {
                 setIsLoading(true);
                 const { data } = await getDocuments(filters);
                 setIsLoading(false);
