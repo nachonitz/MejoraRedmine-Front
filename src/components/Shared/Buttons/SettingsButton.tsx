@@ -55,18 +55,18 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
             </button>
             {settingsOpened && (
                 <div
-                    className="flex flex-col z-10 absolute top-[60%] right-[0%] 
+                    className="flex flex-col z-10 absolute top-[100%] right-[0%] 
                   bg-white shadow-card text-[#444] w-[150px] rounded-[0px] 
-                  items-start text-[18px]"
+                  items-start text-[16px]"
                 >
                     {onEdit && (
                         <div
                             onClick={handleEdit}
-                            className="flex gap-[10px] px-4 py-[10px] items-center justify-start 
+                            className="flex gap-[10px] px-4 py-[6px] items-center justify-start 
                             hover:bg-[#eee] w-full cursor-pointer"
                         >
                             <div>
-                                <MdOutlineModeEditOutline className="text-[24px]" />
+                                <MdOutlineModeEditOutline className="text-[18px]" />
                             </div>
                             <div>
                                 <span>Edit</span>
@@ -76,17 +76,18 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
                     {onDelete && (
                         <div
                             onClick={handleDelete}
-                            className="flex gap-[10px] px-4 py-[10px] items-center justify-start 
+                            className="flex gap-[10px] px-4 py-[6px] items-center justify-start 
                           hover:bg-[#eee] w-full cursor-pointer"
                         >
                             <div>
-                                <RiDeleteBin6Line className="text-[24px]" />
+                                <RiDeleteBin6Line className="text-[18px]" />
                             </div>
                             <div>
                                 <span>Delete</span>
                             </div>
                         </div>
                     )}
+                    <div className="absolute top-[-6px] right-[8%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
                 </div>
             )}
         </div>
