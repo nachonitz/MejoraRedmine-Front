@@ -11,18 +11,24 @@ const Sidebar = ({ children }: Props) => {
     const navigate = useNavigate();
     const { projectId } = useParams();
 
+    const isInPage = (page: string) => {
+        return window.location.pathname.includes(page);
+    };
+
     return (
         <>
             <div className="flex h-screen fixed top-header mt-header bg-lightblue w-56">
                 <div className="flex flex-col mt-5 w-full px-[2px] box-border">
                     <Item
-                        name="Home"
+                        selected={isInPage("overview")}
+                        name="Overview"
                         icon="home-icon.png"
                         onClick={() => {
-                            navigate(`/project/${projectId}`);
+                            navigate(`/project/${projectId}/overview`);
                         }}
                     />
                     <Item
+                        selected={isInPage("dashboard")}
                         name="Dashboard"
                         icon="dashboard-icon.png"
                         onClick={() => {
@@ -30,6 +36,7 @@ const Sidebar = ({ children }: Props) => {
                         }}
                     />
                     <Item
+                        selected={isInPage("backlog")}
                         name="Backlog"
                         icon="backlog-icon.png"
                         onClick={() => {
@@ -37,6 +44,7 @@ const Sidebar = ({ children }: Props) => {
                         }}
                     />
                     <Item
+                        selected={isInPage("document")}
                         name="Documents"
                         icon="documents-icon.png"
                         onClick={() => {
@@ -44,6 +52,7 @@ const Sidebar = ({ children }: Props) => {
                         }}
                     />
                     <Item
+                        selected={isInPage("risks")}
                         name="Risks"
                         icon="risks-icon.png"
                         onClick={() => {
@@ -52,6 +61,7 @@ const Sidebar = ({ children }: Props) => {
                     />
                     {hasAdminAccess() && (
                         <Item
+                            selected={isInPage("settings")}
                             name="Settings"
                             icon="settings-icon.png"
                             onClick={() => {

@@ -95,7 +95,7 @@ const ProjectReleases = () => {
     );
 
     const goToRelease = (releaseId: number) => {
-        navigate(`/project/${projectId}/release/${releaseId}`);
+        navigate(`/project/${projectId}/overview/release/${releaseId}`);
     };
 
     const handleCloseCreateRelease = (refresh?: boolean) => {

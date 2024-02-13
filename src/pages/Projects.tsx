@@ -48,7 +48,7 @@ const Projects = () => {
     }, []);
 
     const goToProject = (id: number) => {
-        navigate(`/project/${id}`);
+        navigate(`/project/${id}/overview`);
     };
 
     const handleCloseEditProject = (refresh?: boolean) => {

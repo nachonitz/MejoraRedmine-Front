@@ -36,19 +36,19 @@ function App() {
                             <Route path="/projects" element={<Projects />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route
-                                path="/project/:projectId"
+                                path="/project/:projectId/overview"
                                 element={<ProjectReleases />}
                             />
                             <Route
-                                path="/project/:projectId/release/:releaseId"
+                                path="/project/:projectId/overview/release/:releaseId"
                                 element={<ProjectSprints />}
                             />
                             <Route
-                                path="/project/:projectId/release/:releaseId/sprint/:sprintId"
+                                path="/project/:projectId/overview/release/:releaseId/sprint/:sprintId"
                                 element={<ProjectEpics />}
                             />
                             <Route
-                                path="/project/:projectId/release/:releaseId/sprint/:sprintId/epic/:epicId"
+                                path="/project/:projectId/overview/release/:releaseId/sprint/:sprintId/epic/:epicId"
                                 element={<ProjectIssues />}
                             />
                             <Route

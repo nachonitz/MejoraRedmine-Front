@@ -90,7 +90,7 @@ const ProjectEpics = () => {
 
     const goToEpic = (id: number) => {
         navigate(
-            `/project/${projectId}/release/${releaseId}/sprint/${sprintId}/epic/${id}`
+            `/project/${projectId}/overview/release/${releaseId}/sprint/${sprintId}/epic/${id}`
         );
     };
 
