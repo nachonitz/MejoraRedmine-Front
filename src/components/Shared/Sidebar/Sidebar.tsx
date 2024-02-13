@@ -26,7 +26,7 @@ const Sidebar = ({ children }: Props) => {
                         name="Dashboard"
                         icon="dashboard-icon.png"
                         onClick={() => {
-                            console.log("Click!");
+                            navigate(`/project/${projectId}/dashboard`);
                         }}
                     />
                     <Item

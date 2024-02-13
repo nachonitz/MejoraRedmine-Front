@@ -20,6 +20,7 @@ import { hasAdminAccess } from "./lib/utils";
 import Information from "./pages/Admin/Information";
 import Users from "./pages/Admin/Users";
 import Profile from "./pages/Profile/Profile";
+import Dashboard from "./pages/Project/Dashboard/Dashboard";
 
 function App() {
     const { isLoggedIn } = useContext(UserContext);
@@ -74,6 +75,10 @@ function App() {
                             <Route
                                 path="/project/:projectId/settings"
                                 element={<Settings />}
+                            />
+                            <Route
+                                path="/project/:projectId/dashboard"
+                                element={<Dashboard />}
                             />
                             <Route
                                 path="/project/:projectId/backlog"
