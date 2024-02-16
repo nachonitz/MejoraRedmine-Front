@@ -36,9 +36,11 @@ const Dashboard = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Dashboard" />
                 </div>
-                <div className="mt-5">
-                    <Timeline releases={releases || []} />
-                </div>
+                {releases && releases.length > 1 && (
+                    <div className="mt-5">
+                        <Timeline releases={releases || []} />
+                    </div>
+                )}
             </Page>
         </Sidebar>
     );
