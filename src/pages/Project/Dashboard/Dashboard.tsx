@@ -5,6 +5,7 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { getReleases } from "../../../api/services/releasesService";
 import { Release, ReleaseFilter } from "../../../api/models/release";
 import { useEffect, useState } from "react";
+import { Timeline } from "../../../components/Pages/Dashboard/Timeline";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -35,7 +36,9 @@ const Dashboard = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Dashboard" />
                 </div>
-                <div></div>
+                <div className="mt-5">
+                    <Timeline releases={releases || []} />
+                </div>
             </Page>
         </Sidebar>
     );
