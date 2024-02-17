@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 interface Props {
     title: string;
-    properties: { name: string; value: string }[];
+    properties: { name: string; value: number }[];
 }
 
 export const ComparativeCard = ({ title, properties }: Props) => {
