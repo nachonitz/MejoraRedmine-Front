@@ -6,6 +6,8 @@ import { getReleases } from "../../../api/services/releasesService";
 import { Release, ReleaseFilter } from "../../../api/models/release";
 import { useEffect, useState } from "react";
 import { Timeline } from "../../../components/Pages/Dashboard/Timeline";
+import { ComparativeCard } from "../../../components/Pages/Dashboard/ComparativeCard";
+import { PieChartCard } from "../../../components/Pages/Dashboard/PieChartCard";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -41,6 +43,26 @@ const Dashboard = () => {
                         <Timeline releases={releases || []} />
                     </div>
                 )}
+                <div className="mt-5 flex gap-5">
+                    <div>
+                        <ComparativeCard
+                            title="Tasks"
+                            properties={[
+                                { name: "Completed", value: "31" },
+                                { name: "Planned", value: "214" },
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        <PieChartCard
+                            title="Tasks by status"
+                            data={[
+                                { id: 1, value: 31, label: "Completed" },
+                                { id: 2, value: 214, label: "Planned" },
+                            ]}
+                        />
+                    </div>
+                </div>
             </Page>
         </Sidebar>
     );
