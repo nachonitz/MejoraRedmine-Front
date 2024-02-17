@@ -13,7 +13,7 @@ const Item: React.FC<ItemProps> = ({ name, icon, onClick, selected }) => {
                     `${
                         selected ? "bg-itemhover font-[500] " : "bg-lightblue "
                     } ` +
-                    "flex relative flex-row items-center w-full py-[6px] px-4 gap-[14px] duration-200 text-primary rounded overflow-hidden cursor-pointer bg-lightblue hover:bg-itemhover"
+                    "flex relative flex-row items-center w-full py-[6px] px-4 gap-[14px] duration-200 text-primary rounded overflow-hidden cursor-pointer hover:bg-itemhover"
                 }
                 onClick={onClick}
             >
