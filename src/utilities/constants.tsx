@@ -5,3 +5,11 @@ export const DEFAULT_PAGINATION_DATA = {
     totalItems: 0,
     totalPages: 1,
 };
+
+export const ESTIMATIONS_TO_POINTS = {
+    XS: 1,
+    S: 2,
+    M: 3,
+    L: 5,
+    XL: 8,
+};

@@ -10,6 +10,10 @@ import { ComparativeCard } from "../../../components/Pages/Dashboard/Comparative
 import { PieChartCard } from "../../../components/Pages/Dashboard/PieChartCard";
 import { getIssues } from "../../../api/services/issuesService";
 import { Issue, IssueFilter } from "../../../api/models/issue";
+import { BurnUpChartCard } from "../../../components/Pages/Dashboard/BurnUpChartCard";
+import { getSprints } from "../../../api/services/sprintsService";
+import { Sprint, SprintFilter } from "../../../api/models/sprint";
+import { ESTIMATIONS_TO_POINTS } from "../../../utilities/constants";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -17,6 +21,11 @@ const defaultFilters: ReleaseFilter = {
 };
 
 const defaultIssueFilters: IssueFilter = {
+    page: 1,
+    limit: 500,
+};
+
+const defaultSprintFilters: SprintFilter = {
     page: 1,
     limit: 500,
 };
@@ -34,6 +43,7 @@ const Dashboard = () => {
             label: string;
         }[]
     >([]);
+    const [sprintsToBurnUp, setSprintsToBurnUp] = useState<any>(null);
 
     const getAllReleasesForProject = async () => {
         if (projectId) {
@@ -41,7 +51,17 @@ const Dashboard = () => {
                 ...defaultFilters,
                 projectId: +projectId,
             });
-            setReleases(data.items);
+            return data.items;
+        }
+    };
+
+    const getAllSprintsForProject = async () => {
+        if (projectId) {
+            const { data } = await getSprints({
+                ...defaultSprintFilters,
+                projectId: +projectId,
+            });
+            return data.items;
         }
     };
 
@@ -51,12 +71,94 @@ const Dashboard = () => {
                 ...defaultIssueFilters,
                 projectId: +projectId,
             });
-            setIssues(data.items);
+            return data.items;
+        }
+    };
+
+    const calculateBurnUp = (sprints: Sprint[], issues: Issue[]) => {
+        let orderedSprints = sprints
+            .sort(
+                (a: Sprint, b: Sprint) =>
+                    new Date(a.endDate).getTime() -
+                    new Date(b.endDate).getTime()
+            )
+            .map((sprint: Sprint) => {
+                return {
+                    id: sprint.id,
+                    label: sprint.name,
+                    completed: 0,
+                    trend: 0,
+                    isFuture:
+                        new Date(sprint.endDate).getTime() >
+                        new Date().getTime(),
+                };
+            });
+
+        for (let issue of issues) {
+            if (issue.sprint) {
+                let sprintIndex = orderedSprints.findIndex(
+                    (sprint) => sprint.id === issue.sprint?.id
+                );
+                if (sprintIndex !== -1) {
+                    let issueEstimation = issue.estimation
+                        ? ESTIMATIONS_TO_POINTS[
+                              issue.estimation as keyof typeof ESTIMATIONS_TO_POINTS
+                          ] ?? 0
+                        : 0;
+                    console.log(
+                        issueEstimation,
+                        orderedSprints[sprintIndex].label,
+                        issue.subject
+                    );
+                    orderedSprints[sprintIndex].trend += issueEstimation;
+                    if (issue.status.is_closed) {
+                        orderedSprints[sprintIndex].completed +=
+                            issueEstimation;
+                    }
+                }
+            }
+        }
+
+        let cumulativeOrderedSprints = orderedSprints.map((sprint, index) => {
+            let trend: number = 0;
+            let completed: number | null = 0;
+            for (let i = 0; i <= index; i++) {
+                trend += orderedSprints[i].trend;
+                completed += orderedSprints[i].completed;
+            }
+
+            if (sprint.isFuture) {
+                completed = null;
+            }
+            return {
+                label: sprint.label,
+                completed: completed,
+                trend: trend,
+            };
+        });
+
+        cumulativeOrderedSprints.unshift({
+            label: "",
+            completed: 0,
+            trend: 0,
+        });
+
+        setSprintsToBurnUp(cumulativeOrderedSprints);
+    };
+
+    const setUpDashboardsData = async () => {
+        let releases = await getAllReleasesForProject();
+        if (releases) {
+            setReleases(releases);
+        }
+        let issues = await getAllIssuesForProject();
+        if (issues) {
+            setIssues(issues);
             setTasksCompleted(
-                data.items.filter((issue) => issue.status.is_closed).length
+                issues.filter((issue) => issue.status.is_closed).length
             );
-            setTasksPlanned(data.items.length);
-            let tasksStatuses = data.items.reduce(
+            setTasksPlanned(issues.length);
+            let tasksStatuses = issues.reduce(
                 (
                     acc: {
                         [key: number]: {
@@ -79,14 +181,17 @@ const Dashboard = () => {
                 },
                 {}
             );
-            console.log(tasksStatuses);
             setTasksStatuses(Object.values(tasksStatuses));
+
+            const sprints = await getAllSprintsForProject();
+            if (sprints) {
+                calculateBurnUp(sprints, issues);
+            }
         }
     };
 
     useEffect(() => {
-        getAllReleasesForProject();
-        getAllIssuesForProject();
+        setUpDashboardsData();
     }, [projectId]);
 
     return (
@@ -116,6 +221,12 @@ const Dashboard = () => {
                             ]}
                         />
                     </div>
+                </div>
+                <div className="mt-5 flex gap-5">
+                    <BurnUpChartCard
+                        title="Burn Up Chart"
+                        data={sprintsToBurnUp}
+                    />
                 </div>
             </Page>
         </Sidebar>

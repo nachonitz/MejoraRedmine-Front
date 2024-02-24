@@ -11,7 +11,7 @@ export default {
                 itemhover: "#D6E3FD",
             },
             padding: {
-                page: "0 2rem",
+                page: "0 2rem 2rem 2rem",
             },
             margin: {
                 "page-vertical": "64px 0",
