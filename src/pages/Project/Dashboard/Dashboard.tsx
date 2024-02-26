@@ -15,6 +15,8 @@ import { getSprints } from "../../../api/services/sprintsService";
 import { Sprint, SprintFilter } from "../../../api/models/sprint";
 import { ESTIMATIONS_TO_POINTS } from "../../../utilities/constants";
 import { SprintsVelocityChartCard } from "../../../components/Pages/Dashboard/SprintsVelocityChartCard";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, Tab } from "@mui/material";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -50,6 +52,8 @@ const Dashboard = () => {
     const [sprintsVelocity, setSprintsVelocity] = useState<
         { label: string; velocity: number }[]
     >([]);
+
+    const [dashboardView, setDashboardView] = useState("1");
 
     const getAllReleasesForProject = async () => {
         if (projectId) {
@@ -202,43 +206,69 @@ const Dashboard = () => {
         setUpDashboardsData();
     }, [projectId]);
 
+    const handleChangeDashboardView = (
+        _event: React.SyntheticEvent,
+        newValue: string
+    ) => {
+        setDashboardView(newValue);
+    };
+
     return (
         <Sidebar>
             <Page>
                 <div className="flex justify-between items-center">
                     <PageTitle title="Dashboard" />
                 </div>
-                {releases && releases.length > 1 && (
-                    <div className="mt-5">
-                        <Timeline releases={releases || []} />
-                    </div>
-                )}
-                <div className="mt-5 flex gap-5">
-                    <div>
-                        <PieChartCard
-                            title="Tasks by status"
-                            data={tasksStatuses}
-                        />
-                    </div>
-                    <div>
-                        <ComparativeCard
-                            title="Tasks"
-                            properties={[
-                                { name: "Completed", value: tasksCompleted },
-                                { name: "Planned", value: tasksPlanned },
-                            ]}
-                        />
-                    </div>
-                </div>
-                <div className="mt-5 flex gap-5">
-                    <BurnUpChartCard
-                        title="Burn Up Chart"
-                        data={sprintsToBurnUp}
-                    />
-                    <SprintsVelocityChartCard
-                        title="Sprints Velocity"
-                        data={sprintsVelocity}
-                    />
+                <div className="mt-[20px]">
+                    <TabContext value={dashboardView}>
+                        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                            <TabList onChange={handleChangeDashboardView}>
+                                <Tab label="Project" value="1" />
+                                <Tab label="Sprints" value="2" />
+                            </TabList>
+                        </Box>
+                        <TabPanel value="1">
+                            {releases && releases.length > 1 && (
+                                <div className="mt-5">
+                                    <Timeline releases={releases || []} />
+                                </div>
+                            )}
+                            <div className="mt-5 flex gap-5">
+                                <div>
+                                    <PieChartCard
+                                        title="Tasks by status"
+                                        data={tasksStatuses}
+                                    />
+                                </div>
+                                <div>
+                                    <ComparativeCard
+                                        title="Tasks"
+                                        properties={[
+                                            {
+                                                name: "Completed",
+                                                value: tasksCompleted,
+                                            },
+                                            {
+                                                name: "Planned",
+                                                value: tasksPlanned,
+                                            },
+                                        ]}
+                                    />
+                                </div>
+                            </div>
+                            <div className="mt-5 flex gap-5">
+                                <BurnUpChartCard
+                                    title="Burn Up Chart"
+                                    data={sprintsToBurnUp}
+                                />
+                                <SprintsVelocityChartCard
+                                    title="Sprints Velocity"
+                                    data={sprintsVelocity}
+                                />
+                            </div>
+                        </TabPanel>
+                        <TabPanel value="2"></TabPanel>
+                    </TabContext>
                 </div>
             </Page>
         </Sidebar>
