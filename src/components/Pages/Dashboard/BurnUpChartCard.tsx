@@ -39,7 +39,7 @@ export const options = {
 
 interface Props {
     title: string;
-    data: { label: string; completed: number; trend: number }[];
+    data: { label: string; completed: number | null; trend: number }[];
 }
 export const BurnUpChartCard = ({ title, data }: Props) => {
     return (

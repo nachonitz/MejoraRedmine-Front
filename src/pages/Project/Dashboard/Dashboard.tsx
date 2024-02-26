@@ -14,6 +14,7 @@ import { BurnUpChartCard } from "../../../components/Pages/Dashboard/BurnUpChart
 import { getSprints } from "../../../api/services/sprintsService";
 import { Sprint, SprintFilter } from "../../../api/models/sprint";
 import { ESTIMATIONS_TO_POINTS } from "../../../utilities/constants";
+import { SprintsVelocityChartCard } from "../../../components/Pages/Dashboard/SprintsVelocityChartCard";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -43,7 +44,12 @@ const Dashboard = () => {
             label: string;
         }[]
     >([]);
-    const [sprintsToBurnUp, setSprintsToBurnUp] = useState<any>(null);
+    const [sprintsToBurnUp, setSprintsToBurnUp] = useState<
+        { label: string; completed: number | null; trend: number }[]
+    >([]);
+    const [sprintsVelocity, setSprintsVelocity] = useState<
+        { label: string; velocity: number }[]
+    >([]);
 
     const getAllReleasesForProject = async () => {
         if (projectId) {
@@ -75,7 +81,7 @@ const Dashboard = () => {
         }
     };
 
-    const calculateBurnUp = (sprints: Sprint[], issues: Issue[]) => {
+    const calculateSprintCharts = (sprints: Sprint[], issues: Issue[]) => {
         let orderedSprints = sprints
             .sort(
                 (a: Sprint, b: Sprint) =>
@@ -105,11 +111,6 @@ const Dashboard = () => {
                               issue.estimation as keyof typeof ESTIMATIONS_TO_POINTS
                           ] ?? 0
                         : 0;
-                    console.log(
-                        issueEstimation,
-                        orderedSprints[sprintIndex].label,
-                        issue.subject
-                    );
                     orderedSprints[sprintIndex].trend += issueEstimation;
                     if (issue.status.is_closed) {
                         orderedSprints[sprintIndex].completed +=
@@ -142,8 +143,15 @@ const Dashboard = () => {
             completed: 0,
             trend: 0,
         });
-
         setSprintsToBurnUp(cumulativeOrderedSprints);
+
+        let sprintsVelocity = orderedSprints.map((sprint) => {
+            return {
+                label: sprint.label,
+                velocity: sprint.trend,
+            };
+        });
+        setSprintsVelocity(sprintsVelocity);
     };
 
     const setUpDashboardsData = async () => {
@@ -185,7 +193,7 @@ const Dashboard = () => {
 
             const sprints = await getAllSprintsForProject();
             if (sprints) {
-                calculateBurnUp(sprints, issues);
+                calculateSprintCharts(sprints, issues);
             }
         }
     };
@@ -226,6 +234,10 @@ const Dashboard = () => {
                     <BurnUpChartCard
                         title="Burn Up Chart"
                         data={sprintsToBurnUp}
+                    />
+                    <SprintsVelocityChartCard
+                        title="Sprints Velocity"
+                        data={sprintsVelocity}
                     />
                 </div>
             </Page>
