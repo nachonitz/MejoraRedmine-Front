@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Epic, EpicFilter } from "../../../api/models/epic";
@@ -246,17 +246,19 @@ const Backlog = () => {
                         />
                     </div>
                 </div>
-                <div className="mt-[30px] w-full">
-                    <Tabs
-                        value={tab}
-                        onChange={handleChange}
-                        textColor="primary"
-                        indicatorColor="primary"
-                        aria-label="secondary tabs example"
-                    >
-                        <Tab disableRipple value="kanban" label="Kanban"></Tab>
-                        <Tab disableRipple value="list" label="List"></Tab>
-                    </Tabs>
+                <div className="mt-[20px] w-full">
+                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                        <Tabs
+                            value={tab}
+                            onChange={handleChange}
+                            textColor="primary"
+                            indicatorColor="primary"
+                            aria-label="secondary tabs example"
+                        >
+                            <Tab value="kanban" label="Kanban"></Tab>
+                            <Tab value="list" label="List"></Tab>
+                        </Tabs>
+                    </Box>
                 </div>
                 <BacklogContext.Provider
                     value={{
