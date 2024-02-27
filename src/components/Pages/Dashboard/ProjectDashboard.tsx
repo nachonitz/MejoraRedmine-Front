@@ -147,7 +147,7 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
         <div>
             {releases && releases.length > 1 && (
                 <div className="mt-5">
-                    <Timeline releases={releases || []} />
+                    <Timeline releases={releases} />
                 </div>
             )}
             <div className="mt-5 flex gap-5">

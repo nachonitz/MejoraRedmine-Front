@@ -20,10 +20,16 @@ export const Timeline = ({ releases }: Props) => {
         let maxEndDate = new Date(endDates.reduce((a, b) => (a > b ? a : b)));
         setMinStartDate(minStartDate);
         setMaxEndDate(maxEndDate);
-        setCurrentDatePercentage(getDatePercentage(new Date()));
+        setCurrentDatePercentage(
+            getDatePercentage(new Date(), minStartDate, maxEndDate)
+        );
     }, [releases]);
 
-    const getDatePercentage = (date: Date) => {
+    const getDatePercentage = (
+        date: Date,
+        minStartDate: Date | undefined,
+        maxEndDate: Date | undefined
+    ) => {
         if (!minStartDate || !maxEndDate) return 0;
         let startDate = minStartDate.getTime();
         let endDate = maxEndDate.getTime();
@@ -31,7 +37,6 @@ export const Timeline = ({ releases }: Props) => {
             ((date.getTime() - startDate) / (endDate - startDate)) * 100;
         if (currentDatePercentage < 0) currentDatePercentage = 0;
         if (currentDatePercentage > 100) currentDatePercentage = 100;
-        console.log(currentDatePercentage);
         return currentDatePercentage;
     };
 
@@ -78,7 +83,9 @@ export const Timeline = ({ releases }: Props) => {
                                             key={release.id}
                                             style={{
                                                 left: `${getDatePercentage(
-                                                    new Date(release.endDate)
+                                                    new Date(release.endDate),
+                                                    minStartDate,
+                                                    maxEndDate
                                                 )}%`,
                                             }}
                                             className="absolute flex justify-center"
