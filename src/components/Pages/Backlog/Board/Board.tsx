@@ -115,8 +115,6 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
             (issue: Issue) => issue.id !== over?.id
         );
 
-        const activeIssue = activeColumn.issues[activeIndex];
-
         const newActiveIssues = columns
             .find((column) => column.name === activeColumnName)
             ?.issues.filter((issue) => issue.id !== active.id) as Issue[];
@@ -133,14 +131,6 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
         newColumns[overColumnIndex].issues = newOverIssues;
 
         setColumns(newColumns);
-
-        if (activeIssue) {
-            changeStatus(
-                activeIssue,
-                statuses.find((status) => status.name === overColumnName)
-                    ?.id as number
-            );
-        }
     };
 
     const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -184,6 +174,16 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
 
         setColumns(newColumns);
 
+        const activeIssue = activeColumn.issues[activeIndex];
+
+        if (activeIssue.status.name !== overColumnName) {
+            changeStatus(
+                activeIssue,
+                statuses.find((status) => status.name === overColumnName)
+                    ?.id as number
+            );
+        }
+
         setActiveIssueId(null);
     };
 
@@ -211,9 +211,7 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
                         columns.map((column) => {
                             return (
                                 <IssuesColumn
-                                    issues={column.issues}
-                                    id={column.name}
-                                    title={column.name}
+                                    column={column}
                                     loading={loading}
                                 />
                             );

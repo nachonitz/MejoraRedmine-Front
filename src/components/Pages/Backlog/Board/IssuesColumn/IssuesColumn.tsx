@@ -6,39 +6,41 @@ import {
 import { Issue } from "../../../../../api/models/issue";
 import IssueCard from "../IssueCard/IssueCard";
 import { LinearProgress } from "@mui/material";
+import { useEffect } from "react";
+import { Column } from "../Board";
 
 type BoardSectionProps = {
-    id: string;
-    title: string;
-    issues: Issue[];
+    column: Column;
     loading: boolean;
 };
 
-const IssuesColumn = ({ id, title, issues, loading }: BoardSectionProps) => {
+const IssuesColumn = ({ column, loading }: BoardSectionProps) => {
     const { setNodeRef } = useDroppable({
-        id,
+        id: column.name,
     });
 
     return (
         <div className="h-[560px] bg-[#F3F7FF] rounded-[7px] p-[7px] box-border flex flex-col flex-1 max-w-[500px] gap-6">
             <div className="w-full">
-                <span className="text-[16px] text-[#004A8E]">{title}</span>
+                <span className="text-[16px] text-[#004A8E]">
+                    {column.name}
+                </span>
             </div>
             <div className="w-full">
                 {loading ? (
                     <LinearProgress />
                 ) : (
                     <SortableContext
-                        id={id}
-                        items={issues}
+                        id={column.name}
+                        items={column.issues}
                         strategy={verticalListSortingStrategy}
                     >
                         <div
                             className="flex flex-col gap-[6px]"
                             ref={setNodeRef}
                         >
-                            {issues &&
-                                issues.map((issue: Issue) => (
+                            {column.issues &&
+                                column.issues.map((issue: Issue) => (
                                     <IssueCard key={issue.id} issue={issue} />
                                 ))}
                         </div>
