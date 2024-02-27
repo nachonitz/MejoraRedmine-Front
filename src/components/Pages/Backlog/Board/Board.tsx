@@ -34,11 +34,6 @@ interface BoardProps {
 const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
     const [columns, setColumns] = useState<Column[]>([]);
-    const columnsStatuses = {
-        toDo: "New",
-        inProgress: "In Progress",
-        done: "Resolved",
-    };
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
