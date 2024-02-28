@@ -1,5 +1,15 @@
+import {
+    MdKeyboardArrowUp,
+    MdKeyboardDoubleArrowUp,
+    MdOutlineKeyboardArrowDown,
+} from "react-icons/md";
+import { BsFire } from "react-icons/bs";
+import { VscDash } from "react-icons/vsc";
+
 import { Issue } from "../api/models/issue";
 import { getFullDate } from "../lib/utils";
+import { Tooltip } from "@mui/material";
+import { AiOutlineExclamation } from "react-icons/ai";
 
 export const getIssueIcon = (issueType: string) => {
     switch (issueType) {
@@ -24,6 +34,52 @@ export const getIssuePriorityColor = (issuePriority: string) => {
             return "#B90000";
         case "Immediate":
             return "#890000";
+    }
+};
+
+export const getPriorityIcon = (issuePriority: string) => {
+    switch (issuePriority) {
+        case "Low":
+            return (
+                <Tooltip title="Low Priority">
+                    <div>
+                        <MdOutlineKeyboardArrowDown className="text-[#43B000] text-[18px]" />
+                    </div>
+                </Tooltip>
+            );
+        case "Normal":
+            return (
+                <Tooltip title="Normal Priority">
+                    <div>
+                        <VscDash className="text-[black] text-[18px] font-[bold]" />
+                    </div>
+                </Tooltip>
+            );
+        case "High":
+            return (
+                <Tooltip title="High Priority">
+                    <div>
+                        <MdKeyboardArrowUp className="text-[#E80000] text-[18px]" />
+                    </div>
+                </Tooltip>
+            );
+
+        case "Urgent":
+            return (
+                <Tooltip title="Urgent Priority">
+                    <div>
+                        <MdKeyboardDoubleArrowUp className="text-[#B90000] text-[18px]" />
+                    </div>
+                </Tooltip>
+            );
+        case "Immediate":
+            return (
+                <Tooltip title="Immediate Priority">
+                    <div>
+                        <AiOutlineExclamation className="text-[#890000] text-[18px]" />
+                    </div>
+                </Tooltip>
+            );
     }
 };
 

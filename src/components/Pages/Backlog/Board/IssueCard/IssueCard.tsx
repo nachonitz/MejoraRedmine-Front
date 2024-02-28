@@ -6,6 +6,7 @@ import { BacklogContext } from "../../../../../context/BacklogContext";
 import {
     getIssueIcon,
     getIssuePriorityColor,
+    getPriorityIcon,
 } from "../../../../../utilities/utilities";
 import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import AssignedCircle from "../../../../Shared/AssignedCircle/AssignedCircle";
@@ -71,7 +72,8 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                         />
                         <span>{issue.epic?.name}</span>
                     </div>
-                    <div>
+                    <div className="flex gap-1 items-center">
+                        {getPriorityIcon(issue.priority.name)}
                         {issue.assignee && (
                             <AssignedCircle
                                 firstname={issue.assignee?.firstname}
