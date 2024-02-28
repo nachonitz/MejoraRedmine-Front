@@ -24,6 +24,7 @@ import { getIssueProperties } from "../../../utilities/utilities";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import { BacklogFiltersModal } from "../../../components/Pages/Backlog/BacklogFiltersModal";
+import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 
 export type Column = {
     [name: string]: Issue[];
@@ -41,6 +42,7 @@ const Backlog = () => {
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
 
     const [openInfoIssue, setOpenInfoIssue] = useState(false);
+    const [openCreateIssue, setOpenCreateIssue] = useState(false);
     const [openEditEpic, setOpenEditEpic] = useState(false);
     const [openDeleteEpic, setOpenDeleteEpic] = useState(false);
     const [openEditIssue, setOpenEditIssue] = useState(false);
@@ -124,6 +126,12 @@ const Backlog = () => {
             });
     };
 
+    const handleOpenCreateIssue = (epic: Epic) => {
+        setSelectedEpic(epic);
+        console.log(epic);
+        setOpenCreateIssue(true);
+    };
+
     const handleOpenEditEpic = (epic: Epic) => {
         setSelectedEpic(epic);
         setOpenEditEpic(true);
@@ -150,6 +158,7 @@ const Backlog = () => {
     };
 
     const handleCloseDialog = (refresh?: boolean) => {
+        setOpenCreateIssue(false);
         setOpenInfoIssue(false);
         setOpenEditEpic(false);
         setOpenDeleteEpic(false);
@@ -188,6 +197,18 @@ const Backlog = () => {
                 )}
                 {selectedEpic && projectId && (
                     <>
+                        <CreateIssueDialog
+                            open={openCreateIssue}
+                            epicId={selectedEpic.id?.toString()}
+                            projectId={projectId}
+                            releaseId={
+                                selectedEpic?.release?.id?.toString() || ""
+                            }
+                            sprintId={
+                                selectedEpic?.sprint?.id?.toString() || ""
+                            }
+                            handleClose={handleCloseDialog}
+                        />
                         <EditEpicDialog
                             open={openEditEpic}
                             epicId={selectedEpic.id}
@@ -267,6 +288,7 @@ const Backlog = () => {
                         handleOpenDeleteIssue,
                         handleOpenEditEpic,
                         handleOpenDeleteEpic,
+                        handleOpenCreateIssue,
                     }}
                 >
                     <div className="mt-[30px] mb-[10px]">

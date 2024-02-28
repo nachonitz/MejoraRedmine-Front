@@ -8,6 +8,7 @@ interface BacklogContextProps {
     handleOpenDeleteIssue: (issue: Issue) => void;
     handleOpenEditEpic: (epic: Epic) => void;
     handleOpenDeleteEpic: (epic: Epic) => void;
+    handleOpenCreateIssue: (epic: Epic) => void;
 }
 
 export const BacklogContext = createContext({} as BacklogContextProps);

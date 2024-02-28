@@ -5,13 +5,15 @@ import { getIssues } from "../../../../../api/services/issuesService";
 import { BacklogContext } from "../../../../../context/BacklogContext";
 import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import IssueItem from "./IssueItem";
+import { IconButton } from "@mui/material";
+import { MdAdd } from "react-icons/md";
 
 interface IssueCardProps {
     epic: Epic;
 }
 
 const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
-    const { handleOpenEditEpic, handleOpenDeleteEpic } =
+    const { handleOpenEditEpic, handleOpenDeleteEpic, handleOpenCreateIssue } =
         useContext(BacklogContext);
     const [opened, setOpened] = useState<boolean>(false);
     const contentRef = useRef(null);
@@ -75,7 +77,15 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                             {epic.name}
                         </span>
                     </div>
-                    <div>
+                    <div className="flex items-center">
+                        <IconButton
+                            onClick={(e) => {
+                                e?.stopPropagation();
+                                handleOpenCreateIssue(epic);
+                            }}
+                        >
+                            <MdAdd />
+                        </IconButton>
                         <SettingsButton
                             onEdit={() => {
                                 handleOpenEditEpic(epic);

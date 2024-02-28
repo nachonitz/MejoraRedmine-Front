@@ -33,7 +33,7 @@ import { Release } from "../../../../api/models/release";
 import { Sprint } from "../../../../api/models/sprint";
 import { Epic } from "../../../../api/models/epic";
 import { getSprints } from "../../../../api/services/sprintsService";
-import { getEpics } from "../../../../api/services/epicsService";
+import { getEpicById, getEpics } from "../../../../api/services/epicsService";
 import { getReleases } from "../../../../api/services/releasesService";
 
 interface CreateIssueDialogProps {
@@ -102,6 +102,19 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             setReleases(data.items);
         });
     };
+
+    useEffect(() => {
+        const setIds = async () => {
+            if (epicId) {
+                if (!sprintId || !releaseId) {
+                    let epic = await getEpicById(parseInt(epicId));
+                    setSelectedReleaseId(epic.release?.id.toString());
+                    setSelectedSprintId(epic.sprint?.id.toString());
+                }
+            }
+        };
+        setIds();
+    }, [epicId]);
 
     useEffect(() => {
         if (selectedReleaseId) {
@@ -258,7 +271,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[600px]">
                 <div className="flex items-center justify-between mt-5 pr-6">
-                    <DialogTitle>Edit Issue</DialogTitle>
+                    <DialogTitle>Create Issue</DialogTitle>
                     <div className="flex gap-2">
                         <FormControl className="w-32">
                             <InputLabel
@@ -507,7 +520,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <SecondaryButton onClick={handleClose}>
+                    <SecondaryButton onClick={() => handleCloseModal()}>
                         Close
                     </SecondaryButton>
                     <PrimaryButton onClick={handleCreate}>
