@@ -10,6 +10,7 @@ import {
 } from "../../../../../utilities/utilities";
 import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import AssignedCircle from "../../../../Shared/AssignedCircle/AssignedCircle";
+import { Tooltip } from "@mui/material";
 
 interface IssueCardProps {
     issue: Issue;
@@ -75,10 +76,16 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                     <div className="flex gap-1 items-center">
                         {getPriorityIcon(issue.priority.name)}
                         {issue.assignee && (
-                            <AssignedCircle
-                                firstname={issue.assignee?.firstname}
-                                lastname={issue.assignee?.lastname}
-                            />
+                            <Tooltip
+                                title={`Assignee: ${issue.assignee?.firstname} ${issue.assignee?.lastname}`}
+                            >
+                                <div>
+                                    <AssignedCircle
+                                        firstname={issue.assignee?.firstname}
+                                        lastname={issue.assignee?.lastname}
+                                    />
+                                </div>
+                            </Tooltip>
                         )}
                     </div>
                 </div>
