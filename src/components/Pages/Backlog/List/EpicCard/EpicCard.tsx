@@ -97,9 +97,14 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                         transition: "max-height 0.2s ease-in-out",
                     }}
                 >
-                    {issues.map((issue) => (
-                        <IssueItem issue={issue} />
-                    ))}
+                    {issues &&
+                        issues.length > 0 &&
+                        issues.map((issue) => <IssueItem issue={issue} />)}
+                    {issues && issues.length === 0 && (
+                        <div className="w-full border-t border-primary border-solid px-[20px] py-[5px] cursor-pointer flex justify-center">
+                            <span>There are no issues yet.</span>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
