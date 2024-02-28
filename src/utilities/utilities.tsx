@@ -3,8 +3,7 @@ import {
     MdKeyboardDoubleArrowUp,
     MdOutlineKeyboardArrowDown,
 } from "react-icons/md";
-import { BsFire } from "react-icons/bs";
-import { VscDash } from "react-icons/vsc";
+import { VscCircleFilled } from "react-icons/vsc";
 
 import { Issue } from "../api/models/issue";
 import { getFullDate } from "../lib/utils";
@@ -51,7 +50,7 @@ export const getPriorityIcon = (issuePriority: string) => {
             return (
                 <Tooltip title="Normal Priority">
                     <div>
-                        <VscDash className="text-[black] text-[18px] font-[bold]" />
+                        <VscCircleFilled className="text-[#FFAA04] text-[18px]" />
                     </div>
                 </Tooltip>
             );
