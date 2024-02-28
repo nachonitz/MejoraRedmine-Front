@@ -61,10 +61,10 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
 
     return (
         <div>
-            <div className="w-full flex flex-col box-content border border-primary border-solid rounded-[10px]">
+            <div className="w-full flex flex-col box-content border border-primary border-solid rounded-[0.25rem]">
                 <div
                     onClick={toggleContent}
-                    className="flex items-center justify-between p-[10px] cursor-pointer select-none rounded-[10px] hover:bg-[#fafafa]"
+                    className="flex items-center justify-between p-[5px] cursor-pointer select-none rounded-[10px] hover:bg-[#fafafa]"
                 >
                     <div className="flex gap-[2px] items-center">
                         <img

@@ -16,7 +16,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
         <div>
             <div
                 onClick={() => handleOpenInfoIssue(issue)}
-                className="w-full flex items-center justify-between p-[10px] border border-primary border-solid rounded-[10px] cursor-pointer"
+                className="w-full flex items-center justify-between p-[5px] border border-primary border-solid rounded-[0.25rem] cursor-pointer"
             >
                 <div className="flex gap-[2px] items-center">
                     <img
