@@ -8,6 +8,7 @@ import {
 import { useContext } from "react";
 import { BacklogContext } from "../../../../../context/BacklogContext";
 import AssignedCircle from "../../../../Shared/AssignedCircle/AssignedCircle";
+import { Tooltip } from "@mui/material";
 
 interface IssueCardProps {
     issue: Issue;
@@ -51,22 +52,33 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
 
                     <div className="w-[25%]">
                         <div
+                            className="w-[150px] text-white flex justify-center items-center rounded-[15px] text-[14px] p-[3px] text-center"
                             style={{
-                                color: getIssuePriorityColor(
-                                    issue.priority["name"]
+                                background: getIssuePriorityColor(
+                                    issue.priority.name
                                 ),
                             }}
                         >
-                            <span>{issue.priority.name}</span>
+                            <span>{issue.priority.name} Priority</span>
                         </div>
                     </div>
                     <div className="w-[25%]">
-                        {issue.assignee && (
-                            <AssignedCircle
-                                firstname={issue.assignee.firstname}
-                                lastname={issue.assignee.lastname}
-                            />
-                        )}
+                        <div className="flex">
+                            {issue.assignee && (
+                                <Tooltip
+                                    title={`Assignee: ${issue.assignee?.firstname} ${issue.assignee?.lastname}`}
+                                >
+                                    <div>
+                                        <AssignedCircle
+                                            firstname={
+                                                issue.assignee?.firstname
+                                            }
+                                            lastname={issue.assignee?.lastname}
+                                        />
+                                    </div>
+                                </Tooltip>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className="w-[30px] h-[30px] flex items-center justify-center">
