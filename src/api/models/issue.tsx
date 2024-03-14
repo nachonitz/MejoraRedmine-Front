@@ -25,6 +25,7 @@ export interface Issue extends BaseIssue {
     tracker: Tracker;
     createdAt: Date;
     assignee?: User;
+    endDate?: Date;
 }
 
 export interface CreateIssueDto extends BaseIssue {
@@ -36,6 +37,7 @@ export interface CreateIssueDto extends BaseIssue {
     epicId?: number;
     statusId?: number;
     assigneeId?: number;
+    endDate?: Date;
 }
 
 export type UpdateIssueDto = Partial<CreateIssueDto>;
@@ -56,6 +58,7 @@ export interface IssueFilter extends PaginationFilters {
     estimation?: string;
     isEstimated?: boolean;
     order?: FilterOrder;
+    endDate?: string | string;
 }
 
 export interface IssueStatus {

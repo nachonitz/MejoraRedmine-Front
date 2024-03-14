@@ -40,6 +40,8 @@ import { Epic } from "../../../../api/models/epic";
 import { getReleases } from "../../../../api/services/releasesService";
 import { getSprints } from "../../../../api/services/sprintsService";
 import { getEpics } from "../../../../api/services/epicsService";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 interface EditIssueDialogProps {
     open: boolean;
@@ -79,6 +81,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [releaseId, setReleaseId] = useState<string | undefined>("");
     const [sprintId, setSprintId] = useState<string | undefined>("");
     const [epicId, setEpicId] = useState<string | undefined>("");
+    const [endDate, setEndDate] = useState<any>(null);
     const [errorName, setErrorName] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
     const [errorTrackerId, setErrorTrackerId] = useState(false);
@@ -87,6 +90,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [errorReleaseId, setErrorReleaseId] = useState(false);
     const [errorSprintId, setErrorSprintId] = useState(false);
     const [errorEpicId, setErrorEpicId] = useState(false);
+    const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -157,6 +161,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                     setReleaseId(issue.release?.id.toString() ?? "");
                     setSprintId(issue.sprint?.id.toString() ?? "");
                     setEpicId(issue.epic?.id.toString() ?? "");
+                    setEndDate(dayjs(issue?.endDate));
                 })
                 .catch((error) => {
                     console.log(error);
@@ -218,6 +223,15 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             setErrorAssigneeId(true);
             errorFound = true;
         }
+        if (
+            statusId &&
+            statuses.find((x) => x.id === Number(statusId))?.is_closed
+        ) {
+            if (!endDate || !new Date(endDate).getTime()) {
+                setErrorEndDate(true);
+                errorFound = true;
+            }
+        }
         return errorFound;
     };
 
@@ -241,6 +255,12 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             epicId: epicId ? +epicId : undefined,
             assigneeId: +assigneeId,
         };
+        if (
+            statusId &&
+            statuses.find((x) => x.id === Number(statusId))?.is_closed
+        ) {
+            issue.endDate = endDate;
+        }
         editIssue(issueId, issue)
             .then(() => {
                 handleCloseModal(true);
@@ -510,6 +530,18 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                                     )}
                             </Select>
                         </FormControl>
+                        {statusId &&
+                            statuses.find((x) => x.id === Number(statusId))
+                                ?.is_closed && (
+                                <DatePicker
+                                    onChange={(date) => setEndDate(date)}
+                                    slotProps={{
+                                        textField: { error: errorEndDate },
+                                    }}
+                                    value={endDate}
+                                    label="End Date"
+                                />
+                            )}
                         {serverErrors && serverErrors.length > 0 && (
                             <div className="mt-2 min-h-[10px] text-left">
                                 {serverErrors.map((error, index) => (
