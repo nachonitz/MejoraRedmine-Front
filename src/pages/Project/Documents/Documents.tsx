@@ -265,9 +265,11 @@ const Documents = () => {
                             {isLoading ? (
                                 <LinearProgress />
                             ) : (
-                                <span className="text-center">
-                                    There are no documents yet.
-                                </span>
+                                <div className="flex justify-center items-center">
+                                    <p className="text-gray-500">
+                                        There are no documents yet
+                                    </p>
+                                </div>
                             )}
                         </div>
                     )}

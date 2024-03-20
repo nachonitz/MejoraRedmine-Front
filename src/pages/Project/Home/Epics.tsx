@@ -281,9 +281,11 @@ const ProjectEpics = () => {
                             {isLoading ? (
                                 <LinearProgress />
                             ) : (
-                                <span className="text-center">
-                                    There are no epics yet.
-                                </span>
+                                <div className="flex justify-center items-center">
+                                    <p className="text-gray-500">
+                                        There are no epics yet
+                                    </p>
+                                </div>
                             )}
                         </div>
                     )}

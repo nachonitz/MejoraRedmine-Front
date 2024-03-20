@@ -266,9 +266,11 @@ const Risks = () => {
                             {isLoading ? (
                                 <LinearProgress />
                             ) : (
-                                <span className="text-center">
-                                    There are no risks yet.
-                                </span>
+                                <div className="flex justify-center items-center">
+                                    <p className="text-gray-500">
+                                        There are no releases yet
+                                    </p>
+                                </div>
                             )}
                         </div>
                     )}

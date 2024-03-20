@@ -321,9 +321,11 @@ const ProjectSprints = () => {
                             {isLoading ? (
                                 <LinearProgress />
                             ) : (
-                                <span className="text-center">
-                                    There are no sprints yet.
-                                </span>
+                                <div className="flex justify-center items-center">
+                                    <p className="text-gray-500">
+                                        There are no sprints yet
+                                    </p>
+                                </div>
                             )}
                         </div>
                     )}

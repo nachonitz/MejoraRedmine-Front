@@ -380,9 +380,11 @@ const ProjectIssues = () => {
                             {isLoading ? (
                                 <LinearProgress />
                             ) : (
-                                <span className="text-center">
-                                    There are no issues yet.
-                                </span>
+                                <div className="flex justify-center items-center">
+                                    <p className="text-gray-500">
+                                        There are no issues yet
+                                    </p>
+                                </div>
                             )}
                         </div>
                     )}
