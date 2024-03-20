@@ -91,12 +91,14 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
             };
         });
 
-        cumulativeOrderedSprints.unshift({
-            label: "",
-            completed: 0,
-            trend: 0,
-        });
-        setSprintsToBurnUp(cumulativeOrderedSprints);
+        if (cumulativeOrderedSprints.length > 0) {
+            cumulativeOrderedSprints.unshift({
+                label: "",
+                completed: 0,
+                trend: 0,
+            });
+            setSprintsToBurnUp(cumulativeOrderedSprints);
+        }
 
         let sprintsVelocity = orderedSprints.map((sprint) => {
             return {
@@ -139,47 +141,76 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
         calculateSprintCharts(sprints, issues);
     };
 
+    const isEmptyData = () => {
+        return (
+            tasksPlanned === 0 &&
+            releases?.length === 0 &&
+            sprintsToBurnUp.length === 0 &&
+            sprintsVelocity.length === 0
+        );
+    };
+
     useEffect(() => {
         setUpDashboardsData();
     }, [projectId]);
 
     return (
         <div>
-            {releases && releases.length > 1 && (
-                <div className="mt-5">
-                    <Timeline releases={releases} />
+            {!isEmptyData() && (
+                <div>
+                    {releases && releases.length > 1 && (
+                        <div className="mt-5">
+                            <Timeline releases={releases} />
+                        </div>
+                    )}
+                    {tasksPlanned > 0 && (
+                        <div className="mt-5 flex gap-5">
+                            <div>
+                                <PieChartCard
+                                    title="Tasks by status"
+                                    data={tasksStatuses}
+                                />
+                            </div>
+
+                            <div>
+                                <ComparativeCard
+                                    title="Tasks"
+                                    properties={[
+                                        {
+                                            name: "Completed",
+                                            value: tasksCompleted,
+                                        },
+                                        {
+                                            name: "Planned",
+                                            value: tasksPlanned,
+                                        },
+                                    ]}
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <div className="mt-5 flex gap-5">
+                        {sprintsToBurnUp && sprintsToBurnUp.length > 0 && (
+                            <BurnUpChartCard
+                                title="Burn Up Chart"
+                                data={sprintsToBurnUp}
+                            />
+                        )}
+                        {sprintsVelocity && sprintsVelocity.length > 0 && (
+                            <SprintsVelocityChartCard
+                                title="Sprints Velocity"
+                                data={sprintsVelocity}
+                            />
+                        )}
+                    </div>
                 </div>
             )}
-            <div className="mt-5 flex gap-5">
-                <div>
-                    <PieChartCard
-                        title="Tasks by status"
-                        data={tasksStatuses}
-                    />
+
+            {isEmptyData() && (
+                <div className="flex justify-center items-center">
+                    <p className="text-gray-500">There is no data to display</p>
                 </div>
-                <div>
-                    <ComparativeCard
-                        title="Tasks"
-                        properties={[
-                            {
-                                name: "Completed",
-                                value: tasksCompleted,
-                            },
-                            {
-                                name: "Planned",
-                                value: tasksPlanned,
-                            },
-                        ]}
-                    />
-                </div>
-            </div>
-            <div className="mt-5 flex gap-5">
-                <BurnUpChartCard title="Burn Up Chart" data={sprintsToBurnUp} />
-                <SprintsVelocityChartCard
-                    title="Sprints Velocity"
-                    data={sprintsVelocity}
-                />
-            </div>
+            )}
         </div>
     );
 };

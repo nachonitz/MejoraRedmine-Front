@@ -5,7 +5,7 @@ import { ComparativeCard } from "./ComparativeCard";
 import { PieChartCard } from "./PieChartCard";
 import { Issue } from "../../../api/models/issue";
 import { Sprint } from "../../../api/models/sprint";
-import { MenuItem, Select } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 interface Props {
     releases: Release[];
@@ -33,6 +33,13 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
             let sprintStartDate = new Date(sprint.startDate);
             return sprintEndDate >= today && sprintStartDate <= today;
         });
+        if (!currentSprint) {
+            currentSprint = sprints.find((sprint) => {
+                let sprintEndDate = new Date(sprint.endDate);
+                let today = new Date();
+                return sprintEndDate < today;
+            });
+        }
         setSelectedSprint(currentSprint || null);
         if (currentSprint) {
             setupSprintCharts(currentSprint, issues || []);
@@ -89,44 +96,69 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
 
     return (
         <div>
-            <div className="mt-5">
-                <Select
-                    labelId="select-sprint"
-                    value={selectedSprint?.id || ""}
-                    label="Sprint"
-                    onChange={handleSprintChange}
-                >
-                    {sprints &&
-                        sprints.map((sprint: Sprint) => (
-                            <MenuItem key={sprint.id} value={sprint.id}>
-                                {sprint.name}
-                            </MenuItem>
-                        ))}
-                </Select>
-            </div>
-            <div className="mt-5 flex gap-5">
+            {sprints && sprints.length > 0 && (
                 <div>
-                    <PieChartCard
-                        title="Tasks by status"
-                        data={sprintTasksStatuses}
-                    />
+                    <div className="mt-5">
+                        <FormControl>
+                            <InputLabel id="select-sprint">Sprint</InputLabel>
+                            <Select
+                                labelId="select-sprint"
+                                value={selectedSprint?.id || ""}
+                                label="Sprint"
+                                onChange={handleSprintChange}
+                            >
+                                {sprints &&
+                                    sprints.map((sprint: Sprint) => (
+                                        <MenuItem
+                                            key={sprint.id}
+                                            value={sprint.id}
+                                        >
+                                            {sprint.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    {sprintTasksPlanned > 0 && (
+                        <div className="mt-5 flex gap-5">
+                            <div>
+                                <PieChartCard
+                                    title="Tasks by status"
+                                    data={sprintTasksStatuses}
+                                />
+                            </div>
+                            <div>
+                                <ComparativeCard
+                                    title="Tasks"
+                                    properties={[
+                                        {
+                                            name: "Completed",
+                                            value: sprintTasksCompleted,
+                                        },
+                                        {
+                                            name: "Planned",
+                                            value: sprintTasksPlanned,
+                                        },
+                                    ]}
+                                />
+                            </div>
+                        </div>
+                    )}
+                    {sprintTasksPlanned === 0 && (
+                        <div className="mt-5">
+                            <span>No tasks planned for this sprint</span>
+                        </div>
+                    )}
                 </div>
-                <div>
-                    <ComparativeCard
-                        title="Tasks"
-                        properties={[
-                            {
-                                name: "Completed",
-                                value: sprintTasksCompleted,
-                            },
-                            {
-                                name: "Planned",
-                                value: sprintTasksPlanned,
-                            },
-                        ]}
-                    />
-                </div>
-            </div>
+            )}
+            {!sprints ||
+                (sprints.length === 0 && (
+                    <div className="flex justify-center items-center">
+                        <p className="text-gray-500">
+                            No sprints found for this project
+                        </p>
+                    </div>
+                ))}
         </div>
     );
 };
