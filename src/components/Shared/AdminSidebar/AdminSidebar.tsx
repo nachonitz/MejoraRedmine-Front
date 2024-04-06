@@ -11,11 +11,16 @@ const AdminSidebar = ({ children }: Props) => {
     const navigate = useNavigate();
     const { projectId } = useParams();
 
+    const isInPage = (page: string) => {
+        return window.location.pathname.includes(page);
+    };
+
     return (
         <>
             <div className="flex h-screen fixed top-header mt-header bg-lightblue w-56">
                 <div className="flex flex-col mt-5 w-full px-[2px] box-border">
                     <Item
+                        selected={isInPage("/admin/information")}
                         name="Information"
                         icon="information.png"
                         onClick={() => {
@@ -23,6 +28,7 @@ const AdminSidebar = ({ children }: Props) => {
                         }}
                     />
                     <Item
+                        selected={isInPage("/admin/users")}
                         name="Users"
                         icon="users.png"
                         onClick={() => {
@@ -30,10 +36,11 @@ const AdminSidebar = ({ children }: Props) => {
                         }}
                     />
                     <Item
+                        selected={isInPage("/admin/roles")}
                         name="Settings"
                         icon="settings-icon.png"
                         onClick={() => {
-                            navigate(`/project/${projectId}/backlog`);
+                            console.log("TODO: Navigate to settings");
                         }}
                     />
                 </div>
