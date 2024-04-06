@@ -11,6 +11,7 @@ export interface User extends BaseUser {
     id: number;
     redmineId: number;
     createdAt: Date;
+    admin: boolean;
 }
 
 export interface AuthUser extends BaseUser {
