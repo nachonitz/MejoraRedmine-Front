@@ -13,6 +13,7 @@ import { Searchbar } from "../../../Shared/Searchbar/Searchbar";
 import { User } from "../../../../api/models/user";
 import { getUsers } from "../../../../api/services/usersService";
 import { UsersList } from "./UsersList";
+import { CreateUserDialog } from "./CreateUserDialog";
 
 export const RedmineUsers = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -43,6 +44,18 @@ export const RedmineUsers = () => {
         getAllUsers();
     }, []);
 
+    const handleCloseDialog = (refresh?: boolean) => {
+        setOpenCreateUser(false);
+        // setOpenInfoUser(false);
+        setOpenEditUser(false);
+        setOpenDeleteUser(false);
+        if (refresh) {
+            getAllUsers();
+        }
+        setSelectedUser(undefined);
+        setSelectedUser(undefined);
+    };
+
     return (
         <>
             <div className="w-full mt-4">
@@ -66,16 +79,13 @@ export const RedmineUsers = () => {
                     )}
                 </div>
             </div>
-            {/* {openCreateUser && (
-                <CreateMemberDialog
-                    projectId={projectId}
-                    open={openCreateMember}
-                    onClose={async () => {
-                        setOpenCreateMember(false);
-                        await getAllUsers();
-                    }}
+            {openCreateUser && (
+                <CreateUserDialog
+                    open={openCreateUser}
+                    onClose={handleCloseDialog}
                 />
             )}
+            {/*
             {selectedUser && (
                 <>
                     <EditMemberDialog

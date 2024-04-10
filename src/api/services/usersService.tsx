@@ -1,7 +1,7 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { UpdateUserDto, User, UserFilter } from "../models/user";
+import { CreateUserDto, UpdateUserDto, User, UserFilter } from "../models/user";
 
 export const getUsers = async (filter: UserFilter) => {
     const { data } = await api.get<ListedResponse<User>>(
@@ -15,7 +15,7 @@ export const getUserById = async (id: User["id"]): Promise<User> => {
     return data;
 };
 
-export const createUser = async (user: User): Promise<User> => {
+export const createUser = async (user: CreateUserDto): Promise<User> => {
     const { data } = await api.post("/users", user);
     return data;
 };
