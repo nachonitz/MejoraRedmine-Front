@@ -268,7 +268,7 @@ const Risks = () => {
                             ) : (
                                 <div className="flex justify-center items-center">
                                     <p className="text-gray-500">
-                                        There are no releases yet
+                                        There are no risks yet
                                     </p>
                                 </div>
                             )}
