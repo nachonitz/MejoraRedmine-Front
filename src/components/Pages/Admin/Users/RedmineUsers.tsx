@@ -14,13 +14,13 @@ import { User } from "../../../../api/models/user";
 import { getUsers } from "../../../../api/services/usersService";
 import { UsersList } from "./UsersList";
 import { CreateUserDialog } from "./CreateUserDialog";
+import { EditUserDialog } from "./EditUserDialog";
 
 export const RedmineUsers = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [searchText, setSearchText] = useState<string>("");
     const [openCreateUser, setOpenCreateUser] = useState(false);
     const [openEditUser, setOpenEditUser] = useState(false);
-    const [openDeleteUser, setOpenDeleteUser] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User>();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -48,7 +48,6 @@ export const RedmineUsers = () => {
         setOpenCreateUser(false);
         // setOpenInfoUser(false);
         setOpenEditUser(false);
-        setOpenDeleteUser(false);
         if (refresh) {
             getAllUsers();
         }
@@ -74,7 +73,6 @@ export const RedmineUsers = () => {
                             items={users}
                             onSelected={(user) => setSelectedUser(user)}
                             onEdit={() => setOpenEditUser(true)}
-                            onDelete={() => setOpenDeleteUser(true)}
                         />
                     )}
                 </div>
@@ -85,31 +83,14 @@ export const RedmineUsers = () => {
                     onClose={handleCloseDialog}
                 />
             )}
-            {/*
+
             {selectedUser && (
-                <>
-                    <EditMemberDialog
-                        membership={selectedMember}
-                        open={openEditMember}
-                        onClose={async () => {
-                            setOpenEditMember(false);
-                            setSelectedMember(undefined);
-                            await getAllUsers();
-                        }}
-                    />
-                    <DeleteDialog
-                        open={openDeleteMember}
-                        id={selectedMember.id}
-                        handleClose={async () => {
-                            setOpenDeleteMember(false);
-                            setSelectedMember(undefined);
-                            await getAllUsers();
-                        }}
-                        deleteFunction={deleteMembership}
-                        name={`${selectedMember.user.login}'s membership to ${selectedMember.project.name}`}
-                    />
-                </>
-            )} */}
+                <EditUserDialog
+                    user={selectedUser}
+                    open={openEditUser}
+                    onClose={handleCloseDialog}
+                />
+            )}
         </>
     );
 };

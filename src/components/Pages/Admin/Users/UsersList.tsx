@@ -11,7 +11,6 @@ import { IoMdCheckmark } from "react-icons/io";
 interface Props {
     items: User[];
     onEdit: () => void;
-    onDelete: () => void;
     onSelected: (user: User) => void;
 }
 
@@ -20,9 +19,9 @@ const defaultFilters: UserFilter = {
     limit: 10,
 };
 
-export const UsersList = ({ items, onEdit, onDelete, onSelected }: Props) => {
+export const UsersList = ({ items, onEdit, onSelected }: Props) => {
     const [filters, setFilters] = useState<UserFilter>(defaultFilters);
-    const [paginationData, setPaginationData] =
+    const [paginationData, _setPaginationData] =
         useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
     return (
         <div>
@@ -81,10 +80,6 @@ export const UsersList = ({ items, onEdit, onDelete, onSelected }: Props) => {
                                                 onEdit={() => {
                                                     onSelected(user);
                                                     onEdit();
-                                                }}
-                                                onDelete={() => {
-                                                    onSelected(user);
-                                                    onDelete();
                                                 }}
                                             />
                                         }
