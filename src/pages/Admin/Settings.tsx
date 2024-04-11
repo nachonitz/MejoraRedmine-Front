@@ -26,7 +26,7 @@ const Information = () => {
     return (
         <AdminSidebar>
             <Page>
-                <PageTitle title="Information" />
+                <PageTitle title="Settings" />
                 <div className="mt-[30px]">
                     <div className="w-full mt-4 flex flex-col gap-5">
                         <div className="flex flex-col gap-[20px]">

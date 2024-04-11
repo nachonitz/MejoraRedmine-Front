@@ -19,12 +19,20 @@ const AdminSidebar = ({ children }: Props) => {
         <>
             <div className="flex h-screen fixed top-header mt-header bg-lightblue w-56">
                 <div className="flex flex-col mt-5 w-full px-[2px] box-border">
-                    <Item
+                    {/* <Item
                         selected={isInPage("/admin/information")}
                         name="Information"
                         icon="information.png"
                         onClick={() => {
                             navigate(`/admin/information`);
+                        }}
+                    /> */}
+                    <Item
+                        selected={isInPage("/admin/settings")}
+                        name="Settings"
+                        icon="settings-icon.png"
+                        onClick={() => {
+                            navigate(`/admin/settings`);
                         }}
                     />
                     <Item
@@ -33,14 +41,6 @@ const AdminSidebar = ({ children }: Props) => {
                         icon="users.png"
                         onClick={() => {
                             navigate(`/admin/users`);
-                        }}
-                    />
-                    <Item
-                        selected={isInPage("/admin/roles")}
-                        name="Settings"
-                        icon="settings-icon.png"
-                        onClick={() => {
-                            console.log("TODO: Navigate to settings");
                         }}
                     />
                 </div>

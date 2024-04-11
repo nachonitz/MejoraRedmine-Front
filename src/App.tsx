@@ -17,7 +17,7 @@ import Register from "./pages/Register";
 import EditDocument from "./pages/Project/Documents/EditDocument";
 import SingleDocument from "./pages/Project/Documents/SingleDocument";
 import { hasAdminAccess } from "./lib/utils";
-import Information from "./pages/Admin/Information";
+import Information from "./pages/Admin/Settings";
 import Users from "./pages/Admin/Users";
 import Profile from "./pages/Profile/Profile";
 import Dashboard from "./pages/Project/Dashboard/Dashboard";
@@ -87,7 +87,7 @@ function App() {
                             {hasAdminAccess() && (
                                 <>
                                     <Route
-                                        path="/admin/information"
+                                        path="/admin/settings"
                                         element={<Information />}
                                     />
                                     <Route
@@ -97,7 +97,7 @@ function App() {
                                     <Route
                                         path="/admin"
                                         element={
-                                            <Navigate to="/admin/information" />
+                                            <Navigate to="/admin/settings" />
                                         }
                                     />
                                 </>
