@@ -15,9 +15,10 @@ import { LoadingIcon } from "../../components/Shared/Loading/LoadingIcon";
 import { useState } from "react";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { RedmineUsers } from "../../components/Pages/Admin/Users/RedmineUsers";
+import { Pending } from "../../components/Pages/Admin/Pending/Pending";
 
 const Users = () => {
-    const [pending, setPending] = useState(12);
+    const [pending, setPending] = useState(2);
     const [value, setValue] = useState("1");
 
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -73,7 +74,7 @@ const Users = () => {
                             <RedmineUsers />
                         </TabPanel>
                         <TabPanel value="2">
-                            <RedmineUsers />
+                            <Pending />
                         </TabPanel>
                     </TabContext>
                 </Box>
