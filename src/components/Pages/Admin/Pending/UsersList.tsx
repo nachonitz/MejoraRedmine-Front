@@ -5,6 +5,7 @@ import { getFullDate } from "../../../../lib/utils";
 import { Paginator } from "../../../Shared/Paginator/Paginator";
 import { DEFAULT_PAGINATION_DATA } from "../../../../utilities/constants";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";
+import { Tooltip } from "@mui/material";
 
 interface Props {
     items: PendingUser[];
@@ -61,12 +62,16 @@ export const UsersList = ({ items }: Props) => {
                                     <td className="text-right">
                                         <div className="flex justify-end">
                                             <div className="flex gap-2">
-                                                <div className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center">
-                                                    <IoMdCheckmark className="text-black" />
-                                                </div>
-                                                <div className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center">
-                                                    <IoMdClose className="text-black" />
-                                                </div>
+                                                <Tooltip title={`Activate`}>
+                                                    <div className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center">
+                                                        <IoMdCheckmark className="text-black" />
+                                                    </div>
+                                                </Tooltip>
+                                                <Tooltip title={`Delete`}>
+                                                    <div className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center">
+                                                        <IoMdClose className="text-black" />
+                                                    </div>
+                                                </Tooltip>
                                             </div>
                                         </div>
                                     </td>
