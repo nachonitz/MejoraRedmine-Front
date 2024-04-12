@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ListedResponseMetadata } from "../../../../api/models/common";
 import { PendingUser, User, UserFilter } from "../../../../api/models/user";
 import { getFullDate } from "../../../../lib/utils";
@@ -6,6 +6,9 @@ import { Paginator } from "../../../Shared/Paginator/Paginator";
 import { DEFAULT_PAGINATION_DATA } from "../../../../utilities/constants";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { Tooltip } from "@mui/material";
+import { approveUser } from "../../../../api/services/usersService";
+import { errorToast, successToast } from "../../../Shared/Toast";
+import { UsersContext } from "../../../../context/UsersContext";
 
 interface Props {
     items: PendingUser[];
@@ -17,9 +20,30 @@ const defaultFilters: UserFilter = {
 };
 
 export const UsersList = ({ items }: Props) => {
+    const { getUsers, getPendingUsers } = useContext(UsersContext);
     const [filters, setFilters] = useState<UserFilter>(defaultFilters);
     const [paginationData, _setPaginationData] =
         useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
+
+    const approve = async (id: number, approved: boolean) => {
+        try {
+            let res = await approveUser(id, approved);
+            if (res) {
+                successToast(approved ? "User approved" : "User deleted");
+                await getPendingUsers();
+                await getUsers(defaultFilters);
+            } else {
+                errorToast("Something went wrong");
+            }
+        } catch (error: any) {
+            let message =
+                error?.messages.length > 0
+                    ? error.messages[0]
+                    : "Something went wrong";
+            errorToast(message);
+        }
+    };
+
     return (
         <div>
             <div>
@@ -63,12 +87,28 @@ export const UsersList = ({ items }: Props) => {
                                         <div className="flex justify-end">
                                             <div className="flex gap-2">
                                                 <Tooltip title={`Activate`}>
-                                                    <div className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center">
+                                                    <div
+                                                        onClick={() => {
+                                                            approve(
+                                                                user.id,
+                                                                true
+                                                            );
+                                                        }}
+                                                        className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center"
+                                                    >
                                                         <IoMdCheckmark className="text-black" />
                                                     </div>
                                                 </Tooltip>
                                                 <Tooltip title={`Delete`}>
-                                                    <div className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center">
+                                                    <div
+                                                        onClick={() => {
+                                                            approve(
+                                                                user.id,
+                                                                false
+                                                            );
+                                                        }}
+                                                        className="w-[26px] h-[26px] rounded-full bg-[#d9d9d9] cursor-pointer flex justify-center items-center"
+                                                    >
                                                         <IoMdClose className="text-black" />
                                                     </div>
                                                 </Tooltip>

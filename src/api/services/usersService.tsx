@@ -43,3 +43,11 @@ export const getPendingUsers = async () => {
     const { data } = await api.get<PendingUser[]>(`/users/pending`);
     return { data };
 };
+
+export const approveUser = async (
+    id: User["id"],
+    approved: boolean
+): Promise<User> => {
+    const { data } = await api.patch(`/users/pending/${id}`, { approved });
+    return data;
+};
