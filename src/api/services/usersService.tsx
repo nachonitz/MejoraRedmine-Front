@@ -1,7 +1,13 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { CreateUserDto, UpdateUserDto, User, UserFilter } from "../models/user";
+import {
+    CreateUserDto,
+    PendingUser,
+    UpdateUserDto,
+    User,
+    UserFilter,
+} from "../models/user";
 
 export const getUsers = async (filter: UserFilter) => {
     const { data } = await api.get<ListedResponse<User>>(
@@ -31,4 +37,9 @@ export const editUser = async (
 export const deleteUser = async (id: User["id"]): Promise<User> => {
     const { data } = await api.delete(`/users/${id}`);
     return data;
+};
+
+export const getPendingUsers = async () => {
+    const { data } = await api.get<PendingUser[]>(`/users/pending`);
+    return { data };
 };

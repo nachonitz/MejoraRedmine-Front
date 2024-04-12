@@ -1,65 +1,70 @@
-import {
-    FormControl,
-    InputLabel,
-    LinearProgress,
-    MenuItem,
-    Select,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { LinearProgress } from "@mui/material";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
-import DeleteDialog from "../../../Shared/DeleteDialog/DeleteDialog";
 import { Searchbar } from "../../../Shared/Searchbar/Searchbar";
-import { User } from "../../../../api/models/user";
-import { getUsers } from "../../../../api/services/usersService";
+import { User, UserFilter } from "../../../../api/models/user";
 import { UsersList } from "./UsersList";
 import { CreateUserDialog } from "./CreateUserDialog";
 import { EditUserDialog } from "./EditUserDialog";
+import { UsersContext } from "../../../../context/UsersContext";
+
+const defaultFilters: UserFilter = {
+    page: 1,
+    limit: 10,
+};
 
 export const RedmineUsers = () => {
-    const [users, setUsers] = useState<User[]>([]);
+    const { users, getUsers, isLoading } = useContext(UsersContext);
     const [searchText, setSearchText] = useState<string>("");
     const [openCreateUser, setOpenCreateUser] = useState(false);
     const [openEditUser, setOpenEditUser] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User>();
-    const [isLoading, setIsLoading] = useState(false);
-
-    const search = async () => {
-        setIsLoading(true);
-        const { data } = await getUsers({
-            login: searchText,
-        });
-        setIsLoading(false);
-        setUsers(data.items);
-    };
-
-    const getAllUsers = async () => {
-        setIsLoading(true);
-        const { data } = await getUsers({});
-        setIsLoading(false);
-        setUsers(data.items);
-    };
-
-    useEffect(() => {
-        getAllUsers();
-    }, []);
+    const [filters, setFilters] = useState<UserFilter>(defaultFilters);
 
     const handleCloseDialog = (refresh?: boolean) => {
         setOpenCreateUser(false);
-        // setOpenInfoUser(false);
         setOpenEditUser(false);
         if (refresh) {
-            getAllUsers();
+            let filter = { ...filters, login: searchText };
+            getUsers(filter);
         }
         setSelectedUser(undefined);
         setSelectedUser(undefined);
+    };
+
+    const componentWillUnmount = useRef(false);
+
+    useEffect(() => {
+        componentWillUnmount.current = false;
+        return () => {
+            componentWillUnmount.current = true;
+        };
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (componentWillUnmount.current) {
+                if (searchText) {
+                    getUsers(defaultFilters);
+                }
+            }
+        };
+    }, [searchText]);
+
+    const handleSearch = () => {
+        let filter = { ...filters, login: searchText };
+        getUsers(filter);
     };
 
     return (
         <>
             <div className="w-full mt-4">
                 <div className="flex gap-x-6">
-                    <Searchbar onChange={setSearchText} onSearch={search} />
+                    <Searchbar
+                        onChange={setSearchText}
+                        onSearch={handleSearch}
+                    />
                     <PrimaryButton onClick={() => setOpenCreateUser(true)}>
                         New User
                     </PrimaryButton>
@@ -73,6 +78,8 @@ export const RedmineUsers = () => {
                             items={users}
                             onSelected={(user) => setSelectedUser(user)}
                             onEdit={() => setOpenEditUser(true)}
+                            filters={filters}
+                            setFilters={setFilters}
                         />
                     )}
                 </div>

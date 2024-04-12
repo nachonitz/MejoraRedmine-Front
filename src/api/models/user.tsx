@@ -14,6 +14,11 @@ export interface User extends BaseUser {
     admin: boolean;
 }
 
+export interface PendingUser extends BaseUser {
+    id: number;
+    created_on: Date;
+}
+
 export interface AuthUser extends BaseUser {
     id: number;
     redmineId: number;

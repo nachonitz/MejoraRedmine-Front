@@ -12,15 +12,17 @@ interface Props {
     items: User[];
     onEdit: () => void;
     onSelected: (user: User) => void;
+    filters: UserFilter;
+    setFilters: (filters: UserFilter) => void;
 }
 
-const defaultFilters: UserFilter = {
-    page: 1,
-    limit: 10,
-};
-
-export const UsersList = ({ items, onEdit, onSelected }: Props) => {
-    const [filters, setFilters] = useState<UserFilter>(defaultFilters);
+export const UsersList = ({
+    items,
+    onEdit,
+    onSelected,
+    filters,
+    setFilters,
+}: Props) => {
     const [paginationData, _setPaginationData] =
         useState<ListedResponseMetadata>(DEFAULT_PAGINATION_DATA);
     return (
