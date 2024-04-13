@@ -198,7 +198,9 @@ const Documents = () => {
                                 <tr
                                     key={document.id}
                                     onClick={() => {
-                                        console.log(document.id);
+                                        navigate(
+                                            `/project/${projectId}/document/${document.id}`
+                                        );
                                     }}
                                     className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50"
                                 >
