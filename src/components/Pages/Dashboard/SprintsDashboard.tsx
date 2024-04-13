@@ -8,7 +8,7 @@ import { Sprint } from "../../../api/models/sprint";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { ESTIMATIONS_TO_POINTS } from "../../../utilities/constants";
 import { BurnDownChartCard } from "./BurnDownChartCard";
-import { getFullDate, getShortDate } from "../../../lib/utils";
+import { getShortDate } from "../../../lib/utils";
 
 interface Props {
     releases: Release[];
@@ -276,7 +276,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                             </div>
                             <div className="flex mt-5 gap-5">
                                 <BurnDownChartCard
-                                    title="Burn down chart"
+                                    title="Burn Down Chart"
                                     data={burnDownChartInfo}
                                 />
                             </div>
