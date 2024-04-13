@@ -14,7 +14,9 @@ export const Pending = () => {
                     <Searchbar onChange={setSearchText} onSearch={search} />
                 </div> */}
                 <div className="flex flex-col mt-4 gap-4">
-                    <h6>Pending Users: {pendingUsersCount}</h6>
+                    {pendingUsersCount > 0 && (
+                        <h6>Pending Users: {pendingUsersCount}</h6>
+                    )}
                     {isLoading ? (
                         <LinearProgress />
                     ) : (
