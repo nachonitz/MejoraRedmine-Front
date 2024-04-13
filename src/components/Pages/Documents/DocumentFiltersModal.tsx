@@ -15,8 +15,11 @@ import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import { getEnumerations } from "../../../api/services/enumerationsService";
 import PrimaryButton from "../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../Shared/Buttons/SecondaryButton";
+import { ProjectMembership } from "../../../api/models/membership";
+import { getMemberships } from "../../../api/services/membershipsService";
 
 interface Props {
+    projectId: number;
     open: boolean;
     onClose: () => void;
     filters: DocumentFilter;
@@ -25,6 +28,7 @@ interface Props {
 }
 
 export const DocumentFiltersModal = ({
+    projectId,
     open,
     onClose,
     filters,
@@ -40,6 +44,8 @@ export const DocumentFiltersModal = ({
     const [documentCategoryId, setDocumentCategoryId] = useState<
         number | string
     >("");
+    const [memberships, setMemberships] = useState<ProjectMembership[]>([]);
+    const [authorId, setAuthorId] = useState<number | string | undefined>();
 
     const handleApply = () => {
         setFilters({
@@ -48,26 +54,36 @@ export const DocumentFiltersModal = ({
             categoryId: documentCategoryId
                 ? (documentCategoryId as number)
                 : undefined,
+            authorId: authorId ? (authorId as number) : undefined,
         });
         onClose();
     };
 
     useEffect(() => {
-        const getCategories = async () => {
+        const fetch = async () => {
             try {
-                const { data } = await getEnumerations({
-                    type: EnumerationType.DOCUMENT_CATEGORY,
-                });
-                setDocumentCategories(data);
-                if (filters.categoryId) {
-                    setDocumentCategoryId(filters.categoryId);
+                if (projectId) {
+                    const { data: categories } = await getEnumerations({
+                        type: EnumerationType.DOCUMENT_CATEGORY,
+                    });
+                    const { data: resMemberships } = await getMemberships({
+                        projectId,
+                    });
+                    setDocumentCategories(categories);
+                    setMemberships(resMemberships.items);
+                    if (filters.categoryId) {
+                        setDocumentCategoryId(filters.categoryId);
+                    }
+                    if (filters.authorId) {
+                        setAuthorId(filters.authorId);
+                    }
                 }
             } catch (error) {
                 throw new Error("Error. Please try again.");
             }
         };
-        getCategories();
-    }, [filters.categoryId]);
+        fetch();
+    }, [filters.categoryId, projectId, filters.authorId]);
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -96,6 +112,29 @@ export const DocumentFiltersModal = ({
                                                 value={category.id}
                                             >
                                                 {category.name}
+                                            </MenuItem>
+                                        )
+                                    )}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="author-label">Author</InputLabel>
+                            <Select
+                                labelId="author-label"
+                                value={authorId}
+                                label="Assignee"
+                                onChange={(e) => setAuthorId(e.target.value)}
+                            >
+                                {memberships &&
+                                    memberships.map(
+                                        (membership: ProjectMembership) => (
+                                            <MenuItem
+                                                key={membership.user.id}
+                                                value={membership.user.id}
+                                            >
+                                                {membership.user.firstname +
+                                                    " " +
+                                                    membership.user.lastname}
                                             </MenuItem>
                                         )
                                     )}
