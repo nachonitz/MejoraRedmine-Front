@@ -124,8 +124,9 @@ const Documents = () => {
     return (
         <Sidebar>
             <Page>
-                {openDocumentFiltersModal && (
+                {openDocumentFiltersModal && projectId && (
                     <DocumentFiltersModal
+                        projectId={+projectId}
                         open={openDocumentFiltersModal}
                         onClose={() => setOpenDocumentFiltersModal(false)}
                         filters={filters}
