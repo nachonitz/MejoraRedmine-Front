@@ -193,20 +193,27 @@ export const IssueFiltersModal = ({
                         </FormControl>
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <SecondaryButton onClick={onClose}>Close</SecondaryButton>
-                    <SecondaryButton
-                        onClick={() => {
-                            onClearFilters();
-                            onClose();
-                        }}
-                    >
-                        Clear Filters
-                    </SecondaryButton>
-                    <PrimaryButton onClick={handleApply} className="h-[50px]">
-                        Apply
-                    </PrimaryButton>
-                </DialogActions>
+                <div className="px-4 mb-4">
+                    <DialogActions>
+                        <SecondaryButton onClick={onClose}>
+                            Close
+                        </SecondaryButton>
+                        <SecondaryButton
+                            onClick={() => {
+                                onClearFilters();
+                                onClose();
+                            }}
+                        >
+                            Clear Filters
+                        </SecondaryButton>
+                        <PrimaryButton
+                            onClick={handleApply}
+                            className="h-[50px]"
+                        >
+                            Apply
+                        </PrimaryButton>
+                    </DialogActions>
+                </div>
             </div>
         </Dialog>
     );

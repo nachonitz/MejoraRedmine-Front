@@ -183,21 +183,23 @@ const EditReleaseDialog = ({
                         )}
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <SecondaryButton onClick={handleClose}>
-                        Close
-                    </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>
-                        {isLoading ? (
-                            <CircularProgress
-                                sx={{ color: "white", padding: 0 }}
-                                size={20}
-                            />
-                        ) : (
-                            "Edit"
-                        )}
-                    </PrimaryButton>
-                </DialogActions>
+                <div className="px-4 mb-4">
+                    <DialogActions>
+                        <SecondaryButton onClick={handleClose}>
+                            Close
+                        </SecondaryButton>
+                        <PrimaryButton onClick={handleSubmit}>
+                            {isLoading ? (
+                                <CircularProgress
+                                    sx={{ color: "white", padding: 0 }}
+                                    size={20}
+                                />
+                            ) : (
+                                "Edit"
+                            )}
+                        </PrimaryButton>
+                    </DialogActions>
+                </div>
             </div>
         </Dialog>
     );

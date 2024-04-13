@@ -1,16 +1,15 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Tooltip } from "@mui/material";
 import { useContext } from "react";
 import { Issue } from "../../../../../api/models/issue";
 import { BacklogContext } from "../../../../../context/BacklogContext";
 import {
     getIssueIcon,
-    getIssuePriorityColor,
     getPriorityIcon,
 } from "../../../../../utilities/utilities";
-import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import AssignedCircle from "../../../../Shared/AssignedCircle/AssignedCircle";
-import { Tooltip } from "@mui/material";
+import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 
 interface IssueCardProps {
     issue: Issue;

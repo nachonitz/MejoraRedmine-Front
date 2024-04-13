@@ -517,21 +517,23 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                         )}
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <SecondaryButton onClick={() => handleCloseModal()}>
-                        Close
-                    </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>
-                        {isLoading ? (
-                            <CircularProgress
-                                sx={{ color: "white", padding: 0 }}
-                                size={20}
-                            />
-                        ) : (
-                            "Create"
-                        )}
-                    </PrimaryButton>
-                </DialogActions>
+                <div className="px-4 mb-4">
+                    <DialogActions>
+                        <SecondaryButton onClick={() => handleCloseModal()}>
+                            Close
+                        </SecondaryButton>
+                        <PrimaryButton onClick={handleCreate}>
+                            {isLoading ? (
+                                <CircularProgress
+                                    sx={{ color: "white", padding: 0 }}
+                                    size={20}
+                                />
+                            ) : (
+                                "Create"
+                            )}
+                        </PrimaryButton>
+                    </DialogActions>
+                </div>
             </div>
         </Dialog>
     );

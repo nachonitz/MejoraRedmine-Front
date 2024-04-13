@@ -177,7 +177,7 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
         <Dialog open={open} onClose={() => handleCloseModal()}>
             <div className="w-[600px]">
                 <div className="flex items-center justify-between mt-5 pr-6">
-                    <DialogTitle>Edit Issue</DialogTitle>
+                    <DialogTitle>Edit Epic</DialogTitle>
                     <div className="flex gap-2">
                         <FormControl className="w-32">
                             <InputLabel
@@ -297,21 +297,23 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                         )}
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <SecondaryButton onClick={handleClose}>
-                        Close
-                    </SecondaryButton>
-                    <PrimaryButton onClick={handleSubmit}>
-                        {isLoading ? (
-                            <CircularProgress
-                                sx={{ color: "white", padding: 0 }}
-                                size={20}
-                            />
-                        ) : (
-                            "Edit"
-                        )}
-                    </PrimaryButton>
-                </DialogActions>
+                <div className="px-4 mb-4">
+                    <DialogActions>
+                        <SecondaryButton onClick={handleClose}>
+                            Close
+                        </SecondaryButton>
+                        <PrimaryButton onClick={handleSubmit}>
+                            {isLoading ? (
+                                <CircularProgress
+                                    sx={{ color: "white", padding: 0 }}
+                                    size={20}
+                                />
+                            ) : (
+                                "Edit"
+                            )}
+                        </PrimaryButton>
+                    </DialogActions>
+                </div>
             </div>
         </Dialog>
     );

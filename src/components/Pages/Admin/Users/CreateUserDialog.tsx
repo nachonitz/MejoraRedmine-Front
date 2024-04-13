@@ -120,12 +120,16 @@ export const CreateUserDialog = ({ open, onClose }: Props) => {
                         />
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <SecondaryButton onClick={() => onClose()}>
-                        Close
-                    </SecondaryButton>
-                    <PrimaryButton onClick={handleCreate}>Create</PrimaryButton>
-                </DialogActions>
+                <div className="px-4 mb-4">
+                    <DialogActions>
+                        <SecondaryButton onClick={() => onClose()}>
+                            Close
+                        </SecondaryButton>
+                        <PrimaryButton onClick={handleCreate}>
+                            Create
+                        </PrimaryButton>
+                    </DialogActions>
+                </div>
             </div>
         </Dialog>
     );

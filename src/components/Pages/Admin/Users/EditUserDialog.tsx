@@ -77,7 +77,7 @@ export const EditUserDialog = ({ user, open, onClose }: Props) => {
         }
 
         try {
-            let res = await editUser(user.id, updatedUser);
+            const res = await editUser(user.id, updatedUser);
             if (res) {
                 successToast("User edited successfully");
                 onClose(true);
@@ -85,7 +85,7 @@ export const EditUserDialog = ({ user, open, onClose }: Props) => {
                 errorToast("Something went wrong");
             }
         } catch (error: any) {
-            let message =
+            const message =
                 error?.messages.length > 0
                     ? error.messages[0]
                     : "Something went wrong";
@@ -146,12 +146,14 @@ export const EditUserDialog = ({ user, open, onClose }: Props) => {
                         />
                     </div>
                 </DialogContent>
-                <DialogActions>
-                    <SecondaryButton onClick={() => onClose()}>
-                        Close
-                    </SecondaryButton>
-                    <PrimaryButton onClick={handleEdit}>Edit</PrimaryButton>
-                </DialogActions>
+                <div className="px-4 mb-4">
+                    <DialogActions>
+                        <SecondaryButton onClick={() => onClose()}>
+                            Close
+                        </SecondaryButton>
+                        <PrimaryButton onClick={handleEdit}>Edit</PrimaryButton>
+                    </DialogActions>
+                </div>
             </div>
         </Dialog>
     );
