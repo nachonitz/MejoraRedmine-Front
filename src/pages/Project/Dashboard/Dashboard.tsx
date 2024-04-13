@@ -21,7 +21,7 @@ const defaultFilters: ReleaseFilter = {
 
 const defaultIssueFilters: IssueFilter = {
     page: 1,
-    limit: 500,
+    limit: 10000,
 };
 
 const defaultSprintFilters: SprintFilter = {

@@ -65,8 +65,39 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
                           ] ?? 0
                         : 0;
                     orderedSprints[sprintIndex].trend += issueEstimation;
+
                     if (issue.status.is_closed) {
-                        orderedSprints[sprintIndex].completed +=
+                        // get the sprint where the issue was closed
+                        let closedSprintIndex;
+                        if (issue.endDate) {
+                            let issueEndDate = new Date(issue.endDate).setHours(
+                                0,
+                                0,
+                                0,
+                                0
+                            );
+
+                            closedSprintIndex = sprints.findIndex((sprint) => {
+                                return (
+                                    new Date(sprint.startDate).setHours(
+                                        0,
+                                        0,
+                                        0,
+                                        0
+                                    ) <= issueEndDate &&
+                                    new Date(sprint.endDate).setHours(
+                                        0,
+                                        0,
+                                        0,
+                                        0
+                                    ) >= issueEndDate
+                                );
+                            });
+                        } else {
+                            closedSprintIndex = sprintIndex;
+                        }
+
+                        orderedSprints[closedSprintIndex].completed +=
                             issueEstimation;
                     }
                 }
