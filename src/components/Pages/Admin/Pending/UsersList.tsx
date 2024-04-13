@@ -131,7 +131,7 @@ export const UsersList = ({ items }: Props) => {
                     <div className="text-[18px] h-[40px] w-full text-center mt-2">
                         <div className="flex justify-center items-center">
                             <p className="text-gray-500">
-                                There are no users yet
+                                There are pending users
                             </p>
                         </div>
                     </div>
