@@ -33,7 +33,7 @@ export interface CreateUserDto extends BaseUser {
 export type UpdateUserDto = Partial<CreateUserDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof User}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface UserFilter extends PaginationFilters {
     firstname?: string;

@@ -9,22 +9,21 @@ import {
     getIssues,
     getIssuesStatuses,
 } from "../../../api/services/issuesService";
+import { BacklogFiltersModal } from "../../../components/Pages/Backlog/BacklogFiltersModal";
 import Board from "../../../components/Pages/Backlog/Board/Board";
 import List from "../../../components/Pages/Backlog/List/List";
 import EditEpicDialog from "../../../components/Pages/Epics/EditEpicDialog/EditEpicDialog";
+import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
+import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
-import InfoDialog from "../../../components/Shared/InfoDialog/InfoDialog";
-import { getFullDate } from "../../../lib/utils";
 import { getIssueProperties } from "../../../utilities/utilities";
-import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
-import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
-import { BacklogFiltersModal } from "../../../components/Pages/Backlog/BacklogFiltersModal";
-import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 
 export type Column = {
     [name: string]: Issue[];

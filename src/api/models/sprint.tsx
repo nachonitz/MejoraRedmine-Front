@@ -24,7 +24,7 @@ export interface CreateSprintDto extends BaseSprint {
 export type UpdateSprintDto = Partial<CreateSprintDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Sprint}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface SprintFilter extends PaginationFilters {
     name?: string;

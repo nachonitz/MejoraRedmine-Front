@@ -2,6 +2,7 @@ import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { IoLockClosed } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { ListedResponseMetadata } from "../api/models/common";
 import { Project, ProjectFilter } from "../api/models/project";
 import { deleteProject, getProjects } from "../api/services/projectsService";
 import CreateProjectDialog from "../components/Pages/Projects/CreateProjectDialog/CreateProjectDialog";
@@ -10,11 +11,11 @@ import PrimaryButton from "../components/Shared/Buttons/PrimaryButton";
 import SettingsButton from "../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../components/Shared/Page/Page";
-import { Searchbar } from "../components/Shared/Searchbar/Searchbar";
-import { getFullDate, hasAdminAccess } from "../lib/utils";
 import { Paginator } from "../components/Shared/Paginator/Paginator";
+import { Searchbar } from "../components/Shared/Searchbar/Searchbar";
+import { TableHeadItem } from "../components/Shared/Table/TableHeadItem";
+import { getFullDate, hasAdminAccess } from "../lib/utils";
 import { DEFAULT_PAGINATION_DATA } from "../utilities/constants";
-import { ListedResponseMetadata } from "../api/models/common";
 
 const defaultFilters: ProjectFilter = {
     page: 1,
@@ -126,8 +127,18 @@ const Projects = () => {
                     <thead>
                         <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                             <th></th>
-                            <th className="text-left">Name</th>
-                            <th className="text-left">Created</th>
+                            <TableHeadItem
+                                attribute="name"
+                                setFilters={setFilters}
+                            >
+                                Name
+                            </TableHeadItem>
+                            <TableHeadItem
+                                attribute="createdAt"
+                                setFilters={setFilters}
+                            >
+                                Created
+                            </TableHeadItem>
                             <th className="text-left">Owner</th>
                             <th className="text-right"></th>
                         </tr>

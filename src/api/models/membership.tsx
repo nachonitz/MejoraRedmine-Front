@@ -20,7 +20,7 @@ export interface CreateProjectMembershipDto {
 export type UpdateProjectMembershipDto = Partial<CreateProjectMembershipDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof ProjectMembership}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface ProjectMembershipFilter extends PaginationFilters {
     userId?: number;

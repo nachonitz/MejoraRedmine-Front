@@ -1,14 +1,14 @@
-import { useContext, useState } from "react";
-import { ListedResponseMetadata } from "../../../../api/models/common";
-import { PendingUser, User, UserFilter } from "../../../../api/models/user";
-import { getFullDate } from "../../../../lib/utils";
-import { Paginator } from "../../../Shared/Paginator/Paginator";
-import { DEFAULT_PAGINATION_DATA } from "../../../../utilities/constants";
-import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { Tooltip } from "@mui/material";
+import { useContext, useState } from "react";
+import { IoMdCheckmark, IoMdClose } from "react-icons/io";
+import { ListedResponseMetadata } from "../../../../api/models/common";
+import { PendingUser, UserFilter } from "../../../../api/models/user";
 import { approveUser } from "../../../../api/services/usersService";
-import { errorToast, successToast } from "../../../Shared/Toast";
 import { UsersContext } from "../../../../context/UsersContext";
+import { getFullDate } from "../../../../lib/utils";
+import { DEFAULT_PAGINATION_DATA } from "../../../../utilities/constants";
+import { Paginator } from "../../../Shared/Paginator/Paginator";
+import { errorToast, successToast } from "../../../Shared/Toast";
 
 interface Props {
     items: PendingUser[];
@@ -27,7 +27,7 @@ export const UsersList = ({ items }: Props) => {
 
     const approve = async (id: number, approved: boolean) => {
         try {
-            let res = await approveUser(id, approved);
+            const res = await approveUser(id, approved);
             if (res) {
                 successToast(approved ? "User approved" : "User deleted");
                 await getPendingUsers();
@@ -36,7 +36,7 @@ export const UsersList = ({ items }: Props) => {
                 errorToast("Something went wrong");
             }
         } catch (error: any) {
-            let message =
+            const message =
                 error?.messages.length > 0
                     ? error.messages[0]
                     : "Something went wrong";

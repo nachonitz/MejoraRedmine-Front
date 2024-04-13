@@ -22,6 +22,7 @@ import { SprintFiltersModal } from "../../../components/Pages/Sprints/SprintFilt
 import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import { ListedResponseMetadata } from "../../../api/models/common";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
+import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 
 const defaultFilters: SprintFilter = {
     page: 1,
@@ -240,9 +241,24 @@ const ProjectSprints = () => {
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>
-                                <th className="text-left">Name</th>
-                                <th className="text-left">Start date</th>
-                                <th className="text-left">End date</th>
+                                <TableHeadItem
+                                    attribute="name"
+                                    setFilters={setFilters}
+                                >
+                                    Name
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="startDate"
+                                    setFilters={setFilters}
+                                >
+                                    Start date
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="endDate"
+                                    setFilters={setFilters}
+                                >
+                                    End date
+                                </TableHeadItem>
                                 <th className="text-left">Progress</th>
                             </tr>
                         </thead>

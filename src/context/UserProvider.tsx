@@ -14,7 +14,6 @@ interface Props {
 
 export const UserProvider = ({ children }: Props) => {
     const [user, setUser] = useState<User | null>(null);
-    const [apiKey, setApiKey] = useState(null);
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -65,13 +64,12 @@ export const UserProvider = ({ children }: Props) => {
     const logout = () => {
         localStorage.removeItem("user");
         setUser(null);
-        setApiKey(null);
         setIsLoggedIn(false);
         navigate("/login");
     };
 
     const updateUser = async (id: number, user: UpdateUserDto) => {
-        let updatedUser = await editUser(id, user);
+        const updatedUser = await editUser(id, user);
         if (!updatedUser) return false;
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));

@@ -26,7 +26,7 @@ export const RedmineUsers = () => {
         setOpenCreateUser(false);
         setOpenEditUser(false);
         if (refresh) {
-            let filter = { ...filters, login: searchText };
+            const filter = { ...filters, login: searchText };
             getUsers(filter);
         }
         setSelectedUser(undefined);
@@ -50,10 +50,10 @@ export const RedmineUsers = () => {
                 }
             }
         };
-    }, [searchText]);
+    }, [searchText, getUsers]);
 
     const handleSearch = () => {
-        let filter = { ...filters, login: searchText };
+        const filter = { ...filters, login: searchText };
         getUsers(filter);
     };
 

@@ -11,7 +11,7 @@ import { SprintFilter } from "../api/models/sprint";
 import { UserFilter } from "../api/models/user";
 
 // Add all filters here
-type Filters =
+export type Filters =
     | ProjectFilter
     | ReleaseFilter
     | SprintFilter

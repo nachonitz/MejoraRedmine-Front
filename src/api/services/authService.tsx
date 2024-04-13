@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { UpdateUserDto, User } from "../models/user";
+import { User } from "../models/user";
 
 export const login = async (
     username: string,

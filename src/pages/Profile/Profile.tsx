@@ -1,17 +1,13 @@
 import { useContext, useState } from "react";
-import { useParams } from "react-router-dom";
-
+import { CircularProgress, InputAdornment, TextField } from "@mui/material";
+import { IoLogInOutline } from "react-icons/io5";
+import { LiaIdCardSolid } from "react-icons/lia";
+import { MdOutlineMail } from "react-icons/md";
+import PrimaryButton from "../../components/Shared/Buttons/PrimaryButton";
 import Page from "../../components/Shared/Page/Page";
 import PageTitle from "../../components/Shared/Page/PageTitle/PageTitle";
-import Sidebar from "../../components/Shared/Sidebar/Sidebar";
-import { UserContext } from "../../context/UserContext";
-import { getFullDate } from "../../lib/utils";
-import { CircularProgress, InputAdornment, TextField } from "@mui/material";
-import PrimaryButton from "../../components/Shared/Buttons/PrimaryButton";
-import { IoLogInOutline } from "react-icons/io5";
-import { MdOutlineMail } from "react-icons/md";
-import { LiaIdCardSolid } from "react-icons/lia";
 import { errorToast, successToast } from "../../components/Shared/Toast";
+import { UserContext } from "../../context/UserContext";
 
 const Profile = () => {
     const { user, updateUser } = useContext(UserContext);

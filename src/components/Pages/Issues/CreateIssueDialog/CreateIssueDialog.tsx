@@ -10,31 +10,30 @@ import {
     TextField,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Enumeration,
     EnumerationType,
 } from "../../../../api/models/enumeration";
+import { Epic } from "../../../../api/models/epic";
 import { CreateIssueDto, IssueStatus } from "../../../../api/models/issue";
+import { ProjectMembership } from "../../../../api/models/membership";
+import { Release } from "../../../../api/models/release";
+import { Sprint } from "../../../../api/models/sprint";
 import { Tracker } from "../../../../api/models/tracker";
 import { getEnumerations } from "../../../../api/services/enumerationsService";
+import { getEpicById, getEpics } from "../../../../api/services/epicsService";
 import {
     createIssue,
     getIssuesStatuses,
     getTrackers,
 } from "../../../../api/services/issuesService";
-import { UserContext } from "../../../../context/UserContext";
+import { getMemberships } from "../../../../api/services/membershipsService";
+import { getReleases } from "../../../../api/services/releasesService";
+import { getSprints } from "../../../../api/services/sprintsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
-import { ProjectMembership } from "../../../../api/models/membership";
-import { getMemberships } from "../../../../api/services/membershipsService";
-import { Release } from "../../../../api/models/release";
-import { Sprint } from "../../../../api/models/sprint";
-import { Epic } from "../../../../api/models/epic";
-import { getSprints } from "../../../../api/services/sprintsService";
-import { getEpicById, getEpics } from "../../../../api/services/epicsService";
-import { getReleases } from "../../../../api/services/releasesService";
 
 interface CreateIssueDialogProps {
     open: boolean;
@@ -53,7 +52,6 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     sprintId,
     epicId,
 }) => {
-    const { user } = useContext(UserContext);
     const [releases, setReleases] = useState<Release[]>([]);
     const [sprints, setSprints] = useState<Sprint[]>([]);
     const [epics, setEpics] = useState<Epic[]>([]);
@@ -107,7 +105,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         const setIds = async () => {
             if (epicId) {
                 if (!sprintId || !releaseId) {
-                    let epic = await getEpicById(parseInt(epicId));
+                    const epic = await getEpicById(parseInt(epicId));
                     setSelectedReleaseId(epic.release?.id.toString());
                     setSelectedSprintId(epic.sprint?.id.toString());
                 }

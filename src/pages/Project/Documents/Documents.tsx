@@ -1,7 +1,8 @@
-import { LinearProgress, Pagination } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
+import { ListedResponseMetadata } from "../../../api/models/common";
 import { Document, DocumentFilter } from "../../../api/models/document";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import {
@@ -10,19 +11,19 @@ import {
 } from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
 import { getMyPermissions } from "../../../api/services/membershipsService";
+import { DocumentFiltersModal } from "../../../components/Pages/Documents/DocumentFiltersModal";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
+import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
 import DeleteDialog from "../../../components/Shared/DeleteDialog/DeleteDialog";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
+import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 import { getFullDate, hasAccess } from "../../../lib/utils";
-import { DocumentFiltersModal } from "../../../components/Pages/Documents/DocumentFiltersModal";
-import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
-import { ListedResponseMetadata } from "../../../api/models/common";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
-import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 
 const defaultFilters: DocumentFilter = {
     page: 1,
@@ -170,10 +171,25 @@ const Documents = () => {
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th className="w-[30px]"></th>
-                                <th className="text-left">Title</th>
+                                <TableHeadItem
+                                    attribute="title"
+                                    setFilters={setFilters}
+                                >
+                                    Name
+                                </TableHeadItem>
                                 <th className="text-left">Category</th>
-                                <th className="text-left">Created</th>
-                                <th className="text-left">Tags</th>
+                                <TableHeadItem
+                                    attribute="createdAt"
+                                    setFilters={setFilters}
+                                >
+                                    Created
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="tags"
+                                    setFilters={setFilters}
+                                >
+                                    Tags
+                                </TableHeadItem>
                             </tr>
                         </thead>
                         <tbody>

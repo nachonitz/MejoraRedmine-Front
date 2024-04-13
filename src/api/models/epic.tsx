@@ -29,7 +29,7 @@ export interface CreateEpicDto extends BaseEpic {
 export type UpdateEpicDto = Partial<CreateEpicDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Epic}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface EpicFilter extends PaginationFilters {
     name?: string;

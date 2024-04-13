@@ -20,7 +20,7 @@ export interface CreateReleaseDto extends BaseRelease {
 export type UpdateReleaseDto = Partial<CreateReleaseDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Release}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface ReleaseFilter extends PaginationFilters {
     name?: string;

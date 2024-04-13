@@ -51,7 +51,7 @@ export interface CreateRiskDto extends BaseRisk {
 export type UpdateRiskDto = Partial<CreateRiskDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Risk}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface RiskFilter extends PaginationFilters {
     name?: string;

@@ -43,7 +43,7 @@ export interface CreateIssueDto extends BaseIssue {
 export type UpdateIssueDto = Partial<CreateIssueDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Issue}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface IssueFilter extends PaginationFilters {
     subject?: string;
@@ -58,7 +58,7 @@ export interface IssueFilter extends PaginationFilters {
     estimation?: string;
     isEstimated?: boolean;
     order?: FilterOrder;
-    endDate?: string | string;
+    endDate?: Date | string;
 }
 
 export interface IssueStatus {

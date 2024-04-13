@@ -19,7 +19,7 @@ export type CreateProjectDto = BaseProject;
 export type UpdateProjectDto = BaseProject;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Project}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface ProjectFilter extends PaginationFilters {
     name?: string;

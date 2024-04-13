@@ -20,6 +20,7 @@ import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
 import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import { ListedResponseMetadata } from "../../../api/models/common";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
+import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 
 const defaultFilters: EpicFilter = {
     page: 1,
@@ -123,6 +124,12 @@ const ProjectEpics = () => {
         getUserPermissions();
     }, [getSprint, getUserPermissions, query]);
 
+    useEffect(() => {
+        query(filters);
+    }, [query, filters]);
+
+    console.log({ epics });
+
     return (
         <Sidebar>
             <Page>
@@ -216,7 +223,12 @@ const ProjectEpics = () => {
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>
-                                <th className="text-left">Name</th>
+                                <TableHeadItem
+                                    attribute="name"
+                                    setFilters={setFilters}
+                                >
+                                    Name
+                                </TableHeadItem>
                                 <th className="text-left">Progress</th>
                             </tr>
                         </thead>

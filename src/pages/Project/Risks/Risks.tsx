@@ -19,6 +19,7 @@ import { RiskFiltersModal } from "../../../components/Pages/Risks/RiskFiltersMod
 import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import { ListedResponseMetadata } from "../../../api/models/common";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
+import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 
 const defaultFilters: RiskFilter = {
     page: 1,
@@ -175,12 +176,47 @@ const Risks = () => {
                     <table className="w-full mt-[30px] border-collapse">
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
-                                <th className="text-center">Risk</th>
-                                <th className="text-center">Probability</th>
-                                <th className="text-center">Impact</th>
-                                <th className="text-center">Level</th>
-                                <th className="text-center">Status</th>
-                                <th className="text-center">Last updated</th>
+                                <TableHeadItem
+                                    attribute="name"
+                                    setFilters={setFilters}
+                                >
+                                    Risk
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="probability"
+                                    setFilters={setFilters}
+                                    align="center"
+                                >
+                                    Probability
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="impact"
+                                    setFilters={setFilters}
+                                    align="center"
+                                >
+                                    Impact
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="level"
+                                    setFilters={setFilters}
+                                    align="center"
+                                >
+                                    Level
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="status"
+                                    setFilters={setFilters}
+                                    align="center"
+                                >
+                                    Status
+                                </TableHeadItem>
+                                <TableHeadItem
+                                    attribute="updatedAt"
+                                    setFilters={setFilters}
+                                    align="center"
+                                >
+                                    Last updated
+                                </TableHeadItem>
                             </tr>
                         </thead>
                         <tbody>

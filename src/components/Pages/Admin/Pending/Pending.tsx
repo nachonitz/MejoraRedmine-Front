@@ -1,13 +1,7 @@
 import { LinearProgress } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { Searchbar } from "../../../Shared/Searchbar/Searchbar";
-import { PendingUser } from "../../../../api/models/user";
-import {
-    getPendingUsers,
-    getUsers,
-} from "../../../../api/services/usersService";
-import { UsersList } from "./UsersList";
+import { useContext } from "react";
 import { UsersContext } from "../../../../context/UsersContext";
+import { UsersList } from "./UsersList";
 
 export const Pending = () => {
     const { pendingUsers, pendingUsersCount, isLoading } =

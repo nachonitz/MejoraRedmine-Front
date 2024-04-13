@@ -1,19 +1,19 @@
 import { useState } from "react";
+import { IoMdCheckmark } from "react-icons/io";
 import { ListedResponseMetadata } from "../../../../api/models/common";
 import { User, UserFilter } from "../../../../api/models/user";
 import { getFullDate } from "../../../../lib/utils";
+import { DEFAULT_PAGINATION_DATA } from "../../../../utilities/constants";
 import SettingsButton from "../../../Shared/Buttons/SettingsButton";
 import { Paginator } from "../../../Shared/Paginator/Paginator";
-import { DEFAULT_PAGINATION_DATA } from "../../../../utilities/constants";
-import { LinearProgress } from "@mui/material";
-import { IoMdCheckmark } from "react-icons/io";
+import { TableHeadItem } from "../../../Shared/Table/TableHeadItem";
 
 interface Props {
     items: User[];
     onEdit: () => void;
     onSelected: (user: User) => void;
     filters: UserFilter;
-    setFilters: (filters: UserFilter) => void;
+    setFilters: React.Dispatch<React.SetStateAction<UserFilter>>;
 }
 
 export const UsersList = ({
@@ -31,10 +31,30 @@ export const UsersList = ({
                 <table className="w-full mt-[10px]" cellPadding={5}>
                     <thead>
                         <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
-                            <th className="text-left">User</th>
-                            <th className="text-left">Administrator</th>
-                            <th className="text-left">Created</th>
-                            <th className="text-left">Last connection</th>
+                            <TableHeadItem
+                                attribute="name"
+                                setFilters={setFilters}
+                            >
+                                User
+                            </TableHeadItem>
+                            <TableHeadItem
+                                attribute="admin"
+                                setFilters={setFilters}
+                            >
+                                Administrator
+                            </TableHeadItem>
+                            <TableHeadItem
+                                attribute="createdAt"
+                                setFilters={setFilters}
+                            >
+                                Created
+                            </TableHeadItem>
+                            <TableHeadItem
+                                attribute="createdAt"
+                                setFilters={setFilters}
+                            >
+                                Last connection
+                            </TableHeadItem>
                         </tr>
                     </thead>
                     <tbody>

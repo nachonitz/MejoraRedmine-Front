@@ -10,38 +10,37 @@ import {
     TextField,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import { useContext, useEffect, useState } from "react";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import {
     Enumeration,
     EnumerationType,
 } from "../../../../api/models/enumeration";
+import { Epic } from "../../../../api/models/epic";
 import {
     Issue,
     IssueStatus,
     UpdateIssueDto,
 } from "../../../../api/models/issue";
+import { ProjectMembership } from "../../../../api/models/membership";
+import { Release } from "../../../../api/models/release";
+import { Sprint } from "../../../../api/models/sprint";
 import { Tracker } from "../../../../api/models/tracker";
 import { getEnumerations } from "../../../../api/services/enumerationsService";
+import { getEpics } from "../../../../api/services/epicsService";
 import {
     editIssue,
     getIssueById,
     getIssuesStatuses,
     getTrackers,
 } from "../../../../api/services/issuesService";
-import { UserContext } from "../../../../context/UserContext";
+import { getMemberships } from "../../../../api/services/membershipsService";
+import { getReleases } from "../../../../api/services/releasesService";
+import { getSprints } from "../../../../api/services/sprintsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
-import { getMemberships } from "../../../../api/services/membershipsService";
-import { ProjectMembership } from "../../../../api/models/membership";
-import { Release } from "../../../../api/models/release";
-import { Sprint } from "../../../../api/models/sprint";
-import { Epic } from "../../../../api/models/epic";
-import { getReleases } from "../../../../api/services/releasesService";
-import { getSprints } from "../../../../api/services/sprintsService";
-import { getEpics } from "../../../../api/services/epicsService";
-import { DatePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
 
 interface EditIssueDialogProps {
     open: boolean;
@@ -56,7 +55,6 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     issueId,
     projectId,
 }) => {
-    const { user } = useContext(UserContext);
     const [releases, setReleases] = useState<Release[]>([]);
     const [sprints, setSprints] = useState<Sprint[]>([]);
     const [epics, setEpics] = useState<Epic[]>([]);

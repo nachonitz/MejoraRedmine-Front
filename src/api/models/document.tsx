@@ -25,11 +25,11 @@ export interface CreateDocumentDto extends BaseDocument {
 export type UpdateDocumentDto = Partial<CreateDocumentDto>;
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Document}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface DocumentFilter extends PaginationFilters {
     title?: string;
-    projectId: number;
+    projectId?: number;
     authorId?: number;
     categoryId?: number;
     tags?: string[];

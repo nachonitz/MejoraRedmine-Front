@@ -3,11 +3,10 @@ import {
     SortableContext,
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Issue } from "../../../../../api/models/issue";
-import IssueCard from "../IssueCard/IssueCard";
 import { LinearProgress } from "@mui/material";
-import { useEffect } from "react";
+import { Issue } from "../../../../../api/models/issue";
 import { Column } from "../Board";
+import IssueCard from "../IssueCard/IssueCard";
 
 type BoardSectionProps = {
     column: Column;

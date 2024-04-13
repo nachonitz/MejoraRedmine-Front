@@ -1,23 +1,13 @@
-import {
-    Box,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    Tab,
-    TextField,
-} from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, Tab } from "@mui/material";
+import { useEffect, useState } from "react";
+import { PendingUser, User, UserFilter } from "../../api/models/user";
+import { getPendingUsers, getUsers } from "../../api/services/usersService";
+import { Pending } from "../../components/Pages/Admin/Pending/Pending";
+import { RedmineUsers } from "../../components/Pages/Admin/Users/RedmineUsers";
 import AdminSidebar from "../../components/Shared/AdminSidebar/AdminSidebar";
 import Page from "../../components/Shared/Page/Page";
 import PageTitle from "../../components/Shared/Page/PageTitle/PageTitle";
-import PrimaryButton from "../../components/Shared/Buttons/PrimaryButton";
-import { LoadingIcon } from "../../components/Shared/Loading/LoadingIcon";
-import { useEffect, useState } from "react";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { RedmineUsers } from "../../components/Pages/Admin/Users/RedmineUsers";
-import { Pending } from "../../components/Pages/Admin/Pending/Pending";
-import { getPendingUsers, getUsers } from "../../api/services/usersService";
-import { PendingUser, User, UserFilter } from "../../api/models/user";
 import { UsersContext } from "../../context/UsersContext";
 
 const defaultFilters: UserFilter = {

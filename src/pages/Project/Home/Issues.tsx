@@ -28,6 +28,7 @@ import {
     getIssuePriorityColor,
 } from "../../../utilities/utilities";
 import AssignedCircle from "../../../components/Shared/AssignedCircle/AssignedCircle";
+import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 
 const defaultFilters: IssueFilter = {
     page: 1,
@@ -93,7 +94,7 @@ const ProjectIssues = () => {
                 throw new Error("Error. Please try again.");
             }
         },
-        [sprintId]
+        [epicId]
     );
 
     const goToIssue = (issue: Issue) => {
@@ -291,7 +292,12 @@ const ProjectIssues = () => {
                         <thead>
                             <tr className="text-[18px] border-b-[1px] border-b-[#ccc] h-[40px]">
                                 <th></th>
-                                <th className="text-left">Name</th>
+                                <TableHeadItem
+                                    attribute="subject"
+                                    setFilters={setFilters}
+                                >
+                                    Name
+                                </TableHeadItem>
                                 <th className="text-left">Status</th>
                                 <th className="text-left">Priority</th>
                                 <th className="text-left">Assigned to</th>

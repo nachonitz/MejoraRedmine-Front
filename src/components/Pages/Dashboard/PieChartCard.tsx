@@ -1,5 +1,4 @@
 import { PieChart } from "@mui/x-charts";
-import { useEffect, useState } from "react";
 
 interface Props {
     title: string;

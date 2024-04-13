@@ -8,6 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ToastContainerWrapper } from "./components/Shared/Toast/container.tsx";
+import { ActiveSortProvider } from "./context/ActiveSortContext.tsx";
 
 const theme = createTheme({
     typography: {
@@ -19,12 +20,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
         <Router>
             <UserProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <ThemeProvider theme={theme}>
-                        <App />
-                        <ToastContainerWrapper />
-                    </ThemeProvider>
-                </LocalizationProvider>
+                <ActiveSortProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <ThemeProvider theme={theme}>
+                            <App />
+                            <ToastContainerWrapper />
+                        </ThemeProvider>
+                    </LocalizationProvider>
+                </ActiveSortProvider>
             </UserProvider>
         </Router>
     </React.StrictMode>

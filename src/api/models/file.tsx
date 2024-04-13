@@ -25,7 +25,7 @@ export interface CreateFileDto extends BaseFile {
 }
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof File}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface FileFilter extends PaginationFilters {
     title?: string;

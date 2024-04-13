@@ -12,7 +12,7 @@ export interface Enumeration extends BaseEnumeration {
 }
 
 type AscDesc = "asc" | "desc";
-type FilterOrder = `${keyof Enumeration}:${AscDesc}`;
+type FilterOrder = `${string}:${AscDesc}`;
 
 export interface EnumerationFilter extends PaginationFilters {
     type?: string;
