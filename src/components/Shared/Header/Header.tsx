@@ -8,6 +8,7 @@ import { syncWithRedmine } from "../../../api/services/redmineService";
 import { infoToast, successToast } from "../Toast";
 import { CgProfile } from "react-icons/cg";
 import { IoMdLogOut } from "react-icons/io";
+import { ExternalAppList } from "./ExternalAppList";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -142,9 +143,12 @@ const Header = () => {
                                         <IoApps />
                                     </button>
                                     {appsMenuOpened && (
-                                        <div className="flex flex-col absolute top-[130%] right-[0] bg-white shadow-card text-[#444] py-[8px] w-[200px] h-[150px] rounded-[0.25rem] items-center text-[18px]">
-                                            <span>Applications</span>
+                                        <div className="flex flex-col absolute top-[130%] right-[0] bg-white shadow-card text-[#444] py-[8px] min-w-[300px] max-w-[600px] rounded-[0.25rem] items-center text-[18px]">
+                                            <span className="font-bold">
+                                                Applications
+                                            </span>
                                             <div className="absolute top-[-6px] right-[6%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
+                                            <ExternalAppList />
                                         </div>
                                     )}
                                 </div>
