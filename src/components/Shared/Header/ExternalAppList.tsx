@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { ExternalApplicationItem } from "../../../api/models/application";
 import { getApps } from "../../../api/services/applicationService";
 import { CircularProgress } from "@mui/material";
+import { getToken } from "../../../api/api";
+
+interface Props {
+    isLoggedIn: boolean;
+}
 
 const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength
@@ -9,7 +14,7 @@ const truncateText = (text: string, maxLength: number) => {
         : text;
 };
 
-export const ExternalAppList = () => {
+export const ExternalAppList = ({ isLoggedIn = false }: Props) => {
     const [applications, setApplications] = useState<ExternalApplicationItem[]>(
         []
     );
@@ -33,7 +38,9 @@ export const ExternalAppList = () => {
             {applications.map((app) => (
                 <a
                     className="flex items-center gap-2 p-2 m-1 hover:bg-black/5 rounded-md"
-                    href={app.url}
+                    href={
+                        isLoggedIn ? `${app.url}?token=${getToken()}` : app.url
+                    }
                 >
                     <img src={app.icon} alt={app.name} className="w-10 h-10" />
                     <div className="flex flex-col">
