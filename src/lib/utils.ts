@@ -44,6 +44,13 @@ export const getFullDate = (date: Date) => {
     return `${day}/${month}/${year}`;
 };
 
+export const getShortDate = (date: Date) => {
+    const d = new Date(date);
+    const month = `${d.getMonth() + 1}`.padStart(2, "0");
+    const day = `${d.getDate()}`.padStart(2, "0");
+    return `${day}/${month}`;
+};
+
 /**
  * Returns true if the user has access to all of the required permissions or if the
  * user is an admin. Gets the current user from local storage.
