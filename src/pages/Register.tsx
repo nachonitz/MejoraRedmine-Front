@@ -103,7 +103,7 @@ const Register = () => {
         } catch (error: any) {
             setPassword("");
             setConfirmpassword("");
-            if (!error.messages) {
+            if (!error.messages || error.status === 500) {
                 setErrorText("Error. Please try again.");
             } else {
                 setServerErrors(error.messages);
@@ -201,11 +201,15 @@ const Register = () => {
                             </PrimaryButton>
                             <div className="mt-2 min-h-[10px] text-left">
                                 <p className="text-red-700"> {errorText}</p>
-                                {serverErrors.map((error, index) => (
-                                    <div key={index}>
-                                        <p className="text-red-700"> {error}</p>
-                                    </div>
-                                ))}
+                                {serverErrors &&
+                                    serverErrors.map((error, index) => (
+                                        <div key={index}>
+                                            <p className="text-red-700">
+                                                {" "}
+                                                {error}
+                                            </p>
+                                        </div>
+                                    ))}
                             </div>
                         </div>
                         <div className="flex flex-row justify-center items-center gap-3">
