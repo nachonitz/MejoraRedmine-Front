@@ -33,7 +33,10 @@ const InfoDialog: React.FC<InfoDialogProps> = ({
                         {properties &&
                             properties.length > 0 &&
                             properties.map((property) => (
-                                <div className="flex flex-col gap-[2px]">
+                                <div
+                                    key={property.name}
+                                    className="flex flex-col gap-[2px]"
+                                >
                                     <div className="font-[500]">
                                         <span className="text-[#202124] text-[16px] font-[500]">
                                             {property?.name}:

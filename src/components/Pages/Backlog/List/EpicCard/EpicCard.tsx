@@ -109,7 +109,9 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                 >
                     {issues &&
                         issues.length > 0 &&
-                        issues.map((issue) => <IssueItem issue={issue} />)}
+                        issues.map((issue) => (
+                            <IssueItem key={issue.id} issue={issue} />
+                        ))}
                     {issues && issues.length === 0 && (
                         <div className="w-full border-t border-primary border-solid px-[20px] py-[5px] cursor-pointer flex justify-center">
                             <span>There are no issues yet.</span>

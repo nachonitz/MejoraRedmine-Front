@@ -211,6 +211,7 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
                         columns.map((column) => {
                             return (
                                 <IssuesColumn
+                                    key={column.name}
                                     column={column}
                                     loading={loading}
                                 />

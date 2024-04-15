@@ -40,7 +40,10 @@ const IssuesColumn = ({ column, loading }: BoardSectionProps) => {
                         >
                             {column.issues &&
                                 column.issues.map((issue: Issue) => (
-                                    <IssueCard key={issue.id} issue={issue} />
+                                    <IssueCard
+                                        key={issue.id.toString()}
+                                        issue={issue}
+                                    />
                                 ))}
                         </div>
                     </SortableContext>
