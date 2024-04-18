@@ -24,6 +24,10 @@ export interface CreateFileDto extends BaseFile {
     authorId?: number;
 }
 
+export interface RemoveFileFromDocDto {
+    fileIds: number[];
+}
+
 type AscDesc = "asc" | "desc";
 type FilterOrder = `${string}:${AscDesc}`;
 

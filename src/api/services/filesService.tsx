@@ -1,7 +1,12 @@
 import { filterToQueryParams } from "../../lib/utils";
 import { api } from "../api";
 import { ListedResponse } from "../models/common";
-import { CreateFileDto, File as RedmineFile, FileFilter } from "../models/file";
+import {
+    CreateFileDto,
+    File as RedmineFile,
+    FileFilter,
+    RemoveFileFromDocDto,
+} from "../models/file";
 
 export const getFiles = async (filter: FileFilter) => {
     const { data } = await api.get<ListedResponse<RedmineFile>>(
@@ -27,4 +32,8 @@ export const uploadFile = async (
 export const createFile = async (file: CreateFileDto): Promise<RedmineFile> => {
     const { data } = await api.post("/files", file);
     return data;
+};
+
+export const removeFilesFromDocument = async (dto: RemoveFileFromDocDto) => {
+    await api.patch("/files/remove-from-doc", dto);
 };

@@ -20,7 +20,11 @@ import {
     getDocumentById,
 } from "../../../api/services/documentsService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
-import { getFiles, uploadFile } from "../../../api/services/filesService";
+import {
+    getFiles,
+    removeFilesFromDocument,
+    uploadFile,
+} from "../../../api/services/filesService";
 import { FilePicker } from "../../../components/Shared/Dropzone/FilePicker";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
@@ -51,6 +55,7 @@ const EditDocument = () => {
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [existingFiles, setExistingFiles] = useState<RedmineFile[]>([]);
+    const [deletedFiles, setDeletedFiles] = useState<RedmineFile[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const clearErrors = () => {
@@ -108,6 +113,9 @@ const EditDocument = () => {
         };
         try {
             const res = await editDocument(+documentId!, document);
+            await removeFilesFromDocument({
+                fileIds: deletedFiles.map((f) => f.id),
+            });
             successToast("Document updated successfully");
             if (selectedFiles && selectedFiles.length > 0) {
                 infoToast("Uploading new attachments...");
@@ -252,7 +260,7 @@ const EditDocument = () => {
                                         <div className="ml-2">
                                             <IconButton
                                                 onClick={() => {
-                                                    const newselectedFiles =
+                                                    const newselectedFiles: RedmineFile[] =
                                                         existingFiles.filter(
                                                             (m) =>
                                                                 m.title !==
@@ -261,6 +269,18 @@ const EditDocument = () => {
                                                     setExistingFiles(
                                                         newselectedFiles
                                                     );
+                                                    const deletedFile =
+                                                        existingFiles.find(
+                                                            (m) =>
+                                                                m.title ===
+                                                                file.title
+                                                        );
+                                                    if (deletedFile) {
+                                                        setDeletedFiles([
+                                                            ...deletedFiles,
+                                                            deletedFile,
+                                                        ]);
+                                                    }
                                                 }}
                                                 component="label"
                                             >
