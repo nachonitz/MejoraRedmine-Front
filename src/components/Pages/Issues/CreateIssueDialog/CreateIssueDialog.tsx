@@ -93,6 +93,8 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    console.log({ memberships });
+
     const getProjectReleases = () => {
         getReleases({
             projectId: +projectId,
@@ -493,14 +495,14 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                             >
                                 {memberships &&
                                     memberships.map(
-                                        (user: ProjectMembership) => (
+                                        (membership: ProjectMembership) => (
                                             <MenuItem
-                                                key={user.id}
-                                                value={user.id}
+                                                key={membership.id}
+                                                value={membership.user.id}
                                             >
-                                                {user.user.firstname +
+                                                {membership.user.firstname +
                                                     " " +
-                                                    user.user.lastname}
+                                                    membership.user.lastname}
                                             </MenuItem>
                                         )
                                     )}
