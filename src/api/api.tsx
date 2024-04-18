@@ -55,4 +55,9 @@ export const getToken = () => {
     return user ? JSON.parse(user).api_key : "";
 };
 
+export const getUserId = () => {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user).id : "";
+};
+
 export { axiosInstance as api };
