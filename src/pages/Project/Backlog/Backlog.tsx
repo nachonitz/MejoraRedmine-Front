@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, LinearProgress, Tab, Tabs } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Epic, EpicFilter } from "../../../api/models/epic";
@@ -291,21 +291,32 @@ const Backlog = () => {
                     }}
                 >
                     <div className="mt-[30px] mb-[10px]">
-                        <div hidden={tab !== "kanban"}>
-                            <Board
-                                issues={issuesAndEpics.allIssues}
-                                statuses={statuses}
-                                refresh={refresh}
-                                loading={false}
-                            />
-                        </div>
-                        <div hidden={tab !== "list"}>
-                            <List
-                                issues={issuesAndEpics.issuesWithoutEpic}
-                                epics={issuesAndEpics.epics}
-                                loading={false}
-                            />
-                        </div>
+                        {isLoading && (
+                            <div>
+                                <LinearProgress />
+                            </div>
+                        )}
+                        {!isLoading && (
+                            <div>
+                                <div hidden={tab !== "kanban"}>
+                                    <Board
+                                        issues={issuesAndEpics.allIssues}
+                                        statuses={statuses}
+                                        refresh={refresh}
+                                        loading={false}
+                                    />
+                                </div>
+                                <div hidden={tab !== "list"}>
+                                    <List
+                                        issues={
+                                            issuesAndEpics.issuesWithoutEpic
+                                        }
+                                        epics={issuesAndEpics.epics}
+                                        loading={false}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </BacklogContext.Provider>
             </Page>

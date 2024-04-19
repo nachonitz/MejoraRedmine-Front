@@ -10,7 +10,7 @@ import { Issue, IssueFilter } from "../../../api/models/issue";
 import { getSprints } from "../../../api/services/sprintsService";
 import { Sprint, SprintFilter } from "../../../api/models/sprint";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Tab } from "@mui/material";
+import { Box, CircularProgress, LinearProgress, Tab } from "@mui/material";
 import ProjectDashboard from "../../../components/Pages/Dashboard/ProjectDashboard";
 import SprintsDashboard from "../../../components/Pages/Dashboard/SprintsDashboard";
 
@@ -35,6 +35,7 @@ const Dashboard = () => {
     const [sprints, setSprints] = useState<Sprint[]>();
     const [issues, setIssues] = useState<Issue[]>();
     const [dashboardView, setDashboardView] = useState("1");
+    const [loading, setLoading] = useState(true);
 
     const getAllReleasesForProject = async () => {
         if (projectId) {
@@ -67,6 +68,7 @@ const Dashboard = () => {
     };
 
     const setUpDashboardsData = async () => {
+        setLoading(true);
         let releases = await getAllReleasesForProject();
         if (releases) {
             setReleases(releases);
@@ -79,6 +81,7 @@ const Dashboard = () => {
         if (sprints) {
             setSprints(sprints);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -106,24 +109,35 @@ const Dashboard = () => {
                                 <Tab label="Sprints" value="2" />
                             </TabList>
                         </Box>
-                        <TabPanel value="1">
-                            {releases && sprints && issues && (
-                                <ProjectDashboard
-                                    releases={releases}
-                                    sprints={sprints}
-                                    issues={issues}
-                                />
-                            )}
-                        </TabPanel>
-                        <TabPanel value="2">
-                            {releases && sprints && issues && (
-                                <SprintsDashboard
-                                    releases={releases}
-                                    sprints={sprints}
-                                    issues={issues}
-                                />
-                            )}
-                        </TabPanel>
+                        {loading && (
+                            <>
+                                <div className="mt-10">
+                                    <LinearProgress />
+                                </div>
+                            </>
+                        )}
+                        {!loading && (
+                            <div>
+                                <TabPanel value="1">
+                                    {releases && sprints && issues && (
+                                        <ProjectDashboard
+                                            releases={releases}
+                                            sprints={sprints}
+                                            issues={issues}
+                                        />
+                                    )}
+                                </TabPanel>
+                                <TabPanel value="2">
+                                    {releases && sprints && issues && (
+                                        <SprintsDashboard
+                                            releases={releases}
+                                            sprints={sprints}
+                                            issues={issues}
+                                        />
+                                    )}
+                                </TabPanel>
+                            </div>
+                        )}
                     </TabContext>
                 </div>
             </Page>
