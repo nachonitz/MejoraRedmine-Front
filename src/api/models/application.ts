@@ -4,3 +4,8 @@ export interface ExternalApplicationItem {
     description: string;
     url: string;
 }
+
+export interface ApplicationInfo {
+    app_title: string;
+    welcome_text: string;
+}

@@ -1,27 +1,64 @@
-import {
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
-} from "@mui/material";
+import { TextField } from "@mui/material";
 import AdminSidebar from "../../components/Shared/AdminSidebar/AdminSidebar";
 import Page from "../../components/Shared/Page/Page";
 import PageTitle from "../../components/Shared/Page/PageTitle/PageTitle";
 import PrimaryButton from "../../components/Shared/Buttons/PrimaryButton";
 import { LoadingIcon } from "../../components/Shared/Loading/LoadingIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+    getAppInfo,
+    updateAppInfo,
+} from "../../api/services/applicationService";
+import { errorToast, successToast } from "../../components/Shared/Toast";
 
 const Information = () => {
     const [title, setTitle] = useState("");
-    const [path, setPath] = useState("");
-    const [protocol, setProtocol] = useState("");
+    const [welcome, setWelcome] = useState("");
 
     const [errorTitle, setErrorTitle] = useState(false);
-    const [errorPath, setErrorPath] = useState(false);
-    const [errorProtocol, setErrorProtocol] = useState(false);
+    const [errorWelcome, setErrorWelcome] = useState(false);
 
     const [isLoading, setLoading] = useState<boolean>(false);
+
+    const checkErrors = () => {
+        let errors = false;
+        if (!title) {
+            setErrorTitle(true);
+            errors = true;
+        }
+        if (!welcome) {
+            setErrorWelcome(true);
+            errors = true;
+        }
+        return errors;
+    };
+
+    const updateApplicationInfo = async () => {
+        let errors = checkErrors();
+        if (errors) return;
+        setErrorTitle(false);
+        setErrorWelcome(false);
+        setLoading(true);
+        try {
+            await updateAppInfo({ app_title: title, welcome_text: welcome });
+            successToast("Settings updated successfully");
+        } catch (error: any) {
+            console.log(error);
+            errorToast("Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getApplicationInfo = async () => {
+        const info = await getAppInfo();
+        setTitle(info.app_title);
+        setWelcome(info.welcome_text);
+    };
+
+    useEffect(() => {
+        getApplicationInfo();
+    }, []);
 
     return (
         <AdminSidebar>
@@ -36,44 +73,21 @@ const Information = () => {
                                 value={title}
                                 className="w-full"
                                 id="title"
-                                label="Title"
+                                label="App Title"
                                 variant="outlined"
                             />
                             <TextField
-                                onChange={(e) => setPath(e.target.value)}
-                                error={errorPath}
-                                value={path}
+                                onChange={(e) => setWelcome(e.target.value)}
+                                error={errorWelcome}
+                                value={welcome}
                                 className="w-full"
-                                id="path"
-                                label="Path"
+                                id="welcome"
+                                label="Welcome Text"
                                 variant="outlined"
                             />
-                            <FormControl>
-                                <InputLabel
-                                    id="protocol-label"
-                                    error={errorProtocol}
-                                >
-                                    Protocol
-                                </InputLabel>
-                                <Select
-                                    labelId="protocol-label"
-                                    value={protocol}
-                                    label="Protocol"
-                                    error={errorProtocol}
-                                    onChange={(e) =>
-                                        setProtocol(e.target.value as string)
-                                    }
-                                    defaultValue={protocol}
-                                >
-                                    <MenuItem value={"HTTP"}>HTTP</MenuItem>
-                                    <MenuItem value={"HTTP"}>HTTPS</MenuItem>
-                                </Select>
-                            </FormControl>
                         </div>
                         <div>
-                            <PrimaryButton
-                                onClick={() => setLoading(!isLoading)}
-                            >
+                            <PrimaryButton onClick={updateApplicationInfo}>
                                 {isLoading ? <LoadingIcon /> : "Save"}
                             </PrimaryButton>
                         </div>
