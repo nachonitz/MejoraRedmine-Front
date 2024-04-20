@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import PrimaryButton from "../components/Shared/Buttons/PrimaryButton";
 import { UserContext } from "../context/UserContext";
 import { AppInfoContext } from "../context/AppInfoContext";
+import PendingApprovalDialogDialog from "../components/Pages/Register/CreateReleaseDialog/PendingApprovalDialog";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -23,6 +24,8 @@ const Register = () => {
     const [errorFirstname, setErrorFirstname] = useState(false);
     const [errorLastname, setErrorLastname] = useState(false);
     const { register } = useContext(UserContext);
+    const [openPendingApprovalDialog, setOpenPendingApprovalDialog] =
+        useState(false);
 
     const clearErrors = () => {
         setErrorText("");
@@ -96,7 +99,7 @@ const Register = () => {
                 lastname
             );
             if (response) {
-                navigate("/login");
+                setOpenPendingApprovalDialog(true);
             } else {
                 setPassword("");
                 setConfirmpassword("");
@@ -121,6 +124,7 @@ const Register = () => {
 
     return (
         <div className="flex justify-center w-full m-page-vertical">
+            {<PendingApprovalDialogDialog open={openPendingApprovalDialog} />}
             <div className="w-[420px] shadow-login py-[36px] px-[50px] box-border">
                 <div className="flex flex-col items-center gap-[60px]">
                     <div>
