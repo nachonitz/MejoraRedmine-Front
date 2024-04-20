@@ -148,7 +148,7 @@ const Header = () => {
                                             <span className="font-bold">
                                                 Applications
                                             </span>
-                                            <div className="absolute top-[-6px] right-[6%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
+                                            <div className="absolute top-[-6px] right-[4%] border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-white"></div>
                                             <ExternalAppList
                                                 isLoggedIn={isLoggedIn}
                                             />
