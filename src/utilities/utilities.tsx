@@ -16,8 +16,8 @@ export const getIssueIcon = (issueType: string) => {
             return "/src/assets/icons/bug-icon.png";
         case "Feature":
             return "/src/assets/icons/user-story-icon.png";
-        case "Task":
-            return "/src/assets/icons/user-story-icon.png";
+        case "Support":
+            return "/src/assets/icons/support-icon.png";
     }
 };
 
