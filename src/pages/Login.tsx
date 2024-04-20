@@ -4,9 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import PrimaryButton from "../components/Shared/Buttons/PrimaryButton";
 import { UserContext } from "../context/UserContext";
 import { errorToast } from "../components/Shared/Toast";
+import { AppInfoContext } from "../context/AppInfoContext";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { title } = useContext(AppInfoContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [wrongCredentials, setWrongCredentials] = useState(false);
@@ -48,7 +50,7 @@ const Login = () => {
                 <div className="flex flex-col items-center gap-[60px]">
                     <div>
                         <p className="text-primary text-3xl text-center">
-                            REDMINE
+                            {title}
                         </p>
                     </div>
                     <div

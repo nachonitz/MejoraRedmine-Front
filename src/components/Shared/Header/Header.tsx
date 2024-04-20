@@ -9,16 +9,17 @@ import { infoToast, successToast } from "../Toast";
 import { CgProfile } from "react-icons/cg";
 import { IoMdLogOut } from "react-icons/io";
 import { ExternalAppList } from "./ExternalAppList";
+import { AppInfoContext } from "../../../context/AppInfoContext";
 
 const Header = () => {
     const navigate = useNavigate();
+    const { title } = useContext(AppInfoContext);
     const { user, isLoggedIn, logout } = useContext(UserContext);
     const [profileMenuOpened, setProfileMenuOpened] = useState(false);
     const [appsMenuOpened, setAppsMenuOpened] = useState(false);
     const profileDropdownRef = useRef<HTMLDivElement>(null);
     const appsDropdownRef = useRef<HTMLDivElement>(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleOutsideClick = (event: any) => {
         if (
             profileDropdownRef.current &&
@@ -83,7 +84,7 @@ const Header = () => {
                             className="text-white text-2xl hover:bg-white/10 
                         font-bold h-full px-4 -translate-x-4"
                         >
-                            Redmine
+                            {title}
                         </button>
                     </Link>
                     {isLoggedIn && (

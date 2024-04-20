@@ -4,14 +4,17 @@ import Page from "../../components/Shared/Page/Page";
 import PageTitle from "../../components/Shared/Page/PageTitle/PageTitle";
 import PrimaryButton from "../../components/Shared/Buttons/PrimaryButton";
 import { LoadingIcon } from "../../components/Shared/Loading/LoadingIcon";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     getAppInfo,
     updateAppInfo,
 } from "../../api/services/applicationService";
 import { errorToast, successToast } from "../../components/Shared/Toast";
+import { AppInfoContext } from "../../context/AppInfoContext";
 
 const Information = () => {
+    const { getAppInfo: getApplicationInformation } =
+        useContext(AppInfoContext);
     const [title, setTitle] = useState("");
     const [welcome, setWelcome] = useState("");
 
@@ -41,6 +44,7 @@ const Information = () => {
         setLoading(true);
         try {
             await updateAppInfo({ app_title: title, welcome_text: welcome });
+            await getApplicationInformation();
             successToast("Settings updated successfully");
         } catch (error: any) {
             console.log(error);
