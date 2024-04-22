@@ -63,10 +63,10 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
 
     return (
         <div>
-            <div className="w-full flex flex-col box-content border border-primary border-solid rounded-[0.25rem]">
+            <div className="w-full flex flex-col box-content border border-[#F3F7FF] bg-[#F3F7FF] shadow-userStory border-solid rounded-[0.25rem]">
                 <div
                     onClick={toggleContent}
-                    className="flex items-center justify-between p-[5px] cursor-pointer select-none rounded-[10px] hover:bg-[#fafafa]"
+                    className="flex items-center justify-between p-[5px] cursor-pointer select-none rounded-[10px] hover:bg-[#ebf2ff]"
                 >
                     <div className="flex gap-[2px] items-center">
                         <img
@@ -107,16 +107,18 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                         transition: "max-height 0.2s ease-in-out",
                     }}
                 >
-                    {issues &&
-                        issues.length > 0 &&
-                        issues.map((issue) => (
-                            <IssueItem key={issue.id} issue={issue} />
-                        ))}
-                    {issues && issues.length === 0 && (
-                        <div className="w-full border-t border-primary border-solid px-[20px] py-[5px] cursor-pointer flex justify-center">
-                            <span>There are no issues yet.</span>
-                        </div>
-                    )}
+                    <div className="pt-[5px] pb-[5px]">
+                        {issues &&
+                            issues.length > 0 &&
+                            issues.map((issue) => (
+                                <IssueItem key={issue.id} issue={issue} />
+                            ))}
+                        {issues && issues.length === 0 && (
+                            <div className="w-full px-[20px] py-[5px] cursor-pointer flex justify-center">
+                                <span>There are no issues yet.</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
