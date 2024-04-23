@@ -24,15 +24,15 @@ export const getIssueIcon = (issueType: string) => {
 export const getIssuePriorityColor = (issuePriority: string) => {
     switch (issuePriority) {
         case "Low":
-            return "#43B000";
+            return "#B5EAD7";
         case "Normal":
-            return "#FFAA04";
+            return "#E2F0CB";
         case "High":
-            return "#E80000";
+            return "#FFDAc1";
         case "Urgent":
-            return "#B90000";
+            return "#FFB7B2";
         case "Immediate":
-            return "#890000";
+            return "#FF9AA2";
     }
 };
 
@@ -42,7 +42,7 @@ export const getPriorityIcon = (issuePriority: string) => {
             return (
                 <Tooltip title="Low Priority">
                     <div>
-                        <MdOutlineKeyboardArrowDown className="text-[#43B000] text-[18px]" />
+                        <MdOutlineKeyboardArrowDown className="text-[#B5EAD7] brightness-90 text-[18px]" />
                     </div>
                 </Tooltip>
             );
@@ -50,7 +50,7 @@ export const getPriorityIcon = (issuePriority: string) => {
             return (
                 <Tooltip title="Normal Priority">
                     <div>
-                        <VscCircleFilled className="text-[#FFAA04] text-[18px]" />
+                        <VscCircleFilled className="text-[#E2F0CB] brightness-90 text-[18px]" />
                     </div>
                 </Tooltip>
             );
@@ -58,7 +58,7 @@ export const getPriorityIcon = (issuePriority: string) => {
             return (
                 <Tooltip title="High Priority">
                     <div>
-                        <MdKeyboardArrowUp className="text-[#E80000] text-[18px]" />
+                        <MdKeyboardArrowUp className="text-[#FFDAc1] brightness-90 text-[18px]" />
                     </div>
                 </Tooltip>
             );
@@ -67,7 +67,7 @@ export const getPriorityIcon = (issuePriority: string) => {
             return (
                 <Tooltip title="Urgent Priority">
                     <div>
-                        <MdKeyboardDoubleArrowUp className="text-[#B90000] text-[18px]" />
+                        <MdKeyboardDoubleArrowUp className="text-[#FFB7B2] brightness-90 text-[18px]" />
                     </div>
                 </Tooltip>
             );
@@ -75,7 +75,7 @@ export const getPriorityIcon = (issuePriority: string) => {
             return (
                 <Tooltip title="Immediate Priority">
                     <div>
-                        <AiOutlineExclamation className="text-[#890000] text-[18px]" />
+                        <AiOutlineExclamation className="text-[#FF9AA2] brightness-90 text-[18px]" />
                     </div>
                 </Tooltip>
             );
@@ -85,17 +85,17 @@ export const getPriorityIcon = (issuePriority: string) => {
 export const getIssueStatusBackgroundColor = (issueStatus: string) => {
     switch (issueStatus) {
         case "New":
-            return "#8A8A8A";
+            return "#CCCCCC";
         case "In Progress":
-            return "#FFAA04";
+            return "#E2F0CB";
         case "Resolved":
-            return "#086700";
+            return "#B5EAD7";
         case "Feedback":
-            return "#086700";
+            return "#B5EAD7";
         case "Closed":
-            return "#086700";
+            return "#B5EAD7";
         case "Rejected":
-            return "#FF0000";
+            return "#FF9AA2";
     }
 };
 

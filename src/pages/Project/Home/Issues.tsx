@@ -324,14 +324,7 @@ const ProjectIssues = () => {
                                         {issue.subject}
                                     </td>
                                     <td>{issue.status.name}</td>
-                                    <td
-                                        style={{
-                                            color: getIssuePriorityColor(
-                                                issue.priority["name"]
-                                            ),
-                                        }}
-                                        className="text-left"
-                                    >
+                                    <td className="text-left">
                                         {issue.priority["name"]}
                                     </td>
                                     <td>

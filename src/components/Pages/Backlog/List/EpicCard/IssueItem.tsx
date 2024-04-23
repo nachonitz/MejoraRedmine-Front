@@ -3,6 +3,7 @@ import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import {
     getIssueIcon,
     getIssuePriorityColor,
+    getIssuePriorityTextColor,
     getIssueStatusBackgroundColor,
 } from "../../../../../utilities/utilities";
 import { useContext } from "react";
@@ -40,7 +41,7 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
 
                         <div className="w-[25%] flex items-center">
                             <div
-                                className="w-[120px] text-white flex justify-center items-center rounded-[15px] text-[14px] p-[3px]"
+                                className="w-[120px] flex justify-center items-center rounded-[15px] text-[14px] p-[3px]"
                                 style={{
                                     backgroundColor:
                                         getIssueStatusBackgroundColor(
@@ -54,7 +55,7 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
 
                         <div className="w-[25%]">
                             <div
-                                className="w-[150px] text-white flex justify-center items-center rounded-[15px] text-[14px] p-[3px] text-center"
+                                className="w-[150px] flex justify-center items-center rounded-[15px] text-[14px] p-[3px] text-center"
                                 style={{
                                     background: getIssuePriorityColor(
                                         issue.priority.name
