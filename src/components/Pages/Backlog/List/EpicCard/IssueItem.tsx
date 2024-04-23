@@ -5,6 +5,7 @@ import {
     getIssuePriorityColor,
     getIssuePriorityTextColor,
     getIssueStatusBackgroundColor,
+    getIssueStatusTextColor,
 } from "../../../../../utilities/utilities";
 import { useContext } from "react";
 import { BacklogContext } from "../../../../../context/BacklogContext";
@@ -47,6 +48,9 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
                                         getIssueStatusBackgroundColor(
                                             issue.status.name
                                         ),
+                                    color: getIssueStatusTextColor(
+                                        issue.status.name
+                                    ),
                                 }}
                             >
                                 <span>{issue.status.name}</span>
@@ -58,6 +62,9 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
                                 className="w-[150px] flex justify-center items-center rounded-[15px] text-[14px] p-[3px] text-center"
                                 style={{
                                     background: getIssuePriorityColor(
+                                        issue.priority.name
+                                    ),
+                                    color: getIssuePriorityTextColor(
                                         issue.priority.name
                                     ),
                                 }}

@@ -28,6 +28,14 @@ export const RISK_COLOR: Record<RiskLevel, string> = {
     [RiskLevel.VERY_HIGH]: "#FF9AA2",
 };
 
+export const RISK_TEXT_COLOR: Record<RiskLevel, string> = {
+    [RiskLevel.VERY_LOW]: "#0d5038",
+    [RiskLevel.LOW]: "#1e6d51",
+    [RiskLevel.MEDIUM]: "#4d573c",
+    [RiskLevel.HIGH]: "#7f252c",
+    [RiskLevel.VERY_HIGH]: "#64211d",
+};
+
 export interface BaseRisk {
     name: string;
     description?: string;

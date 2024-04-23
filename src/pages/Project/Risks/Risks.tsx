@@ -1,7 +1,12 @@
 import { LinearProgress } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { RISK_COLOR, Risk, RiskFilter } from "../../../api/models/risk";
+import {
+    RISK_COLOR,
+    RISK_TEXT_COLOR,
+    Risk,
+    RiskFilter,
+} from "../../../api/models/risk";
 import { getMyPermissions } from "../../../api/services/membershipsService";
 import { deleteRisk, getRisks } from "../../../api/services/risksService";
 import CreateRiskDialog from "../../../components/Pages/Risks/CreateRiskDialog/CreateRiskDialog";
@@ -233,17 +238,19 @@ const Risks = () => {
                                     </td>
                                     <td
                                         style={{
-                                            color: RISK_COLOR[risk.probability],
+                                            color: RISK_TEXT_COLOR[
+                                                risk.probability
+                                            ],
                                         }}
-                                        className="text-center brightness-[0.85]"
+                                        className="text-center brightness-[1]"
                                     >
                                         {risk.probability}
                                     </td>
                                     <td
                                         style={{
-                                            color: RISK_COLOR[risk.impact],
+                                            color: RISK_TEXT_COLOR[risk.impact],
                                         }}
-                                        className="text-center brightness-[0.85]"
+                                        className="text-center brightness-[1]"
                                     >
                                         {risk.impact}
                                     </td>
@@ -253,6 +260,9 @@ const Risks = () => {
                                                 style={{
                                                     backgroundColor:
                                                         RISK_COLOR[risk.level],
+                                                    color: RISK_TEXT_COLOR[
+                                                        risk.level
+                                                    ],
                                                 }}
                                                 className="rounded-[18px] p-1 bg-red-500 w-[150px] text-[16px]"
                                             >
