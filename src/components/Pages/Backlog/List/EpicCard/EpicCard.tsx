@@ -114,7 +114,7 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                                 <IssueItem key={issue.id} issue={issue} />
                             ))}
                         {issues && issues.length === 0 && (
-                            <div className="w-full px-[20px] py-[5px] cursor-pointer flex justify-center">
+                            <div className="w-full px-[20px] py-[5px] cursor-pointer flex justify-center text-gray-500">
                                 <span>There are no issues yet.</span>
                             </div>
                         )}
