@@ -21,11 +21,11 @@ export enum RiskLevel {
 }
 
 export const RISK_COLOR: Record<RiskLevel, string> = {
-    [RiskLevel.VERY_LOW]: "#338800",
-    [RiskLevel.LOW]: "#43B000",
-    [RiskLevel.MEDIUM]: "#FFAA04",
-    [RiskLevel.HIGH]: "#E80000",
-    [RiskLevel.VERY_HIGH]: "#c30000",
+    [RiskLevel.VERY_LOW]: "#95d9c1",
+    [RiskLevel.LOW]: "#B5EAD7",
+    [RiskLevel.MEDIUM]: "#E2F0CB",
+    [RiskLevel.HIGH]: "#FFB7B2",
+    [RiskLevel.VERY_HIGH]: "#FF9AA2",
 };
 
 export interface BaseRisk {

@@ -235,7 +235,7 @@ const Risks = () => {
                                         style={{
                                             color: RISK_COLOR[risk.probability],
                                         }}
-                                        className="text-center"
+                                        className="text-center brightness-[0.85]"
                                     >
                                         {risk.probability}
                                     </td>
@@ -243,7 +243,7 @@ const Risks = () => {
                                         style={{
                                             color: RISK_COLOR[risk.impact],
                                         }}
-                                        className="text-center"
+                                        className="text-center brightness-[0.85]"
                                     >
                                         {risk.impact}
                                     </td>
@@ -254,7 +254,7 @@ const Risks = () => {
                                                     backgroundColor:
                                                         RISK_COLOR[risk.level],
                                                 }}
-                                                className="rounded-[18px] p-1 bg-red-500 text-white w-[120px]"
+                                                className="rounded-[18px] p-1 bg-red-500 w-[150px] text-[16px]"
                                             >
                                                 {risk.level}
                                             </div>
