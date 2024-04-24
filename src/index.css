@@ -9,3 +9,23 @@
         @apply font-primary;
     }
 }
+
+.column::-webkit-scrollbar {
+    width: 5px;
+    padding: 10px;
+}
+
+/* Track */
+.column::-webkit-scrollbar-track {
+    border-radius: 5px;
+}
+
+/* Handle */
+.column::-webkit-scrollbar-thumb {
+    background: #9fafdb;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+.column::-webkit-scrollbar-thumb:hover {
+}

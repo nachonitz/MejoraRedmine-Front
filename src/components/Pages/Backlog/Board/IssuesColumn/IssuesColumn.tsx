@@ -25,7 +25,7 @@ const IssuesColumn = ({ column, loading }: BoardSectionProps) => {
                     {column.name}
                 </span>
             </div>
-            <div className="w-full">
+            <div className="w-full overflow-y-auto column">
                 {loading ? (
                     <LinearProgress />
                 ) : (
