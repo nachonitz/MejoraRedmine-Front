@@ -47,10 +47,13 @@ export const getIssuesStatuses = async (): Promise<IssueStatus[]> => {
     return data;
 };
 
-export const changeIssueStatus = async (issueId: number, statusId: number): Promise<Issue> => {
+export const changeIssueStatus = async (
+    issueId: number,
+    statusId: number
+): Promise<Issue> => {
     const response = await api.patch(`/issues/${issueId}`, {
         statusId: statusId,
     });
-    const editedIssue: Issue = response.data.issue;
+    const editedIssue: Issue = response.data;
     return editedIssue;
-}
+};
