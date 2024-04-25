@@ -18,22 +18,7 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
     const [opened, setOpened] = useState<boolean>(false);
     const contentRef = useRef(null);
     const [contentHeight, setContentHeight] = useState("0px");
-    const [issues, setIssues] = useState<Issue[]>([]);
     const [overflow, setOveflow] = useState<string>("hidden");
-
-    const getEpicIssues = async () => {
-        try {
-            if (epic.id) {
-                const { data: issues } = await getIssues({
-                    epicId: epic.id,
-                });
-                setIssues(issues.items);
-                return issues;
-            }
-        } catch (error) {
-            throw new Error("Error. Please try again.");
-        }
-    };
 
     const toggleContent = () => {
         console.log(opened);
@@ -56,10 +41,6 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
             setTimeout(handleChangeOverflow, 200);
         }
     }, [opened]);
-
-    useEffect(() => {
-        getEpicIssues();
-    }, [epic]);
 
     return (
         <div>
@@ -100,20 +81,18 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                     className="w-full"
                     ref={contentRef}
                     style={{
-                        // height: contentHeight,
-                        // display: opened ? "block" : "none",
                         overflow: opened ? overflow : "hidden",
                         maxHeight: contentHeight,
                         transition: "max-height 0.2s ease-in-out",
                     }}
                 >
                     <div className="pt-[5px] pb-[5px]">
-                        {issues &&
-                            issues.length > 0 &&
-                            issues.map((issue) => (
+                        {epic.issues &&
+                            epic.issues.length > 0 &&
+                            epic.issues.map((issue) => (
                                 <IssueItem key={issue.id} issue={issue} />
                             ))}
-                        {issues && issues.length === 0 && (
+                        {epic.issues && epic.issues.length === 0 && (
                             <div className="w-full px-[20px] py-[5px] cursor-pointer flex justify-center text-gray-500">
                                 <span>There are no issues yet.</span>
                             </div>

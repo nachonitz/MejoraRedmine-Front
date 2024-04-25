@@ -67,6 +67,35 @@ const Backlog = () => {
 
     const [tab, setTab] = useState<string>("kanban");
 
+    const handleIssueStatusChanged = (issue: Issue) => {
+        setIssuesAndEpics(
+            (prev: {
+                allIssues: Issue[];
+                issuesWithoutEpic: Issue[];
+                epics: Epic[];
+            }) => {
+                const allIssues = prev.allIssues.map((prevIssue) =>
+                    prevIssue.id === issue.id ? issue : prevIssue
+                );
+                const issuesWithoutEpic = prev.issuesWithoutEpic.map(
+                    (prevIssue) =>
+                        prevIssue.id === issue.id ? issue : prevIssue
+                );
+                const epics = prev.epics.map((epic) => {
+                    epic.issues = epic.issues?.map((epicIssue) =>
+                        epicIssue.id === issue.id ? issue : epicIssue
+                    );
+                    return epic;
+                });
+                return {
+                    allIssues,
+                    issuesWithoutEpic,
+                    epics: epics,
+                };
+            }
+        );
+    };
+
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
     };
@@ -105,7 +134,11 @@ const Backlog = () => {
                         ...(filters as EpicFilter),
                         projectId: parseInt(projectId),
                     });
-                    setIssuesAndEpicsState(issues.items, epics.items);
+                    let epicsList = epics.items.map((epic) => {
+                        epic.issues = [];
+                        return epic;
+                    });
+                    setIssuesAndEpicsState(issues.items, epicsList);
                     setIsLoading(false);
                 }
             } catch (error) {
@@ -304,6 +337,9 @@ const Backlog = () => {
                                         statuses={statuses}
                                         refresh={refresh}
                                         loading={false}
+                                        handleIssueStatusChanged={
+                                            handleIssueStatusChanged
+                                        }
                                     />
                                 </div>
                                 <div hidden={tab !== "list"}>

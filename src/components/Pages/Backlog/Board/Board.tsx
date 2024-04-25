@@ -29,9 +29,16 @@ interface BoardProps {
     statuses: IssueStatus[];
     refresh: () => void;
     loading: boolean;
+    handleIssueStatusChanged: (issue: Issue) => void;
 }
 
-const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
+const Board = ({
+    issues,
+    statuses,
+    refresh,
+    loading,
+    handleIssueStatusChanged,
+}: BoardProps) => {
     const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
     const [columns, setColumns] = useState<Column[]>([]);
 
@@ -59,7 +66,8 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
                 issue.status.id = newIssue?.status.id;
                 issue.status.name = newIssue?.status?.name;
                 issue.status.is_closed = newIssue?.status?.is_closed;
-                refresh();
+                handleIssueStatusChanged(newIssue);
+                // refresh();
             })
             .catch((error) => {
                 console.error(error);
