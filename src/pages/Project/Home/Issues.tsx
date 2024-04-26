@@ -215,19 +215,23 @@ const ProjectIssues = () => {
                         "delete_issues",
                     ]) && (
                         <>
-                            <EditIssueDialog
-                                open={openEditIssue}
-                                issueId={selectedIssue.id}
-                                projectId={selectedIssue.project.id}
-                                handleClose={handleCloseEditIssue}
-                            />
-                            <DeleteDialog
-                                open={openDeleteIssue}
-                                id={selectedIssue.id}
-                                handleClose={handleCloseDeleteIssue}
-                                deleteFunction={deleteIssue}
-                                name={selectedIssue.subject}
-                            />
+                            {openEditIssue && (
+                                <EditIssueDialog
+                                    open={openEditIssue}
+                                    issueId={selectedIssue.id}
+                                    projectId={selectedIssue.project.id}
+                                    handleClose={handleCloseEditIssue}
+                                />
+                            )}
+                            {openDeleteIssue && (
+                                <DeleteDialog
+                                    open={openDeleteIssue}
+                                    id={selectedIssue.id}
+                                    handleClose={handleCloseDeleteIssue}
+                                    deleteFunction={deleteIssue}
+                                    name={selectedIssue.subject}
+                                />
+                            )}
                         </>
                     )}
                 <div className="flex flex-col">

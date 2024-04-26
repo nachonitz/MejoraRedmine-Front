@@ -229,54 +229,66 @@ const Backlog = () => {
                 )}
                 {selectedEpic && projectId && (
                     <>
-                        <CreateIssueDialog
-                            open={openCreateIssue}
-                            epicId={selectedEpic.id?.toString()}
-                            projectId={projectId}
-                            releaseId={
-                                selectedEpic?.release?.id?.toString() || ""
-                            }
-                            sprintId={
-                                selectedEpic?.sprint?.id?.toString() || ""
-                            }
-                            handleClose={handleCloseDialog}
-                        />
-                        <EditEpicDialog
-                            open={openEditEpic}
-                            epicId={selectedEpic.id}
-                            handleClose={handleCloseDialog}
-                            projectId={parseInt(projectId)}
-                        />
-                        <DeleteDialog
-                            open={openDeleteEpic}
-                            id={selectedEpic.id}
-                            handleClose={handleCloseDialog}
-                            deleteFunction={deleteEpic}
-                            name={selectedEpic.name}
-                        />
+                        {openCreateIssue && (
+                            <CreateIssueDialog
+                                open={openCreateIssue}
+                                epicId={selectedEpic.id?.toString()}
+                                projectId={projectId}
+                                releaseId={
+                                    selectedEpic?.release?.id?.toString() || ""
+                                }
+                                sprintId={
+                                    selectedEpic?.sprint?.id?.toString() || ""
+                                }
+                                handleClose={handleCloseDialog}
+                            />
+                        )}
+                        {openEditEpic && (
+                            <EditEpicDialog
+                                open={openEditEpic}
+                                epicId={selectedEpic.id}
+                                handleClose={handleCloseDialog}
+                                projectId={parseInt(projectId)}
+                            />
+                        )}
+                        {openDeleteEpic && (
+                            <DeleteDialog
+                                open={openDeleteEpic}
+                                id={selectedEpic.id}
+                                handleClose={handleCloseDialog}
+                                deleteFunction={deleteEpic}
+                                name={selectedEpic.name}
+                            />
+                        )}
                     </>
                 )}
                 {selectedIssue && (
                     <>
-                        <InfoDialog
-                            name={selectedIssue?.subject}
-                            properties={getIssueProperties(selectedIssue)}
-                            open={openInfoIssue}
-                            handleClose={handleCloseDialog}
-                        />
-                        <EditIssueDialog
-                            open={openEditIssue}
-                            issueId={selectedIssue?.id}
-                            projectId={selectedIssue?.project.id}
-                            handleClose={handleCloseDialog}
-                        />
-                        <DeleteDialog
-                            open={openDeleteIssue}
-                            id={selectedIssue?.id}
-                            handleClose={handleCloseDialog}
-                            deleteFunction={deleteIssue}
-                            name={selectedIssue?.subject}
-                        />
+                        {openInfoIssue && (
+                            <InfoDialog
+                                name={selectedIssue?.subject}
+                                properties={getIssueProperties(selectedIssue)}
+                                open={openInfoIssue}
+                                handleClose={handleCloseDialog}
+                            />
+                        )}
+                        {openEditIssue && (
+                            <EditIssueDialog
+                                open={openEditIssue}
+                                issueId={selectedIssue?.id}
+                                projectId={selectedIssue?.project.id}
+                                handleClose={handleCloseDialog}
+                            />
+                        )}
+                        {openDeleteIssue && (
+                            <DeleteDialog
+                                open={openDeleteIssue}
+                                id={selectedIssue?.id}
+                                handleClose={handleCloseDialog}
+                                deleteFunction={deleteIssue}
+                                name={selectedIssue?.subject}
+                            />
+                        )}
                     </>
                 )}
                 <div className="flex justify-between items-center">
