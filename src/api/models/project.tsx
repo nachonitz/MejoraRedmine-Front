@@ -1,4 +1,5 @@
 import { PaginationFilters } from "./common";
+import { Sprint } from "./sprint";
 import { User } from "./user";
 
 interface BaseProject {
@@ -13,6 +14,7 @@ export interface Project extends BaseProject {
     redmineId: number;
     createdAt: Date;
     owner: User;
+    currentSprint: Sprint | null;
 }
 
 export type CreateProjectDto = BaseProject;

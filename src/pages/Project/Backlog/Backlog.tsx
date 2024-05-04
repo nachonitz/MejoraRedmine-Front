@@ -24,6 +24,7 @@ import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
 import { getIssueProperties } from "../../../utilities/utilities";
+import { getProjectById } from "../../../api/services/projectsService";
 
 export type Column = {
     [name: string]: Issue[];
@@ -50,9 +51,7 @@ const Backlog = () => {
         useState(false);
 
     const [searchText, setSearchText] = useState<string>("");
-    const [filters, setFilters] = useState<IssueFilter & EpicFilter>({
-        ...defaultFilters,
-    });
+    const [filters, setFilters] = useState<IssueFilter & EpicFilter>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [issuesAndEpics, setIssuesAndEpics] = useState<{
@@ -158,6 +157,15 @@ const Backlog = () => {
             });
     };
 
+    const setCurrentSprintId = async (projectId: string) => {
+        const project = await getProjectById(+projectId);
+        const sprintId = project.currentSprint?.id || defaultFilters.sprintId;
+        setFilters({
+            ...defaultFilters,
+            sprintId,
+        });
+    };
+
     const handleOpenCreateIssue = (epic: Epic) => {
         setSelectedEpic(epic);
         console.log(epic);
@@ -207,12 +215,20 @@ const Backlog = () => {
 
     useEffect(() => {
         getAllIssuesStatuses();
-        query(defaultFilters);
+        // query(defaultFilters);
     }, [query]);
 
     useEffect(() => {
-        query(filters);
+        if (filters) {
+            query(filters);
+        }
     }, [filters, query]);
+
+    useEffect(() => {
+        if (projectId) {
+            setCurrentSprintId(projectId);
+        }
+    }, [projectId]);
 
     return (
         <Sidebar>
@@ -222,7 +238,7 @@ const Backlog = () => {
                         projectId={+projectId}
                         open={openBacklogFiltersModal}
                         onClose={() => setOpenBacklogFiltersModal(false)}
-                        filters={filters}
+                        filters={filters || defaultFilters}
                         setFilters={setFilters}
                         onClearFilters={() => setFilters(defaultFilters)}
                     />
