@@ -128,12 +128,13 @@ const Backlog = () => {
                     const { data: issues } = await getIssues({
                         ...(filters as IssueFilter),
                         projectId: parseInt(projectId),
+                        order: "sortIndex:asc",
                     });
                     const { data: epics } = await getEpics({
                         ...(filters as EpicFilter),
                         projectId: parseInt(projectId),
                     });
-                    let epicsList = epics.items.map((epic) => {
+                    const epicsList = epics.items.map((epic) => {
                         epic.issues = [];
                         return epic;
                     });

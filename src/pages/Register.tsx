@@ -1,13 +1,12 @@
 import { TextField } from "@mui/material";
 import { KeyboardEvent, useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import PrimaryButton from "../components/Shared/Buttons/PrimaryButton";
-import { UserContext } from "../context/UserContext";
-import { AppInfoContext } from "../context/AppInfoContext";
+import { Link } from "react-router-dom";
 import PendingApprovalDialogDialog from "../components/Pages/Register/CreateReleaseDialog/PendingApprovalDialog";
+import PrimaryButton from "../components/Shared/Buttons/PrimaryButton";
+import { AppInfoContext } from "../context/AppInfoContext";
+import { UserContext } from "../context/UserContext";
 
 const Register = () => {
-    const navigate = useNavigate();
     const { title } = useContext(AppInfoContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

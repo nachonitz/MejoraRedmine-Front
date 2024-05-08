@@ -1,12 +1,10 @@
+import { IconButton } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
+import { MdAdd } from "react-icons/md";
 import { Epic } from "../../../../../api/models/epic";
-import { Issue } from "../../../../../api/models/issue";
-import { getIssues } from "../../../../../api/services/issuesService";
 import { BacklogContext } from "../../../../../context/BacklogContext";
 import SettingsButton from "../../../../Shared/Buttons/SettingsButton";
 import IssueItem from "./IssueItem";
-import { IconButton } from "@mui/material";
-import { MdAdd } from "react-icons/md";
 
 interface IssueCardProps {
     epic: Epic;

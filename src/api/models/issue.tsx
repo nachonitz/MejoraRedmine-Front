@@ -16,6 +16,7 @@ interface BaseIssue {
 export interface Issue extends BaseIssue {
     id: number;
     redmineId: number;
+    sortIndex: number;
     priority: Enumeration;
     epic?: Epic;
     sprint?: Sprint;
@@ -38,6 +39,7 @@ export interface CreateIssueDto extends BaseIssue {
     statusId?: number;
     assigneeId?: number;
     endDate?: Date;
+    sortIndex?: number;
 }
 
 export type UpdateIssueDto = Partial<CreateIssueDto>;

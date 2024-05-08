@@ -10,6 +10,7 @@ import { getMyPermissions } from "../../../api/services/membershipsService";
 import CreateIssueDialog from "../../../components/Pages/Issues/CreateIssueDialog/CreateIssueDialog";
 import EditIssueDialog from "../../../components/Pages/Issues/EditIssueDialog/EditIssueDialog";
 import { IssueFiltersModal } from "../../../components/Pages/Issues/IssueFiltersModal";
+import AssignedCircle from "../../../components/Shared/AssignedCircle/AssignedCircle";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../components/Shared/Buttons/SecondaryButton";
 import SettingsButton from "../../../components/Shared/Buttons/SettingsButton";
@@ -21,14 +22,10 @@ import { Paginator } from "../../../components/Shared/Paginator/Paginator";
 import ProjectBreadcrumbs from "../../../components/Shared/ProjectBreadcrumbs/ProjectBreadcrumbs";
 import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
+import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
 import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
-import {
-    getIssueIcon,
-    getIssuePriorityColor,
-} from "../../../utilities/utilities";
-import AssignedCircle from "../../../components/Shared/AssignedCircle/AssignedCircle";
-import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
+import { getIssueIcon } from "../../../utilities/utilities";
 
 const defaultFilters: IssueFilter = {
     page: 1,

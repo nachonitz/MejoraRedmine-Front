@@ -38,7 +38,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
 
     function getDatesArray(startDate: Date, endDate: Date): Date[] {
         const daysArray: Date[] = [];
-        let currentDate = new Date(startDate);
+        const currentDate = new Date(startDate);
         while (
             currentDate.setHours(0, 0, 0, 0) <= endDate.setHours(0, 0, 0, 0)
         ) {
@@ -50,15 +50,15 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
 
     const setUpDashboardsData = async () => {
         let currentSprint = sprints.find((sprint) => {
-            let sprintEndDate = new Date(sprint.endDate);
-            let today = new Date();
-            let sprintStartDate = new Date(sprint.startDate);
+            const sprintEndDate = new Date(sprint.endDate);
+            const today = new Date();
+            const sprintStartDate = new Date(sprint.startDate);
             return sprintEndDate >= today && sprintStartDate <= today;
         });
         if (!currentSprint) {
             currentSprint = sprints.find((sprint) => {
-                let sprintEndDate = new Date(sprint.endDate);
-                let today = new Date();
+                const sprintEndDate = new Date(sprint.endDate);
+                const today = new Date();
                 return sprintEndDate < today;
             });
         }
@@ -73,7 +73,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
     }, [projectId]);
 
     const handleSprintChange = (e: any) => {
-        let sprint = sprints?.find((sprint) => sprint.id === e.target.value);
+        const sprint = sprints?.find((sprint) => sprint.id === e.target.value);
         if (sprint) {
             setupSprintCharts(sprint, issues || []);
             setSelectedSprint(sprint);
@@ -82,14 +82,14 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
 
     const setupSprintCharts = (sprint: Sprint, issues: Issue[]) => {
         if (sprint && issues) {
-            let sprintIssues = issues.filter(
+            const sprintIssues = issues.filter(
                 (issue) => issue.sprint?.id === sprint.id
             );
             setSprintTasksCompleted(
                 sprintIssues.filter((issue) => issue.status.is_closed).length
             );
             setSprintTasksPlanned(sprintIssues.length);
-            let sprintTasksStatuses = sprintIssues.reduce(
+            const sprintTasksStatuses = sprintIssues.reduce(
                 (
                     acc: {
                         [key: number]: {
@@ -114,7 +114,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
             );
             setSprintTasksStatuses(Object.values(sprintTasksStatuses));
 
-            let datesArray = getDatesArray(
+            const datesArray = getDatesArray(
                 new Date(sprint.startDate),
                 new Date(sprint.endDate)
             );
@@ -122,7 +122,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
             const totalStoryPoints = issues
                 .filter((i) => i.sprint?.id === sprint.id)
                 .reduce((acc, issue) => {
-                    let issueEstimation = issue.estimation
+                    const issueEstimation = issue.estimation
                         ? ESTIMATIONS_TO_POINTS[
                               issue.estimation as keyof typeof ESTIMATIONS_TO_POINTS
                           ] ?? 0
@@ -148,8 +148,8 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                 };
             });
 
-            for (let issue of sprintIssues) {
-                let issueEstimation = issue.estimation
+            for (const issue of sprintIssues) {
+                const issueEstimation = issue.estimation
                     ? ESTIMATIONS_TO_POINTS[
                           issue.estimation as keyof typeof ESTIMATIONS_TO_POINTS
                       ] ?? 0
@@ -160,7 +160,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                     new Date(issue.endDate).setHours(0, 0, 0, 0) <=
                         new Date(sprint.endDate).setHours(0, 0, 0, 0)
                 ) {
-                    let issueClosedDate = new Date(issue.endDate);
+                    const issueClosedDate = new Date(issue.endDate);
                     let issueClosedDateIndex = datesArray.findIndex(
                         (date) =>
                             date.toDateString() ===
@@ -187,7 +187,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
             }
 
             // Value null for future days
-            let today = new Date();
+            const today = new Date();
             days = days.map(
                 (day: {
                     date: Date;
@@ -205,7 +205,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                 }
             );
 
-            let burnDownChartInformation = days.map((day, i) => {
+            const burnDownChartInformation = days.map((day, i) => {
                 return {
                     label: day.label,
                     value: day.value,

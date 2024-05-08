@@ -7,17 +7,17 @@ import {
     DropAnimation,
     KeyboardSensor,
     PointerSensor,
+    closestCorners,
+    defaultDropAnimation,
     useSensor,
     useSensors,
-    defaultDropAnimation,
-    closestCorners,
 } from "@dnd-kit/core";
-import IssuesColumn from "./IssuesColumn/IssuesColumn";
-import IssueCard from "./IssueCard/IssueCard";
-import { Issue, IssueStatus } from "../../../../api/models/issue";
-import { useEffect, useState } from "react";
-import { changeIssueStatus } from "../../../../api/services/issuesService";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useEffect, useState } from "react";
+import { Issue, IssueStatus } from "../../../../api/models/issue";
+import { editIssue } from "../../../../api/services/issuesService";
+import IssueCard from "./IssueCard/IssueCard";
+import IssuesColumn from "./IssuesColumn/IssuesColumn";
 
 export interface Column {
     name: string;
@@ -59,20 +59,6 @@ const Board = ({
             }))
         );
     }, [issues]);
-
-    const changeStatus = (issue: Issue, statusId: number) => {
-        changeIssueStatus(issue.id, statusId)
-            .then((newIssue: Issue) => {
-                issue.status.id = newIssue?.status.id;
-                issue.status.name = newIssue?.status?.name;
-                issue.status.is_closed = newIssue?.status?.is_closed;
-                handleIssueStatusChanged(newIssue);
-                // refresh();
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
 
     const getColumn = (id: string) => {
         if (columns.find((column) => column.name === id)) {
@@ -134,7 +120,7 @@ const Board = ({
                 overColumn.issues.slice(overIndex, overColumn.issues.length)
             );
 
-        let newColumns = columns;
+        const newColumns = columns;
         newColumns[activeColumnIndex].issues = newActiveIssues;
         newColumns[overColumnIndex].issues = newOverIssues;
 
@@ -183,13 +169,32 @@ const Board = ({
         setColumns(newColumns);
 
         const activeIssue = activeColumn.issues[activeIndex];
+        const newSortIndex = newColumns[overColumnIndex].issues.findIndex(
+            (issue) => issue.id === activeIssue.id
+        );
+        const realSortIndex = overColumn.issues[newSortIndex].sortIndex;
 
         if (activeIssue.status.name !== overColumnName) {
-            changeStatus(
-                activeIssue,
-                statuses.find((status) => status.name === overColumnName)
-                    ?.id as number
-            );
+            editIssue(activeIssue.id, {
+                sortIndex: realSortIndex,
+                statusId: statuses.find(
+                    (status) => status.name === overColumnName
+                )?.id as number,
+            })
+                .then((newIssue: Issue) => {
+                    activeIssue.status.id = newIssue?.status.id;
+                    activeIssue.status.name = newIssue?.status?.name;
+                    activeIssue.status.is_closed = newIssue?.status?.is_closed;
+                    handleIssueStatusChanged(newIssue);
+                    // refresh();
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            editIssue(activeIssue.id, {
+                sortIndex: realSortIndex,
+            });
         }
 
         setActiveIssueId(null);

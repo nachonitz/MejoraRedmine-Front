@@ -1,18 +1,18 @@
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, LinearProgress, Tab } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Issue, IssueFilter } from "../../../api/models/issue";
+import { Release, ReleaseFilter } from "../../../api/models/release";
+import { Sprint, SprintFilter } from "../../../api/models/sprint";
+import { getIssues } from "../../../api/services/issuesService";
+import { getReleases } from "../../../api/services/releasesService";
+import { getSprints } from "../../../api/services/sprintsService";
+import ProjectDashboard from "../../../components/Pages/Dashboard/ProjectDashboard";
+import SprintsDashboard from "../../../components/Pages/Dashboard/SprintsDashboard";
 import Page from "../../../components/Shared/Page/Page";
 import PageTitle from "../../../components/Shared/Page/PageTitle/PageTitle";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
-import { getReleases } from "../../../api/services/releasesService";
-import { Release, ReleaseFilter } from "../../../api/models/release";
-import { useEffect, useState } from "react";
-import { getIssues } from "../../../api/services/issuesService";
-import { Issue, IssueFilter } from "../../../api/models/issue";
-import { getSprints } from "../../../api/services/sprintsService";
-import { Sprint, SprintFilter } from "../../../api/models/sprint";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, CircularProgress, LinearProgress, Tab } from "@mui/material";
-import ProjectDashboard from "../../../components/Pages/Dashboard/ProjectDashboard";
-import SprintsDashboard from "../../../components/Pages/Dashboard/SprintsDashboard";
 
 const defaultFilters: ReleaseFilter = {
     page: 1,
@@ -69,11 +69,11 @@ const Dashboard = () => {
 
     const setUpDashboardsData = async () => {
         setLoading(true);
-        let releases = await getAllReleasesForProject();
+        const releases = await getAllReleasesForProject();
         if (releases) {
             setReleases(releases);
         }
-        let issues = await getAllIssuesForProject();
+        const issues = await getAllIssuesForProject();
         if (issues) {
             setIssues(issues);
         }
