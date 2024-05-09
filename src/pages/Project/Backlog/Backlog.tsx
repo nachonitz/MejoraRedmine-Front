@@ -148,6 +148,24 @@ const Backlog = () => {
         [projectId]
     );
 
+    const queryWithoutLoading = useCallback(
+        async (filters: IssueFilter & EpicFilter) => {
+            try {
+                if (projectId) {
+                    const { data: issues } = await getIssues({
+                        ...(filters as IssueFilter),
+                        projectId: parseInt(projectId),
+                        order: "sortIndex:asc",
+                    });
+                    setIssuesAndEpicsState(issues.items, issuesAndEpics.epics);
+                }
+            } catch (error) {
+                throw new Error("Error. Please try again.");
+            }
+        },
+        [projectId]
+    );
+
     const getAllIssuesStatuses = () => {
         getIssuesStatuses()
             .then((statuses: IssueStatus[]) => {
@@ -213,6 +231,7 @@ const Backlog = () => {
     };
 
     const refresh = () => query(defaultFilters);
+    const quickRefresh = () => queryWithoutLoading(filters ?? defaultFilters);
 
     useEffect(() => {
         getAllIssuesStatuses();
@@ -364,11 +383,8 @@ const Backlog = () => {
                                     <Board
                                         issues={issuesAndEpics.allIssues}
                                         statuses={statuses}
-                                        refresh={refresh}
+                                        refresh={quickRefresh}
                                         loading={false}
-                                        handleIssueStatusChanged={
-                                            handleIssueStatusChanged
-                                        }
                                     />
                                 </div>
                                 <div hidden={tab !== "list"}>

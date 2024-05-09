@@ -29,16 +29,9 @@ interface BoardProps {
     statuses: IssueStatus[];
     refresh: () => void;
     loading: boolean;
-    handleIssueStatusChanged: (issue: Issue) => void;
 }
 
-const Board = ({
-    issues,
-    statuses,
-    refresh,
-    loading,
-    handleIssueStatusChanged,
-}: BoardProps) => {
+const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
     const [activeIssueId, setActiveIssueId] = useState<number | null>(null);
     const [columns, setColumns] = useState<Column[]>([]);
 
@@ -176,21 +169,13 @@ const Board = ({
 
         if (activeIssue.status.name !== overColumnName) {
             editIssue(activeIssue.id, {
-                sortIndex: realSortIndex,
+                sortIndex: Math.max(newSortIndex, realSortIndex),
                 statusId: statuses.find(
                     (status) => status.name === overColumnName
                 )?.id as number,
             })
-                .then((newIssue: Issue) => {
-                    activeIssue.status.id = newIssue?.status.id;
-                    activeIssue.status.name = newIssue?.status?.name;
-                    activeIssue.status.is_closed = newIssue?.status?.is_closed;
-                    handleIssueStatusChanged(newIssue);
-                    // refresh();
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+                .then(() => refresh())
+                .catch((error) => console.error(error));
         } else {
             editIssue(activeIssue.id, {
                 sortIndex: realSortIndex,
