@@ -85,7 +85,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <SecondaryButton onClick={handleClose}>
+                    <SecondaryButton onClick={() => handleCloseModal()}>
                         Close
                     </SecondaryButton>
                     <PrimaryButton onClick={handleSubmit} className="h-[50px]">

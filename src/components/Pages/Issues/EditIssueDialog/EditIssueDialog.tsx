@@ -553,7 +553,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                 </DialogContent>
                 <div className="px-4 mb-4">
                     <DialogActions>
-                        <SecondaryButton onClick={handleClose}>
+                        <SecondaryButton onClick={() => handleCloseModal()}>
                             Close
                         </SecondaryButton>
                         <PrimaryButton onClick={handleCreate}>

@@ -53,7 +53,7 @@ const InfoDialog: React.FC<InfoDialogProps> = ({
                 </DialogContent>
                 <div className="px-4 mb-4">
                     <DialogActions>
-                        <SecondaryButton onClick={handleClose}>
+                        <SecondaryButton onClick={() => handleCloseModal()}>
                             Close
                         </SecondaryButton>
                     </DialogActions>
