@@ -41,14 +41,14 @@ export const getFullDate = (date: Date) => {
     const month = `${d.getMonth() + 1}`.padStart(2, "0");
     const day = `${d.getDate()}`.padStart(2, "0");
     const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${month}/${day}/${year}`;
 };
 
 export const getShortDate = (date: Date) => {
     const d = new Date(date);
     const month = `${d.getMonth() + 1}`.padStart(2, "0");
     const day = `${d.getDate()}`.padStart(2, "0");
-    return `${day}/${month}`;
+    return `${month}/${day}`;
 };
 
 /**
