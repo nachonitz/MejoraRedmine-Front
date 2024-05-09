@@ -151,7 +151,7 @@ export const getIssueProperties = (issue: Issue) => {
         },
         {
             name: "Assignee",
-            value: `${issue?.assignee?.firstname} ${issue?.assignee?.lastname}`,
+            value: (issue?.assignee?.firstname && issue?.assignee?.lastname) ? (issue.assignee.firstname + " " + issue.assignee.lastname) : undefined,
         },
         {
             name: "Estimation",
