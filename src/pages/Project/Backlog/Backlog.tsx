@@ -224,7 +224,7 @@ const Backlog = () => {
         setOpenEditIssue(false);
         setOpenDeleteIssue(false);
         if (refresh) {
-            query(defaultFilters);
+            query(filters ?? defaultFilters);
         }
         setSelectedEpic(undefined);
         setSelectedIssue(undefined);
