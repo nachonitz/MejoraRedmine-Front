@@ -18,6 +18,8 @@ export const getIssueIcon = (issueType: string) => {
             return "/src/assets/icons/user-story-icon.png";
         case "Support":
             return "/src/assets/icons/support-icon.png";
+        default:
+            return "/src/assets/icons/user-story-icon.png";
     }
 };
 
@@ -151,7 +153,10 @@ export const getIssueProperties = (issue: Issue) => {
         },
         {
             name: "Assignee",
-            value: (issue?.assignee?.firstname && issue?.assignee?.lastname) ? (issue.assignee.firstname + " " + issue.assignee.lastname) : undefined,
+            value:
+                issue?.assignee?.firstname && issue?.assignee?.lastname
+                    ? issue.assignee.firstname + " " + issue.assignee.lastname
+                    : undefined,
         },
         {
             name: "Estimation",
