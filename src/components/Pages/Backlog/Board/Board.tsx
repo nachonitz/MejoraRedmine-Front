@@ -165,11 +165,15 @@ const Board = ({ issues, statuses, refresh, loading }: BoardProps) => {
         const newSortIndex = newColumns[overColumnIndex].issues.findIndex(
             (issue) => issue.id === activeIssue.id
         );
-        const realSortIndex = overColumn.issues[newSortIndex].sortIndex;
+        const realSortIndex =
+            newSortIndex > 0
+                ? newColumns[overColumnIndex].issues[newSortIndex - 1]
+                      .sortIndex + 1
+                : 0;
 
         if (activeIssue.status.name !== overColumnName) {
             editIssue(activeIssue.id, {
-                sortIndex: Math.max(newSortIndex, realSortIndex),
+                sortIndex: realSortIndex,
                 statusId: statuses.find(
                     (status) => status.name === overColumnName
                 )?.id as number,
