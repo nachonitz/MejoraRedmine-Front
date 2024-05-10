@@ -105,25 +105,6 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                             />
                         </div>
                     </div>
-                    {/* <div className="flex gap-[2px] items-center">
-                        <img
-                            className="w-[32px] h-[32px]"
-                            src={getIssueIcon(issue.tracker.name)}
-                        />
-                        <span className="text-[16px] text-primary">
-                            {issue.subject}
-                        </span>
-                    </div>
-                    <div>
-                        <SettingsButton
-                            onEdit={() => {
-                                handleOpenEditIssue(issue);
-                            }}
-                            onDelete={() => {
-                                handleOpenDeleteIssue(issue);
-                            }}
-                        />
-                    </div> */}
                 </div>
             </div>
         </div>
