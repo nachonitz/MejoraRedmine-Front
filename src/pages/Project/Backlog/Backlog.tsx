@@ -157,7 +157,15 @@ const Backlog = () => {
                         projectId: parseInt(projectId),
                         order: "sortIndex:asc",
                     });
-                    setIssuesAndEpicsState(issues.items, issuesAndEpics.epics);
+                    const { data: epics } = await getEpics({
+                        ...(filters as EpicFilter),
+                        projectId: parseInt(projectId),
+                    });
+                    const epicsList = epics.items.map((epic) => {
+                        epic.issues = [];
+                        return epic;
+                    });
+                    setIssuesAndEpicsState(issues.items, epicsList);
                 }
             } catch (error) {
                 throw new Error("Error. Please try again.");
