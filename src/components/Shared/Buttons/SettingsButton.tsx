@@ -65,7 +65,9 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
 
     useEffect(() => {
         updateMenuPosition();
+    });
 
+    useEffect(() => {
         document.addEventListener("click", handleOutsideClick, true);
         window.addEventListener("scroll", handleScroll);
 
@@ -73,7 +75,7 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
             document.removeEventListener("click", handleOutsideClick, true);
             window.removeEventListener("scroll", handleScroll);
         };
-    });
+    }, []);
 
     return (
         <div className="relative" ref={settingsDropdownRef}>
