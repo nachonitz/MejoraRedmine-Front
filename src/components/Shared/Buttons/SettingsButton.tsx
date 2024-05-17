@@ -39,7 +39,6 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
             let top = menuRect.top + window.scrollY;
             let left = menuRect.left + window.scrollX;
             if (top !== menuPosition.top || left !== menuPosition.left) {
-                console.log("updateMenuPosition", top, menuPosition.top);
                 setMenuPosition({
                     top: top,
                     left: left,
