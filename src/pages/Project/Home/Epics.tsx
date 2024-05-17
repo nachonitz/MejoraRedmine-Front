@@ -244,9 +244,7 @@ const ProjectEpics = () => {
                                     <td className="w-[30px]">
                                         <img
                                             className="w-[24px] h-[24px]"
-                                            src={
-                                                "/src/assets/icons/epic-icon.png"
-                                            }
+                                            src={"/assets/icons/epic-icon.png"}
                                         />
                                     </td>
                                     <td className="gap-[10px] text-left">

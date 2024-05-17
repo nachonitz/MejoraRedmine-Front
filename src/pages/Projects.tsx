@@ -155,9 +155,7 @@ const Projects = () => {
                                 <td className="w-[30px]">
                                     <img
                                         className="w-[24px] h-[24px]"
-                                        src={
-                                            "/src/assets/icons/project-icon.png"
-                                        }
+                                        src={"/assets/icons/project-icon.png"}
                                     />
                                 </td>
                                 <td className="text-left">

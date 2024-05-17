@@ -20,7 +20,7 @@ const Item: React.FC<ItemProps> = ({ name, icon, onClick, selected }) => {
                 {selected && (
                     <div className="bg-primary absolute left-0 w-1 h-full"></div>
                 )}
-                <img className="w-[24px]" src={"/src/assets/icons/" + icon} />
+                <img className="w-[24px]" src={"/assets/icons/" + icon} />
                 <span className="text-[18px] text-primary">{name}</span>
             </div>
         </div>

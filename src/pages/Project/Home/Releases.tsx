@@ -270,7 +270,7 @@ const ProjectReleases = () => {
                                         <img
                                             className="w-[24px] h-[24px]"
                                             src={
-                                                "/src/assets/icons/release-icon.png"
+                                                "/assets/icons/release-icon.png"
                                             }
                                         />
                                     </td>

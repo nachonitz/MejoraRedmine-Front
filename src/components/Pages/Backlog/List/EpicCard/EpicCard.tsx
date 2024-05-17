@@ -50,7 +50,7 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                     <div className="flex gap-[2px] items-center">
                         <img
                             className="w-[32px] h-[32px]"
-                            src="/src/assets/icons/epic-icon.png"
+                            src="/assets/icons/epic-icon.png"
                         />
                         <span className="text-[16px] text-primary">
                             {epic.name}

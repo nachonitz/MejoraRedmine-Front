@@ -275,7 +275,7 @@ const ProjectSprints = () => {
                                         <img
                                             className="w-[24px] h-[24px]"
                                             src={
-                                                "/src/assets/icons/sprint-icon.png"
+                                                "/assets/icons/sprint-icon.png"
                                             }
                                         />
                                     </td>

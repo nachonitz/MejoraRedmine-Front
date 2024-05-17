@@ -13,13 +13,13 @@ import { AiOutlineExclamation } from "react-icons/ai";
 export const getIssueIcon = (issueType: string) => {
     switch (issueType) {
         case "Bug":
-            return "/src/assets/icons/bug-icon.png";
+            return "/assets/icons/bug-icon.png";
         case "Feature":
-            return "/src/assets/icons/user-story-icon.png";
+            return "/assets/icons/user-story-icon.png";
         case "Support":
-            return "/src/assets/icons/support-icon.png";
+            return "/assets/icons/support-icon.png";
         default:
-            return "/src/assets/icons/user-story-icon.png";
+            return "/assets/icons/user-story-icon.png";
     }
 };
 

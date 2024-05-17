@@ -68,7 +68,7 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                     <div className="pl-[5px] text-[14px] text-[#444] flex items-center gap-1">
                         <img
                             className="w-[16px] h-[16px]"
-                            src="/src/assets/icons/epic-icon.png"
+                            src="/assets/icons/epic-icon.png"
                         />
                         <span>{issue.epic?.name}</span>
                     </div>
