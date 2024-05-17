@@ -15,7 +15,7 @@ const AdminSidebar = ({ children }: Props) => {
 
     return (
         <>
-            <div className="flex h-screen fixed top-header mt-header bg-lightblue w-56">
+            <div className="flex h-screen fixed top-header mt-header bg-lightblue w-56 z-10">
                 <div className="flex flex-col mt-5 w-full px-[2px] box-border">
                     <Item
                         selected={isInPage("/admin/settings")}
