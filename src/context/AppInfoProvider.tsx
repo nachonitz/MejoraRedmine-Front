@@ -9,7 +9,6 @@ interface Props {
 export const AppInfoProvider = ({ children }: Props) => {
     const [title, setTitle] = useState<string>("");
     const [welcomeText, setWelcomeText] = useState<string>("");
-    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const getApplicationInfo = async () => {
         const info = await getAppInfo();

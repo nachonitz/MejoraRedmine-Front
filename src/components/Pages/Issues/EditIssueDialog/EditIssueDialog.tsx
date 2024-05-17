@@ -62,7 +62,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
-    const [estimations, setEstimations] = useState<string[]>([
+    const [estimations, _setEstimations] = useState<string[]>([
         "XS",
         "S",
         "M",
@@ -85,9 +85,9 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [errorTrackerId, setErrorTrackerId] = useState(false);
     const [errorStatusId, setErrorStatusId] = useState(false);
     const [errorAssigneeId, setErrorAssigneeId] = useState(false);
-    const [errorReleaseId, setErrorReleaseId] = useState(false);
-    const [errorSprintId, setErrorSprintId] = useState(false);
-    const [errorEpicId, setErrorEpicId] = useState(false);
+    const [errorReleaseId, _setErrorReleaseId] = useState(false);
+    const [errorSprintId, _setErrorSprintId] = useState(false);
+    const [errorEpicId, _setErrorEpicId] = useState(false);
     const [errorEndDate, setErrorEndDate] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);

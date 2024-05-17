@@ -66,35 +66,6 @@ const Backlog = () => {
 
     const [tab, setTab] = useState<string>("kanban");
 
-    const handleIssueStatusChanged = (issue: Issue) => {
-        setIssuesAndEpics(
-            (prev: {
-                allIssues: Issue[];
-                issuesWithoutEpic: Issue[];
-                epics: Epic[];
-            }) => {
-                const allIssues = prev.allIssues.map((prevIssue) =>
-                    prevIssue.id === issue.id ? issue : prevIssue
-                );
-                const issuesWithoutEpic = prev.issuesWithoutEpic.map(
-                    (prevIssue) =>
-                        prevIssue.id === issue.id ? issue : prevIssue
-                );
-                const epics = prev.epics.map((epic) => {
-                    epic.issues = epic.issues?.map((epicIssue) =>
-                        epicIssue.id === issue.id ? issue : epicIssue
-                    );
-                    return epic;
-                });
-                return {
-                    allIssues,
-                    issuesWithoutEpic,
-                    epics: epics,
-                };
-            }
-        );
-    };
-
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
     };
@@ -238,7 +209,7 @@ const Backlog = () => {
         setSelectedIssue(undefined);
     };
 
-    const refresh = () => query(defaultFilters);
+    // const refresh = () => query(defaultFilters);
     const quickRefresh = () => queryWithoutLoading(filters ?? defaultFilters);
 
     useEffect(() => {

@@ -38,7 +38,7 @@ export const IssueFiltersModal = ({
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
-    const [estimations, setEstimations] = useState<string[]>([
+    const [estimations, _setEstimations] = useState<string[]>([
         "XS",
         "S",
         "M",

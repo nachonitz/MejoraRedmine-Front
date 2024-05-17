@@ -21,7 +21,7 @@ export const ProjectInfo = ({ projectId }: Props) => {
     const [isPrivate, setIsPrivate] = useState(false);
     const [errorName, setErrorName] = useState(false);
     const [errorIdentifier, setErrorIdentifier] = useState(false);
-    const [serverErrors, setServerErrors] = useState<string[]>([]);
+    const [_serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setLoading] = useState<boolean>(false);
 
     const handleGetProject = useCallback(() => {

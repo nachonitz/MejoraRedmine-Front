@@ -14,7 +14,7 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
     const { handleOpenEditEpic, handleOpenDeleteEpic, handleOpenCreateIssue } =
         useContext(BacklogContext);
     const [opened, setOpened] = useState<boolean>(false);
-    const contentRef = useRef(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     const [contentHeight, setContentHeight] = useState("0px");
     const [overflow, setOveflow] = useState<string>("hidden");
 

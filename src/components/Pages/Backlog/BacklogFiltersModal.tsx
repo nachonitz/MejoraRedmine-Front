@@ -47,7 +47,7 @@ export const BacklogFiltersModal = ({
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
     const [sprints, setSprints] = useState<Sprint[]>([]);
     const [releases, setReleases] = useState<Release[]>([]);
-    const [estimations, setEstimations] = useState<string[]>([
+    const [estimations, _setEstimations] = useState<string[]>([
         "XS",
         "S",
         "M",

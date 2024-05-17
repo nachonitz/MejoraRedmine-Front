@@ -171,7 +171,8 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                             issueClosedDateIndex--;
                             for (let i = issueClosedDateIndex; i >= 0; i--) {
                                 if (days[i].value !== null) {
-                                    days[i].value += issueEstimation;
+                                    days[i].value =
+                                        days[i].value || 0 + issueEstimation;
                                 }
                             }
                         }
@@ -205,7 +206,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                 }
             );
 
-            const burnDownChartInformation = days.map((day, i) => {
+            const burnDownChartInformation = days.map((day, _i) => {
                 return {
                     label: day.label,
                     value: day.value,

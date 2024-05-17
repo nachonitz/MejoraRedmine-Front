@@ -50,8 +50,8 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
     const [errorName, setErrorName] = useState(false);
     const [errorDescription, setErrorDescription] = useState(false);
     const [errorPriorityId, setErrorPriorityId] = useState(false);
-    const [errorReleaseId, setErrorReleaseId] = useState(false);
-    const [errorSprintId, setErrorSprintId] = useState(false);
+    const [errorReleaseId, _setErrorReleaseId] = useState(false);
+    const [errorSprintId, _setErrorSprintId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
