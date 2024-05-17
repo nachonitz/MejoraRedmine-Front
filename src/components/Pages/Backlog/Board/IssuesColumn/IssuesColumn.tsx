@@ -25,29 +25,31 @@ const IssuesColumn = ({ column, loading }: BoardSectionProps) => {
                     {column.name}
                 </span>
             </div>
-            <div className="w-full overflow-y-auto column">
-                {loading ? (
-                    <LinearProgress />
-                ) : (
-                    <SortableContext
-                        id={column.name}
-                        items={column.issues}
-                        strategy={verticalListSortingStrategy}
-                    >
-                        <div
-                            className="flex flex-col gap-[6px]"
-                            ref={setNodeRef}
+            <div className="overflow-y-auto flex flex-1 flex-col column">
+                <div className="pb-4">
+                    {loading ? (
+                        <LinearProgress />
+                    ) : (
+                        <SortableContext
+                            id={column.name}
+                            items={column.issues}
+                            strategy={verticalListSortingStrategy}
                         >
-                            {column.issues &&
-                                column.issues.map((issue: Issue) => (
-                                    <IssueCard
-                                        key={issue.id.toString()}
-                                        issue={issue}
-                                    />
-                                ))}
-                        </div>
-                    </SortableContext>
-                )}
+                            <div
+                                className="flex flex-col gap-[6px]"
+                                ref={setNodeRef}
+                            >
+                                {column.issues &&
+                                    column.issues.map((issue: Issue) => (
+                                        <IssueCard
+                                            key={issue.id.toString()}
+                                            issue={issue}
+                                        />
+                                    ))}
+                            </div>
+                        </SortableContext>
+                    )}
+                </div>
             </div>
         </div>
     );
