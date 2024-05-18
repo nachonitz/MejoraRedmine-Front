@@ -50,7 +50,15 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                             src={getIssueIcon(issue.tracker.name)}
                         />
                         <span className="text-[16px] text-primary">
-                            {issue.subject}
+                            {issue.subject.length > 35 ? (
+                                <Tooltip title={issue.subject}>
+                                    <span>
+                                        {issue.subject.substring(0, 35) + "..."}
+                                    </span>
+                                </Tooltip>
+                            ) : (
+                                issue.subject
+                            )}
                         </span>
                     </div>
                     <div>
@@ -70,7 +78,19 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                             className="w-[16px] h-[16px]"
                             src="/assets/icons/epic-icon.png"
                         />
-                        <span>{issue.epic?.name}</span>
+                        <span>
+                            {issue.epic?.name.length &&
+                            issue.epic?.name.length > 15 ? (
+                                <Tooltip title={issue.epic?.name}>
+                                    <span>
+                                        {issue.epic?.name.substring(0, 15) +
+                                            "..."}
+                                    </span>
+                                </Tooltip>
+                            ) : (
+                                issue.epic?.name
+                            )}
+                        </span>
                     </div>
                     <div className="flex gap-1 items-center">
                         {getPriorityIcon(issue.priority.name)}
