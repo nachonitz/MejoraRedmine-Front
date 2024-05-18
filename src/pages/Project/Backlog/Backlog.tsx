@@ -349,7 +349,7 @@ const Backlog = () => {
                     </div>
                 </div>
                 <div>
-                    <span>
+                    <span className="text-description">
                         {sprints &&
                             filters?.sprintId &&
                             currentSprint &&

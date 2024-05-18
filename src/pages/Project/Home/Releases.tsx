@@ -200,7 +200,10 @@ const ProjectReleases = () => {
                         />
                     )}
                     <div>
-                        <span>Description: {project?.description}</span>
+                        <span className="text-description">
+                            {project?.description &&
+                                "Description: " + project?.description}
+                        </span>
                     </div>
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Releases</h3>

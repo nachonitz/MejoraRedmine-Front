@@ -9,6 +9,7 @@ export default {
                 secondary: "#F98D50",
                 lightblue: "#F3F7FF",
                 itemhover: "#D6E3FD",
+                description: "#444444",
             },
             padding: {
                 page: "0 2rem",

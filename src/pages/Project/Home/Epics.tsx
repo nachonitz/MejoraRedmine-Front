@@ -195,7 +195,10 @@ const ProjectEpics = () => {
                         />
                     )}
                     <div>
-                        <span>Description: {sprint?.description}</span>
+                        <span className="text-description">
+                            {sprint?.description &&
+                                "Description: " + sprint?.description}
+                        </span>
                     </div>
                     <div className="flex justify-between items-center mb-2 mt-4">
                         <h3 className="text-[22px] text-primary">Epics</h3>
