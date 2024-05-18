@@ -25,6 +25,8 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
 import { getIssueProperties } from "../../../utilities/utilities";
 import { getProjectById } from "../../../api/services/projectsService";
+import { getSprints } from "../../../api/services/sprintsService";
+import { Sprint } from "../../../api/models/sprint";
 
 export type Column = {
     [name: string]: Issue[];
@@ -38,6 +40,8 @@ const defaultFilters: IssueFilter & EpicFilter = {
 const Backlog = () => {
     const { projectId } = useParams();
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
+    const [sprints, setSprints] = useState<Sprint[]>([]);
+    const [currentSprint, setCurrentSprint] = useState<Sprint>();
     const [selectedEpic, setSelectedEpic] = useState<Epic>();
     const [selectedIssue, setSelectedIssue] = useState<Issue>();
 
@@ -68,6 +72,15 @@ const Backlog = () => {
 
     const handleChange = (_: React.SyntheticEvent, newValue: string) => {
         setTab(newValue);
+    };
+
+    const getAllSprintsForProject = async () => {
+        if (projectId) {
+            const { data } = await getSprints({
+                projectId: +projectId,
+            });
+            setSprints(data.items);
+        }
     };
 
     const setIssuesAndEpicsState = (issues: Issue[], epics: Epic[]) => {
@@ -224,8 +237,16 @@ const Backlog = () => {
     }, [filters, query]);
 
     useEffect(() => {
+        if (filters && sprints) {
+            const sprint = sprints.find((x) => x.id === filters.sprintId);
+            setCurrentSprint(sprint);
+        }
+    }, [sprints, filters]);
+
+    useEffect(() => {
         if (projectId) {
             setCurrentSprintId(projectId);
+            getAllSprintsForProject();
         }
     }, [projectId]);
 
@@ -325,6 +346,19 @@ const Backlog = () => {
                             }
                         />
                     </div>
+                </div>
+                <div>
+                    <span>
+                        {sprints &&
+                            filters?.sprintId &&
+                            currentSprint &&
+                            `Sprint: ${currentSprint.name}`}
+                        {sprints &&
+                            filters &&
+                            !filters?.sprintId &&
+                            !currentSprint &&
+                            `No sprint selected. Showing all issues.`}
+                    </span>
                 </div>
                 <div className="mt-[20px] w-full">
                     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
