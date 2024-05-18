@@ -261,6 +261,7 @@ const Backlog = () => {
                         filters={filters || defaultFilters}
                         setFilters={setFilters}
                         onClearFilters={() => setFilters(defaultFilters)}
+                        sprints={sprints}
                     />
                 )}
                 {selectedEpic && projectId && (

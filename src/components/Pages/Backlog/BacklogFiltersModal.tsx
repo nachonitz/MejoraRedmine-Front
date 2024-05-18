@@ -21,7 +21,6 @@ import {
 import { getEnumerations } from "../../../api/services/enumerationsService";
 import { EpicFilter } from "../../../api/models/epic";
 import { getReleases } from "../../../api/services/releasesService";
-import { getSprints } from "../../../api/services/sprintsService";
 import { Sprint } from "../../../api/models/sprint";
 import { Release } from "../../../api/models/release";
 
@@ -32,6 +31,7 @@ interface Props {
     setFilters: (filters: IssueFilter & EpicFilter) => void;
     onClearFilters: () => void;
     projectId: number;
+    sprints: Sprint[];
 }
 
 export const BacklogFiltersModal = ({
@@ -41,11 +41,11 @@ export const BacklogFiltersModal = ({
     setFilters,
     onClearFilters,
     projectId,
+    sprints,
 }: Props) => {
     const [trackers, setTrackers] = useState<Tracker[]>([]);
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
-    const [sprints, setSprints] = useState<Sprint[]>([]);
     const [releases, setReleases] = useState<Release[]>([]);
     const [estimations, _setEstimations] = useState<string[]>([
         "XS",
@@ -100,13 +100,6 @@ export const BacklogFiltersModal = ({
             });
     };
 
-    const getAllSprintsForProject = async () => {
-        const { data } = await getSprints({
-            projectId: +projectId,
-        });
-        setSprints(data.items);
-    };
-
     const getAllReleasesForProject = async () => {
         const { data } = await getReleases({
             projectId: +projectId,
@@ -130,7 +123,6 @@ export const BacklogFiltersModal = ({
     useEffect(() => {
         const fetch = async () => {
             await getAllIssuesPriorities();
-            await getAllSprintsForProject();
             await getAllReleasesForProject();
             getAllTrackers();
             getAllIssuesStatuses();
