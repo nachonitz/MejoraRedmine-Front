@@ -13,3 +13,5 @@ export const ESTIMATIONS_TO_POINTS = {
     L: 5,
     XL: 8,
 };
+
+export const NOT_ESTIMATED = "Not Estimated";

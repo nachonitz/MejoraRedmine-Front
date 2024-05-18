@@ -31,6 +31,7 @@ import {
 } from "../../../api/services/sprintsService";
 import { Sprint } from "../../../api/models/sprint";
 import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
+import { NOT_ESTIMATED } from "../../../utilities/constants";
 
 export type Column = {
     [name: string]: Issue[];
@@ -231,6 +232,14 @@ const Backlog = () => {
         setSelectedIssue(undefined);
     };
 
+    const handleSetFilters = (filters: IssueFilter & EpicFilter) => {
+        if (filters.estimation === NOT_ESTIMATED) {
+            filters.estimation = undefined;
+            filters.isEstimated = false;
+        }
+        setFilters(filters);
+    }
+
     // const refresh = () => query(defaultFilters);
     const quickRefresh = () => queryWithoutLoading(filters ?? defaultFilters);
 
@@ -276,7 +285,7 @@ const Backlog = () => {
                         open={openBacklogFiltersModal}
                         onClose={() => setOpenBacklogFiltersModal(false)}
                         filters={filters || defaultFilters}
-                        setFilters={setFilters}
+                        setFilters={handleSetFilters}
                         onClearFilters={() => setFilters(defaultFilters)}
                         sprints={sprints}
                     />

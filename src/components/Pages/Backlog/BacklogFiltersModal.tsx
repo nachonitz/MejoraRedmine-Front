@@ -23,6 +23,7 @@ import { EpicFilter } from "../../../api/models/epic";
 import { getReleases } from "../../../api/services/releasesService";
 import { Sprint } from "../../../api/models/sprint";
 import { Release } from "../../../api/models/release";
+import { NOT_ESTIMATED } from "../../../utilities/constants";
 
 interface Props {
     open: boolean;
@@ -53,6 +54,7 @@ export const BacklogFiltersModal = ({
         "M",
         "L",
         "XL",
+        NOT_ESTIMATED,
     ]);
     const [priorityId, setPriorityId] = useState<string | undefined>(
         filters.priorityId ? filters.priorityId.toString() : undefined
