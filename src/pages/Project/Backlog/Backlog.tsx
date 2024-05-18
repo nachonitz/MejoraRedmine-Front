@@ -25,8 +25,12 @@ import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { BacklogContext } from "../../../context/BacklogContext";
 import { getIssueProperties } from "../../../utilities/utilities";
 import { getProjectById } from "../../../api/services/projectsService";
-import { getSprints } from "../../../api/services/sprintsService";
+import {
+    getSprintById,
+    getSprints,
+} from "../../../api/services/sprintsService";
 import { Sprint } from "../../../api/models/sprint";
+import PrimaryButton from "../../../components/Shared/Buttons/PrimaryButton";
 
 export type Column = {
     [name: string]: Issue[];
@@ -81,6 +85,11 @@ const Backlog = () => {
             });
             setSprints(data.items);
         }
+    };
+
+    const getSprint = async (sprintId: number) => {
+        const sprint = await getSprintById(sprintId);
+        setCurrentSprint(sprint);
     };
 
     const setIssuesAndEpicsState = (issues: Issue[], epics: Epic[]) => {
@@ -238,8 +247,16 @@ const Backlog = () => {
 
     useEffect(() => {
         if (filters && sprints) {
-            const sprint = sprints.find((x) => x.id === filters.sprintId);
-            setCurrentSprint(sprint);
+            if (
+                !currentSprint ||
+                (currentSprint && filters.sprintId !== currentSprint.id)
+            ) {
+                if (filters.sprintId) {
+                    getSprint(filters.sprintId);
+                } else {
+                    setCurrentSprint(undefined);
+                }
+            }
         }
     }, [sprints, filters]);
 
@@ -263,6 +280,25 @@ const Backlog = () => {
                         onClearFilters={() => setFilters(defaultFilters)}
                         sprints={sprints}
                     />
+                )}
+                {!selectedEpic && projectId && (
+                    <>
+                        {openCreateIssue && (
+                            <CreateIssueDialog
+                                open={openCreateIssue}
+                                epicId={undefined}
+                                projectId={projectId}
+                                releaseId={
+                                    currentSprint?.release?.id?.toString() ||
+                                    undefined
+                                }
+                                sprintId={
+                                    currentSprint?.id?.toString() || undefined
+                                }
+                                handleClose={handleCloseDialog}
+                            />
+                        )}
+                    </>
                 )}
                 {selectedEpic && projectId && (
                     <>
@@ -331,6 +367,14 @@ const Backlog = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Backlog" />
                     <div className="flex gap-x-6">
+                        <PrimaryButton
+                            onClick={() => {
+                                setOpenCreateIssue(true);
+                                console.log(currentSprint);
+                            }}
+                        >
+                            New Issue
+                        </PrimaryButton>
                         <SecondaryButton
                             onClick={() => setOpenBacklogFiltersModal(true)}
                         >

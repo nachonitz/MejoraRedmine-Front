@@ -33,9 +33,9 @@ export interface CreateIssueDto extends BaseIssue {
     priorityId: number;
     trackerId: number;
     projectId: number;
-    releaseId?: number;
-    sprintId?: number;
-    epicId?: number;
+    releaseId?: number | null;
+    sprintId?: number | null;
+    epicId?: number | null;
     statusId?: number;
     assigneeId?: number;
     endDate?: Date;

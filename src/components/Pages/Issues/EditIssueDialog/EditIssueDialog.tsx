@@ -248,9 +248,9 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             estimation: estimation,
             statusId: +statusId,
             projectId: +projectId,
-            releaseId: releaseId ? +releaseId : undefined,
-            sprintId: sprintId ? +sprintId : undefined,
-            epicId: epicId ? +epicId : undefined,
+            releaseId: releaseId ? +releaseId : null,
+            sprintId: sprintId ? +sprintId : null,
+            epicId: epicId ? +epicId : null,
             assigneeId: +assigneeId,
         };
         if (
@@ -314,6 +314,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                                     setEpicId(undefined);
                                 }}
                             >
+                                <MenuItem value={""}>None</MenuItem>
                                 {releases &&
                                     releases.map((release: Release) => (
                                         <MenuItem
@@ -343,6 +344,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                                         setEpicId(undefined);
                                     }}
                                 >
+                                    <MenuItem value={""}>None</MenuItem>
                                     {sprints &&
                                         sprints.map((sprint: Sprint) => (
                                             <MenuItem
@@ -367,6 +369,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
                                     error={errorEpicId}
                                     onChange={(e) => setEpicId(e.target.value)}
                                 >
+                                    <MenuItem value={""}>None</MenuItem>
                                     {epics &&
                                         epics.map((epic: Epic) => (
                                             <MenuItem

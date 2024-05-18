@@ -39,9 +39,9 @@ interface CreateIssueDialogProps {
     open: boolean;
     handleClose: (refresh?: boolean) => void;
     projectId: string;
-    releaseId: string;
-    sprintId: string;
-    epicId: string;
+    releaseId?: string;
+    sprintId?: string;
+    epicId?: string;
 }
 
 const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
@@ -93,8 +93,6 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     const [errorSelectedEpicId, _setSelectedErrorEpicId] = useState(false);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    console.log({ memberships });
 
     const getProjectReleases = () => {
         getReleases({
@@ -231,9 +229,9 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
             trackerId: +trackerId,
             statusId: +statusId,
             projectId: +projectId,
-            releaseId: selectedReleaseId ? +selectedReleaseId : undefined,
-            sprintId: selectedSprintId ? +selectedSprintId : undefined,
-            epicId: selectedEpicId ? +selectedEpicId : undefined,
+            releaseId: selectedReleaseId ? +selectedReleaseId : null,
+            sprintId: selectedSprintId ? +selectedSprintId : null,
+            epicId: selectedEpicId ? +selectedEpicId : null,
             assigneeId: +assigneeId,
             estimation: estimation,
         };
@@ -292,6 +290,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                     setSelectedEpicId(undefined);
                                 }}
                             >
+                                <MenuItem value={""}>None</MenuItem>
                                 {releases &&
                                     releases.map((release: Release) => (
                                         <MenuItem
@@ -321,6 +320,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                         setSelectedEpicId(undefined);
                                     }}
                                 >
+                                    <MenuItem value={""}>None</MenuItem>
                                     {sprints &&
                                         sprints.map((sprint: Sprint) => (
                                             <MenuItem
@@ -350,6 +350,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                                         setSelectedEpicId(e.target.value)
                                     }
                                 >
+                                    <MenuItem value={""}>None</MenuItem>
                                     {epics &&
                                         epics.map((epic: Epic) => (
                                             <MenuItem

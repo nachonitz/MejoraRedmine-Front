@@ -74,23 +74,29 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="pl-[5px] text-[14px] text-[#444] flex items-center gap-1">
-                        <img
-                            className="w-[16px] h-[16px]"
-                            src="/assets/icons/epic-icon.png"
-                        />
-                        <span>
-                            {issue.epic?.name.length &&
-                            issue.epic?.name.length > 15 ? (
-                                <Tooltip title={issue.epic?.name}>
-                                    <span>
-                                        {issue.epic?.name.substring(0, 15) +
-                                            "..."}
-                                    </span>
-                                </Tooltip>
-                            ) : (
-                                issue.epic?.name
-                            )}
-                        </span>
+                        {issue.epic && (
+                            <>
+                                <img
+                                    className="w-[16px] h-[16px]"
+                                    src="/assets/icons/epic-icon.png"
+                                />
+                                <span>
+                                    {issue.epic?.name.length &&
+                                    issue.epic?.name.length > 15 ? (
+                                        <Tooltip title={issue.epic?.name}>
+                                            <span>
+                                                {issue.epic?.name.substring(
+                                                    0,
+                                                    15
+                                                ) + "..."}
+                                            </span>
+                                        </Tooltip>
+                                    ) : (
+                                        issue.epic?.name
+                                    )}
+                                </span>
+                            </>
+                        )}
                     </div>
                     <div className="flex gap-1 items-center">
                         {getPriorityIcon(issue.priority.name)}
