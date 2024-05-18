@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { Epic } from "../../../../../api/models/epic";
@@ -53,7 +53,15 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
                             src="/assets/icons/epic-icon.png"
                         />
                         <span className="text-[16px] text-primary">
-                            {epic.name}
+                            {epic.name.length > 130 ? (
+                                <Tooltip title={epic.name}>
+                                    <span>
+                                        {epic.name.substring(0, 130) + "..."}
+                                    </span>
+                                </Tooltip>
+                            ) : (
+                                epic.name
+                            )}
                         </span>
                     </div>
                     <div className="flex items-center">

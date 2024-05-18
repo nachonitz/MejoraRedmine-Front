@@ -36,7 +36,20 @@ const IssueItem: React.FC<IssueCardProps> = ({ issue }) => {
                                 />
                             </div>
                             <div>
-                                <span>{issue.subject}</span>
+                                <span>
+                                    {issue.subject.length > 25 ? (
+                                        <Tooltip title={issue.subject}>
+                                            <span>
+                                                {issue.subject.substring(
+                                                    0,
+                                                    25
+                                                ) + "..."}
+                                            </span>
+                                        </Tooltip>
+                                    ) : (
+                                        issue.subject
+                                    )}
+                                </span>
                             </div>
                         </div>
 
