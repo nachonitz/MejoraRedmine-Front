@@ -43,8 +43,8 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
             {...listeners}
         >
             <div className="bg-white shadow-userStory p-[4px] box-border flex flex-col gap-[3px] select-none">
-                <div className="flex items-center justify-between">
-                    <div className="flex gap-[2px] items-center">
+                <div className="flex items-start justify-between">
+                    <div className="flex gap-[2px] items-start pt-1">
                         <img
                             className="w-[24px] h-[24px]"
                             src={getIssueIcon(issue.tracker.name)}
