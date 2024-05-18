@@ -41,6 +41,7 @@ import { getSprints } from "../../../../api/services/sprintsService";
 import PrimaryButton from "../../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../../Shared/Buttons/SecondaryButton";
 import { errorToast, successToast } from "../../../Shared/Toast";
+import { NOT_ESTIMATED } from "../../../../utilities/constants";
 
 interface EditIssueDialogProps {
     open: boolean;
@@ -68,6 +69,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         "M",
         "L",
         "XL",
+        NOT_ESTIMATED,
     ]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState<string | undefined>("");
@@ -75,7 +77,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
     const [assigneeId, setAssigneeId] = useState<string>("");
-    const [estimation, setEstimation] = useState<string | undefined>("");
+    const [estimation, setEstimation] = useState<string | undefined>();
     const [releaseId, setReleaseId] = useState<string | undefined>("");
     const [sprintId, setSprintId] = useState<string | undefined>("");
     const [epicId, setEpicId] = useState<string | undefined>("");
@@ -245,7 +247,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             description: description,
             priorityId: +priorityId,
             trackerId: +trackerId,
-            estimation: estimation,
+            estimation: estimation === NOT_ESTIMATED ? undefined : estimation,
             statusId: +statusId,
             projectId: +projectId,
             releaseId: releaseId ? +releaseId : null,
@@ -279,7 +281,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         setDescription("");
         setPriorityId("");
         setTrackerId("");
-        setEstimation("");
+        setEstimation(undefined);
         setStatusId("");
         setAssigneeId("");
         clearErrors();
