@@ -44,7 +44,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .catch((error: any) => {
                     console.log(error);
-                    setServerErrors(error.messages);
+                    Array.isArray(error?.messages) ? setServerErrors(error.messages) : setServerErrors([error.messages]);
                     errorToast("Something went wrong");
                 })
                 .finally(() => {
