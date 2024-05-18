@@ -47,9 +47,9 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
         }
     };
 
-    const handleScroll = (_event: any) => {
-        setSettingsOpened(false);
-    };
+    // const handleScroll = (_event: any) => {
+    //     setSettingsOpened(false);
+    // };
 
     const handleEdit = (event: any) => {
         event?.stopPropagation();
@@ -69,11 +69,11 @@ const SettingsButton = ({ onEdit, onDelete }: SettingsButtonProps) => {
 
     useEffect(() => {
         document.addEventListener("click", handleOutsideClick, true);
-        window.addEventListener("scroll", handleScroll);
+        // window.addEventListener("scroll", handleScroll);
 
         return () => {
             document.removeEventListener("click", handleOutsideClick, true);
-            window.removeEventListener("scroll", handleScroll);
+            // window.removeEventListener("scroll", handleScroll);
         };
     }, []);
 
