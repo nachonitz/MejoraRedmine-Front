@@ -67,12 +67,12 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         "XL",
     ]);
     const [name, setName] = useState("");
-    const [description, setDescription] = useState<string | undefined>("");
+    const [description, setDescription] = useState<string | undefined>();
     const [priorityId, setPriorityId] = useState<string>("");
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
     const [assigneeId, setAssigneeId] = useState<string>("");
-    const [estimation, setEstimation] = useState<string | undefined>("");
+    const [estimation, setEstimation] = useState<string | undefined>();
     const [selectedReleaseId, setSelectedReleaseId] = useState<
         string | undefined
     >(releaseId);
@@ -255,7 +255,7 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
         setDescription("");
         setPriorityId("");
         setTrackerId("");
-        setEstimation("");
+        setEstimation(undefined);
         setStatusId("");
         setAssigneeId("");
         clearErrors();
