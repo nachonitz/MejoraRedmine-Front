@@ -24,7 +24,7 @@ import { Searchbar } from "../../../components/Shared/Searchbar/Searchbar";
 import Sidebar from "../../../components/Shared/Sidebar/Sidebar";
 import { TableHeadItem } from "../../../components/Shared/Table/TableHeadItem";
 import { formatPercentage, getFullDate, hasAccess } from "../../../lib/utils";
-import { DEFAULT_PAGINATION_DATA } from "../../../utilities/constants";
+import { DEFAULT_PAGINATION_DATA, NOT_ESTIMATED } from "../../../utilities/constants";
 import { getIssueIcon } from "../../../utilities/utilities";
 
 const defaultFilters: IssueFilter = {
@@ -127,6 +127,14 @@ const ProjectIssues = () => {
         setSelectedIssue(undefined);
     };
 
+    const handleSetFilters = (filters: IssueFilter) => {
+        if (filters.estimation === NOT_ESTIMATED) {
+            filters.estimation = undefined;
+            filters.isEstimated = false;
+        }
+        setFilters(filters);
+    }
+
     useEffect(() => {
         query(filters);
     }, [filters, query]);
@@ -151,7 +159,7 @@ const ProjectIssues = () => {
                         open={openIssueFiltersModal}
                         onClose={() => setOpenIssueFiltersModal(false)}
                         filters={filters}
-                        setFilters={setFilters}
+                        setFilters={handleSetFilters}
                         onClearFilters={() => setFilters(defaultFilters)}
                     />
                 )}

@@ -19,6 +19,7 @@ import {
     getTrackers,
 } from "../../../api/services/issuesService";
 import { getEnumerations } from "../../../api/services/enumerationsService";
+import { NOT_ESTIMATED } from "../../../utilities/constants";
 
 interface Props {
     open: boolean;
@@ -44,6 +45,7 @@ export const IssueFiltersModal = ({
         "M",
         "L",
         "XL",
+        NOT_ESTIMATED,
     ]);
     const [priorityId, setPriorityId] = useState<string | undefined>(
         filters.priorityId ? filters.priorityId.toString() : undefined
