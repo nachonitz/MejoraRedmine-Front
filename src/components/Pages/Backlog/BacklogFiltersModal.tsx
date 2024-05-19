@@ -216,7 +216,7 @@ export const BacklogFiltersModal = ({
                                 ))}
                         </Select>
                     </FormControl>
-                    <FormControl>
+                   {releases?.length > 0 && <FormControl>
                         <InputLabel id="release-label">Release</InputLabel>
                         <Select
                             labelId="release-label"
@@ -234,8 +234,8 @@ export const BacklogFiltersModal = ({
                                     </MenuItem>
                                 ))}
                         </Select>
-                    </FormControl>
-                    <FormControl>
+                    </FormControl>}
+                    {sprints?.length > 0 && <FormControl>
                         <InputLabel id="sprint-label">Sprint</InputLabel>
                         <Select
                             labelId="sprint-label"
@@ -250,7 +250,7 @@ export const BacklogFiltersModal = ({
                                     </MenuItem>
                                 ))}
                         </Select>
-                    </FormControl>
+                    </FormControl>}
                 </div>
             </DialogContent>
             <div className="px-4 mb-4">
