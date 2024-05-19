@@ -19,7 +19,7 @@ const IssuesColumn = ({ column, loading }: BoardSectionProps) => {
     });
 
     return (
-        <div className="h-[560px] bg-[#F3F7FF] rounded-[7px] p-[7px] box-border flex flex-col flex-1 min-w-[250px] max-w-[500px] gap-6">
+        <div className="h-[65vh] bg-[#F3F7FF] rounded-[7px] p-[7px] box-border flex flex-col flex-1 min-w-[250px] max-w-[500px] gap-6">
             <div className="w-full">
                 <span className="text-[16px] text-[#004A8E]">
                     {column.name}
