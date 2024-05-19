@@ -44,7 +44,9 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .catch((error: any) => {
                     console.log(error);
-                    Array.isArray(error?.messages) ? setServerErrors(error.messages) : setServerErrors([error.messages]);
+                    Array.isArray(error?.messages)
+                        ? setServerErrors(error.messages)
+                        : setServerErrors([error.messages]);
                     errorToast("Something went wrong");
                 })
                 .finally(() => {
@@ -63,8 +65,8 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
     };
 
     return (
-        <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[600px]">
+        <Dialog fullWidth={true} open={open} onClose={() => handleCloseModal()}>
+            <div>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
                         <div className="flex flex-col gap-[10px]">

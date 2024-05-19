@@ -98,8 +98,8 @@ const CreateProjectDialog = ({
     };
 
     return (
-        <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[600px] p-2">
+        <Dialog fullWidth={true} open={open} onClose={() => handleCloseModal()}>
+            <div className="p-2">
                 <DialogTitle>Create Project</DialogTitle>
                 <DialogContent>
                     <div className="flex flex-col gap-[20px]">

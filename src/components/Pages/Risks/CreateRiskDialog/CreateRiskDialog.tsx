@@ -112,8 +112,8 @@ const CreateRiskDialog = ({
     };
 
     return (
-        <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[600px]">
+        <Dialog fullWidth={true} open={open} onClose={() => handleCloseModal()}>
+            <div>
                 <DialogTitle>Create Risk</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">

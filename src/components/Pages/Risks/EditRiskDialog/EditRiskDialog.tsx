@@ -150,8 +150,8 @@ const EditRiskDialog = ({
     }, [open, riskId, resetState, handleGetRisk]);
 
     return (
-        <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[600px]">
+        <Dialog fullWidth={true} open={open} onClose={() => handleCloseModal()}>
+            <div>
                 <DialogTitle>Edit Risk</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">

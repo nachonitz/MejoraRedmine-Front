@@ -94,8 +94,8 @@ export const EditUserDialog = ({ user, open, onClose }: Props) => {
     };
 
     return (
-        <Dialog open={open} onClose={() => onClose()}>
-            <div className="w-[600px]">
+        <Dialog fullWidth={true} open={open} onClose={() => onClose()}>
+            <div>
                 <DialogTitle>Edit user</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">

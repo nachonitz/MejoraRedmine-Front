@@ -133,8 +133,8 @@ const EditReleaseDialog = ({
     }, [open, releaseId, resetState, handleGetRelease]);
 
     return (
-        <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[600px]">
+        <Dialog fullWidth={true} open={open} onClose={() => handleCloseModal()}>
+            <div>
                 <DialogTitle>Edit Release</DialogTitle>
                 <DialogContent>
                     <div className="mt-[5px] flex flex-col gap-[20px]">
