@@ -74,7 +74,7 @@ export const hasAdminAccess = () => {
 };
 
 export function formatPercentage(percentage: number) {
-    return `${percentage.toLocaleString("en-US", {
+    return `${percentage?.toLocaleString("en-US", {
         minimumFractionDigits: 0,
         maximumFractionDigits: 1,
     })}%`;
