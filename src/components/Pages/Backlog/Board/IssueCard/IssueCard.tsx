@@ -49,8 +49,8 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                             className="w-[24px] h-[24px]"
                             src={getIssueIcon(issue.tracker.name)}
                         />
-                        <span className="text-[16px] text-primary">
-                            {issue.subject.length > 35 ? (
+                        <span className="text-[16px] text-primary line-clamp-2 break-all">
+                            {/* {issue.subject.length > 35 ? (
                                 <Tooltip title={issue.subject}>
                                     <span>
                                         {issue.subject.substring(0, 35) + "..."}
@@ -58,7 +58,8 @@ const IssueCard: React.FC<IssueCardProps> = ({ issue }) => {
                                 </Tooltip>
                             ) : (
                                 issue.subject
-                            )}
+                            )} */}
+                            {issue.subject}
                         </span>
                     </div>
                     <div>
