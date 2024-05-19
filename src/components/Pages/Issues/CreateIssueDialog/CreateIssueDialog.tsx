@@ -269,8 +269,8 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
     };
 
     return (
-        <Dialog open={open} onClose={() => handleCloseModal()}>
-            <div className="w-[600px]">
+        <Dialog fullWidth={true} open={open} onClose={() => handleCloseModal()}>
+            <div>
                 <div className="flex items-center justify-between mt-5 pr-6">
                     <DialogTitle>Create Issue</DialogTitle>
                     <div className="flex gap-2">
