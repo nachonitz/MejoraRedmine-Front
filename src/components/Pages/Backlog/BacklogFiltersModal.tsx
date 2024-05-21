@@ -11,7 +11,7 @@ import {
 import { IssueFilter, IssueStatus } from "../../../api/models/issue";
 import PrimaryButton from "../../Shared/Buttons/PrimaryButton";
 import SecondaryButton from "../../Shared/Buttons/SecondaryButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Tracker } from "../../../api/models/tracker";
 import { Enumeration, EnumerationType } from "../../../api/models/enumeration";
 import {
@@ -24,6 +24,8 @@ import { getReleases } from "../../../api/services/releasesService";
 import { Sprint } from "../../../api/models/sprint";
 import { Release } from "../../../api/models/release";
 import { NOT_ESTIMATED } from "../../../utilities/constants";
+import { getSprints } from "../../../api/services/sprintsService";
+import { ListedResponse } from "../../../api/models/common";
 
 interface Props {
     open: boolean;
@@ -48,6 +50,7 @@ export const BacklogFiltersModal = ({
     const [priorities, setPriorities] = useState<Enumeration[]>([]);
     const [statuses, setStatuses] = useState<IssueStatus[]>([]);
     const [releases, setReleases] = useState<Release[]>([]);
+    const [sprintsList, setSprintsList] = useState<Sprint[]>([]);
     const [estimations, _setEstimations] = useState<string[]>([
         "XS",
         "S",
@@ -131,6 +134,45 @@ export const BacklogFiltersModal = ({
         };
         fetch();
     }, []);
+
+    const handleGetSprints = useCallback(() => {
+        if (releaseId) {
+            getSprints({
+                releaseId: parseInt(releaseId),
+                projectId,
+                limit: 100,
+            })
+                .then((value: { data: ListedResponse<Sprint> }) => {
+                    const sprints = value.data;
+                    setSprintsList(sprints.items);
+                    if (sprintId) {
+                        const sprint = sprints.items.find(
+                            (sprint) => sprint.id === parseInt(sprintId)
+                        );
+                        if (!sprint) {
+                            setSprintId(undefined);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [releaseId]);
+
+    useEffect(() => {
+        if (sprints) {
+            setSprintsList(sprints);
+        }
+    }, [sprints]);
+
+    useEffect(() => {
+        if (releaseId) {
+            handleGetSprints();
+        } else {
+            setSprintsList(sprints);
+        }
+    }, [releaseId]);
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -216,41 +258,50 @@ export const BacklogFiltersModal = ({
                                 ))}
                         </Select>
                     </FormControl>
-                   {releases?.length > 0 && <FormControl>
-                        <InputLabel id="release-label">Release</InputLabel>
-                        <Select
-                            labelId="release-label"
-                            value={releaseId}
-                            label="Release"
-                            onChange={(e) => setReleaseId(e.target.value)}
-                        >
-                            {releases &&
-                                releases.map((release: Release) => (
-                                    <MenuItem
-                                        key={release.id}
-                                        value={release.id}
-                                    >
-                                        {release.name}
-                                    </MenuItem>
-                                ))}
-                        </Select>
-                    </FormControl>}
-                    {sprints?.length > 0 && <FormControl>
-                        <InputLabel id="sprint-label">Sprint</InputLabel>
-                        <Select
-                            labelId="sprint-label"
-                            value={sprintId}
-                            label="Sprint"
-                            onChange={(e) => setSprintId(e.target.value)}
-                        >
-                            {sprints &&
-                                sprints.map((sprint: Sprint) => (
-                                    <MenuItem key={sprint.id} value={sprint.id}>
-                                        {sprint.name}
-                                    </MenuItem>
-                                ))}
-                        </Select>
-                    </FormControl>}
+                    {releases?.length > 0 && (
+                        <FormControl>
+                            <InputLabel id="release-label">Release</InputLabel>
+                            <Select
+                                labelId="release-label"
+                                value={releaseId}
+                                label="Release"
+                                onChange={(e) => setReleaseId(e.target.value)}
+                            >
+                                <MenuItem value={undefined}>All</MenuItem>
+                                {releases &&
+                                    releases.map((release: Release) => (
+                                        <MenuItem
+                                            key={release.id}
+                                            value={release.id}
+                                        >
+                                            {release.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+                    )}
+                    {sprintsList?.length > 0 && (
+                        <FormControl>
+                            <InputLabel id="sprint-label">Sprint</InputLabel>
+                            <Select
+                                labelId="sprint-label"
+                                value={sprintId}
+                                label="Sprint"
+                                onChange={(e) => setSprintId(e.target.value)}
+                            >
+                                <MenuItem value={undefined}>All</MenuItem>
+                                {sprintsList &&
+                                    sprintsList.map((sprint: Sprint) => (
+                                        <MenuItem
+                                            key={sprint.id}
+                                            value={sprint.id}
+                                        >
+                                            {sprint.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+                    )}
                 </div>
             </DialogContent>
             <div className="px-4 mb-4">

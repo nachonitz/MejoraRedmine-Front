@@ -238,7 +238,7 @@ const Backlog = () => {
             filters.isEstimated = false;
         }
         setFilters(filters);
-    }
+    };
 
     // const refresh = () => query(defaultFilters);
     const quickRefresh = () => queryWithoutLoading(filters ?? defaultFilters);
@@ -411,7 +411,7 @@ const Backlog = () => {
                             filters &&
                             !filters?.sprintId &&
                             !currentSprint &&
-                            `No sprint selected. Showing all issues.`}
+                            `No sprint selected.`}
                     </span>
                 </div>
                 <div className="mt-[20px] w-full">
