@@ -172,7 +172,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                             for (let i = issueClosedDateIndex; i >= 0; i--) {
                                 if (days[i].value !== null) {
                                     days[i].value =
-                                        days[i].value || 0 + issueEstimation;
+                                        (days[i].value || 0) + issueEstimation;
                                 }
                             }
                         }
