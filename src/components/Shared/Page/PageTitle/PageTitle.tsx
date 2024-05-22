@@ -46,7 +46,9 @@ const PageTitle = ({ title, goBackTo, dialogInfo }: Props) => {
                 </IconButton>
             )}
             <div className="flex items-center gap-[10px]">
-                <span className="text-[26px] text-primary">{title}</span>
+                <span className="text-[26px] font-bold text-primary">
+                    {title}
+                </span>
                 {dialogInfo && (
                     <div title="See more information">
                         <AiFillInfoCircle

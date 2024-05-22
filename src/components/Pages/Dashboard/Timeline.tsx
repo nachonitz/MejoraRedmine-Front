@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Release } from "../../../api/models/release";
+import { ChartTitle } from "./ChartTitle";
 
 interface Props {
     releases: Release[];
@@ -12,12 +13,12 @@ export const Timeline = ({ releases }: Props) => {
 
     useEffect(() => {
         if (releases.length === 0) return;
-        let startDates = releases.map((release) => release.startDate);
-        let endDates = releases.map((release) => release.endDate);
-        let minStartDate = new Date(
+        const startDates = releases.map((release) => release.startDate);
+        const endDates = releases.map((release) => release.endDate);
+        const minStartDate = new Date(
             startDates.reduce((a, b) => (a < b ? a : b))
         );
-        let maxEndDate = new Date(endDates.reduce((a, b) => (a > b ? a : b)));
+        const maxEndDate = new Date(endDates.reduce((a, b) => (a > b ? a : b)));
         setMinStartDate(minStartDate);
         setMaxEndDate(maxEndDate);
         setCurrentDatePercentage(
@@ -31,8 +32,8 @@ export const Timeline = ({ releases }: Props) => {
         maxEndDate: Date | undefined
     ) => {
         if (!minStartDate || !maxEndDate) return 0;
-        let startDate = minStartDate.getTime();
-        let endDate = maxEndDate.getTime();
+        const startDate = minStartDate.getTime();
+        const endDate = maxEndDate.getTime();
         let currentDatePercentage =
             ((date.getTime() - startDate) / (endDate - startDate)) * 100;
         if (currentDatePercentage < 0) currentDatePercentage = 0;
@@ -45,11 +46,9 @@ export const Timeline = ({ releases }: Props) => {
         return `${date.getMonth() + 1}/${date.getDate()}`;
     };
     return (
-        <div className="w-full shadow-card rounded-md flex flex-col items-center p-3 box-border gap-5">
-            <div>
-                <span className="text-[#888] text-[20px]">Timeline</span>
-            </div>
-            <div className="w-full h-32 flex items-center gap-3">
+        <div className="w-full bg-white rounded-md flex flex-col items-center p-4 gap-5">
+            <ChartTitle>Timeline</ChartTitle>
+            <div className="w-full h-full flex items-center gap-3 p-4">
                 <div>
                     <span className="text-secondary">
                         {minStartDate && getDate(minStartDate)}
@@ -92,7 +91,7 @@ export const Timeline = ({ releases }: Props) => {
                                         >
                                             <div className="absolute top-[-64px] flex flex-col items-center">
                                                 <div>
-                                                    <span className="text-[#bbb] whitespace-nowrap">
+                                                    <span className="text-[#888] whitespace-nowrap">
                                                         {release.name}
                                                     </span>
                                                 </div>
@@ -103,7 +102,7 @@ export const Timeline = ({ releases }: Props) => {
                                                 </div>
                                             </div>
                                             <div className="absolute top-[5px]">
-                                                <span className="text-[#bbb] whitespace-nowrap">
+                                                <span className="text-[#888] whitespace-nowrap">
                                                     {getDate(
                                                         new Date(
                                                             release.endDate

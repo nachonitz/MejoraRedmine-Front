@@ -189,7 +189,6 @@ const Backlog = () => {
 
     const handleOpenCreateIssue = (epic: Epic) => {
         setSelectedEpic(epic);
-        console.log(epic);
         setOpenCreateIssue(true);
     };
 
@@ -379,7 +378,6 @@ const Backlog = () => {
                         <PrimaryButton
                             onClick={() => {
                                 setOpenCreateIssue(true);
-                                console.log(currentSprint);
                             }}
                         >
                             New Issue

@@ -10,6 +10,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import { ChartTitle } from "./ChartTitle";
 
 ChartJS.register(
     CategoryScale,
@@ -43,10 +44,11 @@ interface Props {
 }
 export const BurnDownChartCard = ({ title, data }: Props) => {
     return (
-        <div className="relative overflow-hidden shadow-card rounded-md flex flex-col items-center justify-center p-3 box-border gap-3 w-[710px]">
-            <div>
-                <span className="text-[#888] text-[20px]">{title}</span>
-            </div>
+        <div
+            className="relative overflow-hidden bg-white rounded-md flex flex-col 
+            items-center justify-center p-4 box-border gap-3 w-full"
+        >
+            <ChartTitle>{title}</ChartTitle>
             <div className="flex flex-grow w-full">
                 {data && (
                     <Line

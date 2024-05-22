@@ -140,7 +140,6 @@ const EditEpicDialog: React.FC<EditEpicDialogProps> = ({
                 successToast("Epic edited successfully");
             })
             .catch((error) => {
-                console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
             })

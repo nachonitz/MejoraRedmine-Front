@@ -19,7 +19,6 @@ const EpicCard: React.FC<IssueCardProps> = ({ epic }) => {
     const [overflow, setOveflow] = useState<string>("hidden");
 
     const toggleContent = () => {
-        console.log(opened);
         setOpened(!opened);
     };
 

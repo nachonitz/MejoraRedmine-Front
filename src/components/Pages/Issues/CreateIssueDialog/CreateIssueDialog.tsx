@@ -243,7 +243,6 @@ const CreateIssueDialog: React.FC<CreateIssueDialogProps> = ({
                 successToast("Issue created successfully");
             })
             .catch((error) => {
-                console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
             })

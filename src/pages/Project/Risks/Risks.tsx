@@ -228,9 +228,6 @@ const Risks = () => {
                             {risks.map((risk: Risk) => (
                                 <tr
                                     key={risk.id}
-                                    onClick={() => {
-                                        console.log(risk.id);
-                                    }}
                                     className="text-[18px] h-[40px] cursor-pointer hover:bg-gray-50"
                                 >
                                     <td className="gap-[10px] text-left">

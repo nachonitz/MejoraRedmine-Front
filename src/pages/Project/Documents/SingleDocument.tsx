@@ -71,19 +71,22 @@ const SingleDocument = () => {
                         <label className="text-gray-600 mb-2">
                             Attachments
                         </label>
-                        <div className="flex gap-x-8">
+                        <div className="grid 2xl:grid-cols-4 grid-cols-3 gap-4">
                             {files.map((file) => (
                                 <div
                                     key={file.title}
-                                    className="flex justify-between items-center"
+                                    className="flex justify-between items-center flex-wrap"
                                 >
                                     <div className="flex flex-col">
-                                        <span>
+                                        <a
+                                            href={file.content_url}
+                                            className="text-primary font-bold"
+                                        >
                                             {file.title.length > 40
                                                 ? file.title.substring(0, 39) +
                                                   "..."
                                                 : file.title}
-                                        </span>
+                                        </a>
                                         <span className="text-[#888] text-[14px]">
                                             {(
                                                 (file.filesize ?? 0) / 1024

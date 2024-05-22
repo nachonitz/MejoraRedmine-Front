@@ -103,7 +103,6 @@ const EditReleaseDialog = ({
                 successToast("Release edited successfully");
             })
             .catch((error) => {
-                console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
             })

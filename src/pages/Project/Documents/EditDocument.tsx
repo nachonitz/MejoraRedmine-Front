@@ -132,7 +132,6 @@ const EditDocument = () => {
             }
             navigate(`/project/${projectId}/documents`);
         } catch (error: any) {
-            console.log(error);
             setServerErrors(error.messages);
             errorToast("Something went wrong");
         } finally {

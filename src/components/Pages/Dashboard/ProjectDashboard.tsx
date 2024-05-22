@@ -18,21 +18,61 @@ interface Props {
 
 const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
     const { projectId } = useParams();
-    const [tasksCompleted, setTasksCompleted] = useState<number>(0);
-    const [tasksPlanned, setTasksPlanned] = useState<number>(0);
-    const [tasksStatuses, setTasksStatuses] = useState<
-        {
-            id: number;
-            value: number;
-            label: string;
-        }[]
-    >([]);
     const [sprintsToBurnUp, setSprintsToBurnUp] = useState<
         { label: string; completed: number | null; trend: number }[]
     >([]);
     const [sprintsVelocity, setSprintsVelocity] = useState<
         { label: string; velocity: number }[]
     >([]);
+
+    const tasksStatuses = Object.values(
+        issues.reduce(
+            (
+                acc: {
+                    [key: number]: {
+                        id: number;
+                        value: number;
+                        label: string;
+                    };
+                },
+                issue
+            ) => {
+                if (!acc[issue.status.id]) {
+                    acc[issue.status.id] = {
+                        id: issue.status.id,
+                        value: 0,
+                        label: issue.status.name,
+                    };
+                }
+                acc[issue.status.id].value++;
+                return acc;
+            },
+            {}
+        )
+    );
+
+    const tasksCompleted = issues.filter(
+        (issue) => issue.status.is_closed
+    ).length;
+    const tasksPlanned = issues.length;
+    const bugsCompleted = issues.filter(
+        (issue) => issue.tracker.name === "Bug" && issue.status.is_closed
+    ).length;
+    const bugsPlanned = issues.filter(
+        (issue) => issue.tracker.name === "Bug"
+    ).length;
+    const featuresCompleted = issues.filter(
+        (issue) => issue.tracker.name === "Feature" && issue.status.is_closed
+    ).length;
+    const featuresPlanned = issues.filter(
+        (issue) => issue.tracker.name === "Feature"
+    ).length;
+    const supportIssuesCompleted = issues.filter(
+        (issue) => issue.tracker.name === "Support" && issue.status.is_closed
+    ).length;
+    const supportIssuesPlanned = issues.filter(
+        (issue) => issue.tracker.name === "Support"
+    ).length;
 
     const calculateSprintCharts = (sprints: Sprint[], issues: Issue[]) => {
         let orderedSprints = sprints
@@ -141,34 +181,6 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
     };
 
     const setUpDashboardsData = async () => {
-        setTasksCompleted(
-            issues.filter((issue) => issue.status.is_closed).length
-        );
-        setTasksPlanned(issues.length);
-        let tasksStatuses = issues.reduce(
-            (
-                acc: {
-                    [key: number]: {
-                        id: number;
-                        value: number;
-                        label: string;
-                    };
-                },
-                issue
-            ) => {
-                if (!acc[issue.status.id]) {
-                    acc[issue.status.id] = {
-                        id: issue.status.id,
-                        value: 0,
-                        label: issue.status.name,
-                    };
-                }
-                acc[issue.status.id].value++;
-                return acc;
-            },
-            {}
-        );
-        setTasksStatuses(Object.values(tasksStatuses));
         calculateSprintCharts(sprints, issues);
     };
 
@@ -190,49 +202,91 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
             {!isEmptyData() && (
                 <div>
                     {releases && releases.length > 1 && (
-                        <div className="mt-5">
-                            <Timeline releases={releases} />
-                        </div>
-                    )}
-                    {tasksPlanned > 0 && (
-                        <div className="mt-5 flex gap-5">
-                            <div>
-                                <PieChartCard
-                                    title="Tasks by status"
-                                    data={tasksStatuses}
-                                />
-                            </div>
-
-                            <div>
-                                <ComparativeCard
-                                    title="Tasks"
-                                    properties={[
-                                        {
-                                            name: "Completed",
-                                            value: tasksCompleted,
-                                        },
-                                        {
-                                            name: "Planned",
-                                            value: tasksPlanned,
-                                        },
-                                    ]}
-                                />
-                            </div>
-                        </div>
+                        <Timeline releases={releases} />
                     )}
                     <div className="mt-5 flex gap-5">
-                        {sprintsToBurnUp && sprintsToBurnUp.length > 0 && (
-                            <BurnUpChartCard
-                                title="Burn Up Chart"
-                                data={sprintsToBurnUp}
+                        <BurnUpChartCard
+                            title="Burn Up Chart"
+                            data={sprintsToBurnUp}
+                            condition={
+                                sprintsToBurnUp && sprintsToBurnUp.length > 0
+                            }
+                        />
+                        <SprintsVelocityChartCard
+                            title="Sprints Velocity"
+                            data={sprintsVelocity}
+                            condition={
+                                sprintsVelocity && sprintsVelocity.length > 0
+                            }
+                        />
+                    </div>
+                    <div className="mt-5 flex gap-5">
+                        <PieChartCard
+                            title="Tasks by status"
+                            data={tasksStatuses}
+                            className="w-3/5"
+                        />
+                        <div className="grid grid-cols-2 gap-5 w-2/5">
+                            <ComparativeCard
+                                title="Tasks"
+                                properties={[
+                                    {
+                                        name: "Completed",
+                                        value: tasksCompleted,
+                                    },
+                                    {
+                                        name: "Planned",
+                                        value: tasksPlanned,
+                                    },
+                                ]}
+                                color="#004A8E"
                             />
-                        )}
-                        {sprintsVelocity && sprintsVelocity.length > 0 && (
-                            <SprintsVelocityChartCard
-                                title="Sprints Velocity"
-                                data={sprintsVelocity}
+                            <ComparativeCard
+                                title="Bugs"
+                                properties={[
+                                    {
+                                        name: "Completed",
+                                        value: bugsCompleted,
+                                    },
+                                    {
+                                        name: "Total",
+                                        value: bugsPlanned,
+                                    },
+                                ]}
+                                color="#FE3406"
+                                icon="/assets/icons/bug-icon.png"
                             />
-                        )}
+                            <ComparativeCard
+                                title="Features"
+                                properties={[
+                                    {
+                                        name: "Completed",
+                                        value: featuresCompleted,
+                                    },
+                                    {
+                                        name: "Total",
+                                        value: featuresPlanned,
+                                    },
+                                ]}
+                                color="#F98D50"
+                                icon="/assets/icons/user-story-icon.png"
+                            />
+                            <ComparativeCard
+                                title="Support Issues"
+                                properties={[
+                                    {
+                                        name: "Completed",
+                                        value: supportIssuesCompleted,
+                                    },
+                                    {
+                                        name: "Total",
+                                        value: supportIssuesPlanned,
+                                    },
+                                ]}
+                                color="#7F7F7F"
+                                icon="/assets/icons/support-icon.png"
+                            />
+                        </div>
                     </div>
                 </div>
             )}

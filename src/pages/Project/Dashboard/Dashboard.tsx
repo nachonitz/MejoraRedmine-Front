@@ -101,7 +101,7 @@ const Dashboard = () => {
                 <div className="flex justify-between items-center">
                     <PageTitle title="Dashboard" />
                 </div>
-                <div className="mt-[20px]">
+                <div className="mt-2">
                     <TabContext value={dashboardView}>
                         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                             <TabList onChange={handleChangeDashboardView}>
@@ -117,7 +117,7 @@ const Dashboard = () => {
                             </>
                         )}
                         {!loading && (
-                            <div>
+                            <div className="bg-[#f1f7fd]">
                                 <TabPanel value="1">
                                     {releases && sprints && issues && (
                                         <ProjectDashboard

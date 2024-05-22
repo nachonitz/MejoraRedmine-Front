@@ -128,8 +128,6 @@ const ProjectEpics = () => {
         query(filters);
     }, [query, filters]);
 
-    console.log({ epics });
-
     return (
         <Sidebar>
             <Page>

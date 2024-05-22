@@ -119,7 +119,6 @@ const EditRiskDialog = ({
                 successToast("Risk edited successfully");
             })
             .catch((error) => {
-                console.log(error);
                 setServerErrors(error.messages);
                 errorToast("Something went wrong");
             })

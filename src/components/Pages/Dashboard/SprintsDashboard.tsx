@@ -16,18 +16,19 @@ interface Props {
     issues: Issue[];
 }
 
+function getDatesArray(startDate: Date, endDate: Date): Date[] {
+    const daysArray: Date[] = [];
+    const currentDate = new Date(startDate);
+    while (currentDate.setHours(0, 0, 0, 0) <= endDate.setHours(0, 0, 0, 0)) {
+        daysArray.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return daysArray;
+}
+
 const SprintsDashboard = ({ sprints, issues }: Props) => {
     const { projectId } = useParams();
     const [selectedSprint, setSelectedSprint] = useState<Sprint | null>(null);
-    const [sprintTasksCompleted, setSprintTasksCompleted] = useState<number>(0);
-    const [sprintTasksPlanned, setSprintTasksPlanned] = useState<number>(0);
-    const [sprintTasksStatuses, setSprintTasksStatuses] = useState<
-        {
-            id: number;
-            value: number;
-            label: string;
-        }[]
-    >([]);
     const [burnDownChartInfo, setBurnDownChartInfo] = useState<
         {
             label: string;
@@ -36,17 +37,56 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
         }[]
     >([]);
 
-    function getDatesArray(startDate: Date, endDate: Date): Date[] {
-        const daysArray: Date[] = [];
-        const currentDate = new Date(startDate);
-        while (
-            currentDate.setHours(0, 0, 0, 0) <= endDate.setHours(0, 0, 0, 0)
-        ) {
-            daysArray.push(new Date(currentDate));
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-        return daysArray;
-    }
+    const sprintIssues = issues.filter(
+        (issue) => issue.sprint?.id === (selectedSprint?.id || 0)
+    );
+    const sprintTasksPlanned = sprintIssues.length;
+    const sprintTasksCompleted = sprintIssues.filter(
+        (issue) => issue.status.is_closed
+    ).length;
+    const bugsCompleted = sprintIssues.filter(
+        (issue) => issue.tracker.name === "Bug" && issue.status.is_closed
+    ).length;
+    const bugsPlanned = sprintIssues.filter(
+        (issue) => issue.tracker.name === "Bug"
+    ).length;
+    const featuresCompleted = sprintIssues.filter(
+        (issue) => issue.tracker.name === "Feature" && issue.status.is_closed
+    ).length;
+    const featuresPlanned = sprintIssues.filter(
+        (issue) => issue.tracker.name === "Feature"
+    ).length;
+    const supportIssuesCompleted = sprintIssues.filter(
+        (issue) => issue.tracker.name === "Support" && issue.status.is_closed
+    ).length;
+    const supportIssuesPlanned = sprintIssues.filter(
+        (issue) => issue.tracker.name === "Support"
+    ).length;
+    const sprintTasksStatuses = Object.values(
+        sprintIssues.reduce(
+            (
+                acc: {
+                    [key: number]: {
+                        id: number;
+                        value: number;
+                        label: string;
+                    };
+                },
+                issue
+            ) => {
+                if (!acc[issue.status.id]) {
+                    acc[issue.status.id] = {
+                        id: issue.status.id,
+                        value: 0,
+                        label: issue.status.name,
+                    };
+                }
+                acc[issue.status.id].value++;
+                return acc;
+            },
+            {}
+        )
+    );
 
     const setUpDashboardsData = async () => {
         let currentSprint = sprints.find((sprint) => {
@@ -85,34 +125,6 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
             const sprintIssues = issues.filter(
                 (issue) => issue.sprint?.id === sprint.id
             );
-            setSprintTasksCompleted(
-                sprintIssues.filter((issue) => issue.status.is_closed).length
-            );
-            setSprintTasksPlanned(sprintIssues.length);
-            const sprintTasksStatuses = sprintIssues.reduce(
-                (
-                    acc: {
-                        [key: number]: {
-                            id: number;
-                            value: number;
-                            label: string;
-                        };
-                    },
-                    issue
-                ) => {
-                    if (!acc[issue.status.id]) {
-                        acc[issue.status.id] = {
-                            id: issue.status.id,
-                            value: 0,
-                            label: issue.status.name,
-                        };
-                    }
-                    acc[issue.status.id].value++;
-                    return acc;
-                },
-                {}
-            );
-            setSprintTasksStatuses(Object.values(sprintTasksStatuses));
 
             const datesArray = getDatesArray(
                 new Date(sprint.startDate),
@@ -229,53 +241,30 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
         <div>
             {sprints && sprints.length > 0 && (
                 <div>
-                    <div className="mt-5">
-                        <FormControl>
-                            <InputLabel id="select-sprint">Sprint</InputLabel>
-                            <Select
-                                labelId="select-sprint"
-                                value={selectedSprint?.id || ""}
-                                label="Sprint"
-                                onChange={handleSprintChange}
-                            >
-                                {sprints &&
-                                    sprints.map((sprint: Sprint) => (
-                                        <MenuItem
-                                            key={sprint.id}
-                                            value={sprint.id}
-                                        >
-                                            {sprint.name}
-                                        </MenuItem>
-                                    ))}
-                            </Select>
-                        </FormControl>
-                    </div>
+                    <FormControl>
+                        <InputLabel id="select-sprint">Sprint</InputLabel>
+                        <Select
+                            labelId="select-sprint"
+                            value={selectedSprint?.id || ""}
+                            label="Sprint"
+                            onChange={handleSprintChange}
+                            className="bg-white"
+                        >
+                            {sprints &&
+                                sprints.map((sprint: Sprint) => (
+                                    <MenuItem key={sprint.id} value={sprint.id}>
+                                        {sprint.name}
+                                    </MenuItem>
+                                ))}
+                        </Select>
+                    </FormControl>
                     {sprintTasksPlanned > 0 && (
                         <div>
-                            <div className="mt-5 flex gap-5">
-                                <div>
-                                    <PieChartCard
-                                        title="Tasks by status"
-                                        data={sprintTasksStatuses}
-                                    />
-                                </div>
-                                <div>
-                                    <ComparativeCard
-                                        title="Tasks"
-                                        properties={[
-                                            {
-                                                name: "Completed",
-                                                value: sprintTasksCompleted,
-                                            },
-                                            {
-                                                name: "Planned",
-                                                value: sprintTasksPlanned,
-                                            },
-                                        ]}
-                                    />
-                                </div>
-                            </div>
                             <div className="flex mt-5 gap-5">
+                                <PieChartCard
+                                    title="Tasks by status"
+                                    data={sprintTasksStatuses}
+                                />
                                 <BurnDownChartCard
                                     title="Burn Down Chart"
                                     data={burnDownChartInfo}
@@ -283,6 +272,67 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
                             </div>
                         </div>
                     )}
+                    <div className="grid grid-cols-4 gap-5 w-full mt-5">
+                        <ComparativeCard
+                            title="Tasks"
+                            properties={[
+                                {
+                                    name: "Completed",
+                                    value: sprintTasksCompleted,
+                                },
+                                {
+                                    name: "Planned",
+                                    value: sprintTasksPlanned,
+                                },
+                            ]}
+                            color="#004A8E"
+                        />
+                        <ComparativeCard
+                            title="Bugs"
+                            properties={[
+                                {
+                                    name: "Completed",
+                                    value: bugsCompleted,
+                                },
+                                {
+                                    name: "Total",
+                                    value: bugsPlanned,
+                                },
+                            ]}
+                            color="#FE3406"
+                            icon="/assets/icons/bug-icon.png"
+                        />
+                        <ComparativeCard
+                            title="Features"
+                            properties={[
+                                {
+                                    name: "Completed",
+                                    value: featuresCompleted,
+                                },
+                                {
+                                    name: "Total",
+                                    value: featuresPlanned,
+                                },
+                            ]}
+                            color="#F98D50"
+                            icon="/assets/icons/user-story-icon.png"
+                        />
+                        <ComparativeCard
+                            title="Support Issues"
+                            properties={[
+                                {
+                                    name: "Completed",
+                                    value: supportIssuesCompleted,
+                                },
+                                {
+                                    name: "Total",
+                                    value: supportIssuesPlanned,
+                                },
+                            ]}
+                            color="#7F7F7F"
+                            icon="/assets/icons/support-icon.png"
+                        />
+                    </div>
                     {sprintTasksPlanned === 0 && (
                         <div className="mt-5">
                             <div className="flex justify-center items-center">
@@ -296,7 +346,7 @@ const SprintsDashboard = ({ sprints, issues }: Props) => {
             )}
             {!sprints ||
                 (sprints.length === 0 && (
-                    <div className="flex justify-center items-center">
+                    <div className="flex justify-center items-center min-h-[450px]">
                         <p className="text-gray-500">
                             No sprints found for this project
                         </p>

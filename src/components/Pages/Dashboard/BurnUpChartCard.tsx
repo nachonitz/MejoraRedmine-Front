@@ -10,6 +10,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import { ChartTitle } from "./ChartTitle";
 
 ChartJS.register(
     CategoryScale,
@@ -40,42 +41,54 @@ export const options = {
 interface Props {
     title: string;
     data: { label: string; completed: number | null; trend: number }[];
+    condition?: boolean;
 }
-export const BurnUpChartCard = ({ title, data }: Props) => {
+export const BurnUpChartCard = ({ title, data, condition }: Props) => {
     return (
-        <div className="relative overflow-hidden shadow-card rounded-md flex flex-col items-center justify-center p-3 box-border gap-3">
-            <div>
-                <span className="text-[#888] text-[20px]">{title}</span>
-            </div>
-            <div className="flex flex-grow w-[400px]">
-                {data && (
-                    <Line
-                        options={options}
-                        data={{
-                            labels: data.map((item: any) => item.label),
-                            datasets: [
-                                {
-                                    label: "Story points done",
-                                    data: data.map(
-                                        (item: any) => item.completed
-                                    ),
-                                    borderColor: "rgb(53, 162, 235)",
-                                    backgroundColor: "rgba(53, 162, 235, 0.5)",
-                                    yAxisID: "y",
-                                },
-                                {
-                                    label: "Trend",
-                                    data: data.map((item: any) => item.trend),
-                                    borderColor: "#ccc",
-                                    backgroundColor: "#ccc",
-                                    yAxisID: "y",
-                                    borderDash: [3, 3],
-                                },
-                            ],
-                        }}
-                    />
-                )}
-            </div>
+        <div
+            className="relative w-full overflow-hidden bg-white rounded-md 
+            flex flex-col items-center justify-center p-4 box-border gap-3"
+        >
+            <ChartTitle>{title}</ChartTitle>
+            {condition ? (
+                <div className="flex flex-grow w-full">
+                    {data && (
+                        <Line
+                            updateMode="resize"
+                            options={options}
+                            data={{
+                                labels: data.map((item: any) => item.label),
+                                datasets: [
+                                    {
+                                        label: "Story points done",
+                                        data: data.map(
+                                            (item: any) => item.completed
+                                        ),
+                                        borderColor: "rgb(53, 162, 235)",
+                                        backgroundColor:
+                                            "rgba(53, 162, 235, 0.5)",
+                                        yAxisID: "y",
+                                    },
+                                    {
+                                        label: "Trend",
+                                        data: data.map(
+                                            (item: any) => item.trend
+                                        ),
+                                        borderColor: "#ccc",
+                                        backgroundColor: "#ccc",
+                                        yAxisID: "y",
+                                        borderDash: [3, 3],
+                                    },
+                                ],
+                            }}
+                        />
+                    )}
+                </div>
+            ) : (
+                <p className="text-[#888] text-[14px] min-h-[150px] flex items-center">
+                    No data available yet.
+                </p>
+            )}
         </div>
     );
 };

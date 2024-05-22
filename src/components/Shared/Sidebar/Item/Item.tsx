@@ -11,7 +11,9 @@ const Item: React.FC<ItemProps> = ({ name, icon, onClick, selected }) => {
             <div
                 className={
                     `${
-                        selected ? "bg-itemhover font-[500] " : "bg-lightblue "
+                        selected
+                            ? "bg-itemhover font-semibold "
+                            : "bg-lightblue "
                     } ` +
                     "flex relative flex-row items-center w-full py-[6px] px-4 gap-[14px] duration-200 text-primary rounded overflow-hidden cursor-pointer hover:bg-itemhover"
                 }

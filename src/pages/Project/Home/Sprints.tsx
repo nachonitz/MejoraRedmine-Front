@@ -96,7 +96,6 @@ const ProjectSprints = () => {
         navigate(
             `/project/${projectId}/overview/release/${releaseId}/sprint/${id}`
         );
-        console.log(id);
     };
 
     const handleCloseCreateSprint = (refresh?: boolean) => {

@@ -150,7 +150,6 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
         if (issueId) {
             getIssueById(issueId)
                 .then((issue: Issue) => {
-                    console.log(issue);
                     setName(issue.subject);
                     setDescription(issue.description);
                     setPriorityId(issue.priority.id.toString());

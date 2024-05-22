@@ -11,6 +11,7 @@ interface BaseFile {
 export interface File extends BaseFile {
     id: number;
     redmineId: number;
+    content_url: string;
     project: Project;
     author?: User;
     document?: Document;
