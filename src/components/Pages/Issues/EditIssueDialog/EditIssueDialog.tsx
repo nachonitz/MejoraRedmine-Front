@@ -77,7 +77,7 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
     const [trackerId, setTrackerId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("");
     const [assigneeId, setAssigneeId] = useState<string>("");
-    const [estimation, setEstimation] = useState<string | undefined>();
+    const [estimation, setEstimation] = useState<string | undefined>("");
     const [releaseId, setReleaseId] = useState<string | undefined>("");
     const [sprintId, setSprintId] = useState<string | undefined>("");
     const [epicId, setEpicId] = useState<string | undefined>("");
@@ -247,7 +247,10 @@ const EditIssueDialog: React.FC<EditIssueDialogProps> = ({
             description: description,
             priorityId: +priorityId,
             trackerId: +trackerId,
-            estimation: estimation === NOT_ESTIMATED ? undefined : estimation,
+            estimation:
+                estimation === NOT_ESTIMATED || estimation === ""
+                    ? undefined
+                    : estimation,
             statusId: +statusId,
             projectId: +projectId,
             releaseId: releaseId ? +releaseId : null,
