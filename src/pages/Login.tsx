@@ -84,7 +84,7 @@ const Login = () => {
                             </PrimaryButton>
                         </div>
                         <div className="flex flex-row justify-center items-center gap-3">
-                            <div className="flex items-center">
+                            {/* <div className="flex items-center">
                                 <Link
                                     to="/login"
                                     className="w-full text-sm text-primary hover:underline"
@@ -92,7 +92,7 @@ const Login = () => {
                                     Forgot your password?
                                 </Link>
                             </div>
-                            <div className="w-[3px] h-[3px] bg-[#444] rounded-[100%]"></div>
+                            <div className="w-[3px] h-[3px] bg-[#444] rounded-[100%]"></div> */}
                             <div className="flex items-center">
                                 <Link
                                     to="/register"
