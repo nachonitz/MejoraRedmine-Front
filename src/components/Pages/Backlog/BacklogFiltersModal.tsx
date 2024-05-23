@@ -26,6 +26,8 @@ import { Release } from "../../../api/models/release";
 import { NOT_ESTIMATED } from "../../../utilities/constants";
 import { getSprints } from "../../../api/services/sprintsService";
 import { ListedResponse } from "../../../api/models/common";
+import { getMemberships } from "../../../api/services/membershipsService";
+import { ProjectMembership } from "../../../api/models/membership";
 
 interface Props {
     open: boolean;
@@ -59,6 +61,7 @@ export const BacklogFiltersModal = ({
         "XL",
         NOT_ESTIMATED,
     ]);
+    const [members, setMembers] = useState<ProjectMembership[]>([]);
     const [priorityId, setPriorityId] = useState<string | undefined>(
         filters.priorityId ? filters.priorityId.toString() : undefined
     );
@@ -67,6 +70,9 @@ export const BacklogFiltersModal = ({
     );
     const [statusId, setStatusId] = useState<string | undefined>(
         filters.statusId ? filters.statusId.toString() : undefined
+    );
+    const [userId, setUserId] = useState<string | undefined>(
+        filters.assigneeId ? filters.assigneeId.toString() : undefined
     );
     const [sprintId, setSprintId] = useState<string | undefined>(
         filters.sprintId ? filters.sprintId.toString() : undefined
@@ -112,6 +118,13 @@ export const BacklogFiltersModal = ({
         setReleases(data.items);
     };
 
+    const getAllProjectMembers = async () => {
+        const { data } = await getMemberships({
+            projectId,
+        });
+        setMembers(data.items);
+    };
+
     const handleApply = () => {
         setFilters({
             ...filters,
@@ -120,6 +133,7 @@ export const BacklogFiltersModal = ({
             statusId: statusId ? parseInt(statusId) : undefined,
             sprintId: sprintId ? parseInt(sprintId) : undefined,
             releaseId: releaseId ? parseInt(releaseId) : undefined,
+            assigneeId: userId ? parseInt(userId) : undefined,
             estimation: estimation,
         });
         onClose();
@@ -131,6 +145,7 @@ export const BacklogFiltersModal = ({
             await getAllReleasesForProject();
             getAllTrackers();
             getAllIssuesStatuses();
+            getAllProjectMembers();
         };
         fetch();
     }, []);
@@ -256,6 +271,28 @@ export const BacklogFiltersModal = ({
                                         {status.name}
                                     </MenuItem>
                                 ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl>
+                        <InputLabel id="assignee-label">Assignee</InputLabel>
+                        <Select
+                            labelId="assignee-label"
+                            value={userId}
+                            label="Assignee"
+                            onChange={(e) => setUserId(e.target.value)}
+                        >
+                            <MenuItem value={undefined}>All</MenuItem>
+                            {members &&
+                                members.map((member: ProjectMembership) =>
+                                    member.user ? (
+                                        <MenuItem
+                                            key={member.id}
+                                            value={member.id}
+                                        >
+                                            {`${member.user.firstname} ${member.user.lastname}`}
+                                        </MenuItem>
+                                    ) : null
+                                )}
                         </Select>
                     </FormControl>
                     {releases?.length > 0 && (
