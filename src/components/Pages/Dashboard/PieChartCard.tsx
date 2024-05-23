@@ -1,5 +1,6 @@
 import { PieChart } from "@mui/x-charts";
 import { ChartTitle } from "./ChartTitle";
+import { useMemo } from "react";
 
 interface Props {
     title: string;
@@ -8,6 +9,12 @@ interface Props {
 }
 
 export const PieChartCard = ({ title, data, className = "" }: Props) => {
+    const chartData = useMemo(() => {
+        if (data.length === 1) {
+            return [...data, { id: -1, value: 0, label: undefined }];
+        }
+        return data;
+    }, [data]);
     return (
         <div
             className={`relative overflow-hidden bg-white rounded-md flex flex-col w-full
@@ -19,7 +26,7 @@ export const PieChartCard = ({ title, data, className = "" }: Props) => {
                     <PieChart
                         series={[
                             {
-                                data,
+                                data: chartData,
                                 paddingAngle: 2,
                                 cornerRadius: 5,
                                 innerRadius: 60,
