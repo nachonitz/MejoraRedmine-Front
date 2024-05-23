@@ -182,7 +182,7 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
         let sprintsVelocity = orderedSprints.map((sprint) => {
             return {
                 label: sprint.label,
-                velocity: sprint.trend,
+                velocity: sprint.completed,
             };
         });
         setSprintsVelocity(sprintsVelocity);
