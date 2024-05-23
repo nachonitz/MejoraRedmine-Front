@@ -34,10 +34,12 @@ const CreateRiskDialog = ({
 }: CreateRiskDialogProps) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState<string | undefined>("");
-    const [probability, setProbability] = useState<RiskEnumeration>(
-        RiskEnumeration.LOW
+    const [probability, setProbability] = useState<RiskEnumeration | undefined>(
+        undefined
     );
-    const [impact, setImpact] = useState<RiskEnumeration>(RiskEnumeration.LOW);
+    const [impact, setImpact] = useState<RiskEnumeration | undefined>(
+        undefined
+    );
     const [errorName, setErrorName] = useState(false);
     const [errorProbability, setErrorProbability] = useState(false);
     const [errorImpact, setErrorImpact] = useState(false);
@@ -78,9 +80,9 @@ const CreateRiskDialog = ({
         const risk: CreateRiskDto = {
             name: name,
             description: description,
-            probability: probability,
+            probability: probability ? probability : RiskEnumeration.LOW,
             projectId: +projectId,
-            impact: impact,
+            impact: impact ? impact : RiskEnumeration.LOW,
             status: RiskStatus.OPEN,
         };
         createRisk(risk)
@@ -101,8 +103,8 @@ const CreateRiskDialog = ({
     const resetState = () => {
         setName("");
         setDescription("");
-        setProbability(RiskEnumeration.LOW);
-        setImpact(RiskEnumeration.LOW);
+        setProbability(undefined);
+        setImpact(undefined);
         clearErrors();
     };
 
