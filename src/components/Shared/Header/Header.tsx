@@ -207,13 +207,12 @@ const ProfileMenuItem = ({
     onClick: () => void;
 }) => {
     return (
-        <a
+        <span
             className="flex items-center gap-2 w-full text-left hover:bg-[#efefef] px-[16px] py-[5px]"
-            href=""
             onClick={onClick}
         >
             <div className="text-[18px]">{icon}</div>
             <span>{text}</span>
-        </a>
+        </span>
     );
 };
