@@ -93,7 +93,13 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
                 };
             });
 
+        let totalStoryPoints = 0;
         for (let issue of issues) {
+            totalStoryPoints += issue.estimation
+                ? ESTIMATIONS_TO_POINTS[
+                      issue.estimation as keyof typeof ESTIMATIONS_TO_POINTS
+                  ] ?? 0
+                : 0;
             if (issue.sprint) {
                 let sprintIndex = orderedSprints.findIndex(
                     (sprint) => sprint.id === issue.sprint?.id
@@ -144,13 +150,15 @@ const ProjectDashboard = ({ releases, sprints, issues }: Props) => {
             }
         }
 
+        const totalSprints = orderedSprints.length;
+
         let cumulativeOrderedSprints = orderedSprints.map((sprint, index) => {
             let trend: number = 0;
             let completed: number | null = 0;
             for (let i = 0; i <= index; i++) {
-                trend += orderedSprints[i].trend;
                 completed += orderedSprints[i].completed;
             }
+            trend = (totalStoryPoints / totalSprints) * (index + 1);
 
             if (sprint.isFuture) {
                 completed = null;

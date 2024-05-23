@@ -79,6 +79,17 @@ export const BurnUpChartCard = ({ title, data, condition }: Props) => {
                                         yAxisID: "y",
                                         borderDash: [3, 3],
                                     },
+                                    {
+                                        label: "Goal",
+                                        data: data.map(
+                                            (_item: any) =>
+                                                data[data.length - 1].trend
+                                        ),
+                                        borderColor: "#f98d50",
+                                        backgroundColor: "#f98d50",
+                                        yAxisID: "y",
+                                        borderDash: [3, 3],
+                                    },
                                 ],
                             }}
                         />
