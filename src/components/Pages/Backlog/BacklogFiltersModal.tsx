@@ -286,8 +286,8 @@ export const BacklogFiltersModal = ({
                                 members.map((member: ProjectMembership) =>
                                     member.user ? (
                                         <MenuItem
-                                            key={member.id}
-                                            value={member.id}
+                                            key={member.user.id}
+                                            value={member.user.id}
                                         >
                                             {`${member.user.firstname} ${member.user.lastname}`}
                                         </MenuItem>
