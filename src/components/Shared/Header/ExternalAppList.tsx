@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { ExternalApplicationItem } from "../../../api/models/application";
-import { getApps } from "../../../api/services/applicationService";
+import { useContext } from "react";
 import { CircularProgress } from "@mui/material";
 import { getToken, getUserId } from "../../../api/api";
+import { AppInfoContext } from "../../../context/AppInfoContext";
 
 interface Props {
     isLoggedIn: boolean;
@@ -15,17 +14,7 @@ const truncateText = (text: string, maxLength: number) => {
 };
 
 export const ExternalAppList = ({ isLoggedIn = false }: Props) => {
-    const [applications, setApplications] = useState<ExternalApplicationItem[]>(
-        []
-    );
-
-    useEffect(() => {
-        const fetch = async () => {
-            const apps = await getApps();
-            setApplications(apps);
-        };
-        fetch();
-    }, []);
+    const { applications } = useContext(AppInfoContext);
 
     return (
         <div className="flex flex-col gap-1">

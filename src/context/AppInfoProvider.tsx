@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
-import { getAppInfo } from "../api/services/applicationService";
+import { getAppInfo, getApps } from "../api/services/applicationService";
 import { AppInfoContext } from "./AppInfoContext";
+import { ExternalApplicationItem } from "../api/models/application";
 
 interface Props {
     children: ReactNode;
@@ -9,6 +10,14 @@ interface Props {
 export const AppInfoProvider = ({ children }: Props) => {
     const [title, setTitle] = useState<string>("");
     const [welcomeText, setWelcomeText] = useState<string>("");
+    const [applications, setApplications] = useState<ExternalApplicationItem[]>(
+        []
+    );
+
+    const getApplications = async () => {
+        const apps = await getApps();
+        setApplications(apps);
+    };
 
     const getApplicationInfo = async () => {
         const info = await getAppInfo();
@@ -18,11 +27,17 @@ export const AppInfoProvider = ({ children }: Props) => {
 
     useEffect(() => {
         getApplicationInfo();
+        getApplications();
     }, []);
 
     return (
         <AppInfoContext.Provider
-            value={{ title, welcomeText, getAppInfo: getApplicationInfo }}
+            value={{
+                title,
+                welcomeText,
+                getAppInfo: getApplicationInfo,
+                applications,
+            }}
         >
             {children}
         </AppInfoContext.Provider>
