@@ -48,7 +48,7 @@ const EditDocument = () => {
     const [documentCategoryId, setDocumentCategoryId] = useState<
         number | string
     >("");
-    const [tagsString, setTagsString] = useState<string | undefined>();
+    const [tagsString, setTagsString] = useState<string | undefined>("");
     const [errorTitle, setErrorTitle] = useState(false);
     const [errorDocumentCategory, setErrorDocumentCategory] = useState(false);
     const [errorTags, setErrorTags] = useState(false);
